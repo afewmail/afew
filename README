@@ -1,0 +1,145 @@
+Features
+========
+
+* text classification, magic tags aka the mailing list without server
+* spam handling (flush all tags, add spam)
+* killed thread handling
+* tags posts to lists with lists, $list-id
+* autoarchives mails sent from you
+* catchall -> remove new, add inbox
+* can operate on new messages [default], --all messages or on custom
+  query results
+* has a --dry-run mode for safe testing
+
+
+Installation
+============
+
+You'll need dbacl for the text classification:
+
+# aptitude install dbacl
+
+And I'd like to suggest to install alot_tags as your unprivileged user.
+If you do, make sure ~/.local/bin is in your path.
+
+$ python setup.py install --prefix=~/.local
+$ mkdir -p ~/.local/share/alot_tags/categories
+
+
+Configuration
+=============
+
+Make sure that ~/.notmuch-config reads:
+
+~~~ snip ~~~
+[new]
+tags=new
+~~~ snip ~~~
+
+
+Commandline help
+================
+
+$ alot_tags --help
+Usage: alot_tags [options] [--] [query]
+
+Options:
+  -h, --help            show this help message and exit
+
+  Actions:
+    Please specify exactly one action (both update actions can be
+    specified simultaniously).
+
+    -t, --tag           run the tag filter
+    -l LEARN, --learn=LEARN
+                        train the category with the messages matching the
+                        given query
+    -u, --update        update the categories [requires no query]
+    -U, --update-reference
+                        update the reference category (takes quite some time)
+                        [requires no query]
+    -c, --classify      classify each message matching the given query (to
+                        test the trained categories) [requires no query]
+
+  Query modifiers:
+    Please specify either --all or --new or a query string. The default
+    query for the update actions is a random selection of
+    REFERENCE_SET_SIZE mails from the last REFERENCE_SET_TIMEFRAME days.
+
+    -a, --all           operate on all messages
+    -n, --new           operate on all new messages
+
+  General options:
+    -m MAILDIR, --maildir=MAILDIR
+                        location of the maildir with the notmuch db
+    -e ENABLE_FILTERS, --enable-filters=ENABLE_FILTERS
+                        filter classes to use, separated by ',' [all]
+    -d, --dry-run       don't change the db [False]
+    -R REFERENCE_SET_SIZE, --reference-set-size=REFERENCE_SET_SIZE
+                        size of the reference set [1000]
+    -T DAYS, --reference-set-timeframe=DAYS
+                        do not use mails older than DAYS days [30]
+    -v, --verbose       be more verbose, can be given multiple times
+
+
+
+Boring stuff
+============
+
+Adding --dry-run to any --tag action prevents modification of the
+notmuch db. Add some -vv goodness to see some action.
+
+Basic tagging stuff requires no configuration, just run
+
+$ alot_tags --tag --new
+
+To do this automatically you can add the following hook into your
+~/.offlineimaprc:
+
+postsynchook = ionice -c 3 chrt --idle 0 /bin/sh -c "notmuch new && alot_tags --tag --new"
+
+
+The real deal
+=============
+
+Let's train on an existing tag 'spam':
+
+$ alot_tags --learn spam -- tag:spam
+
+Let's build the reference category. This is important to reduce the
+false positive rate. This may take a while...
+
+$ alot_tags --update-reference
+
+And now let's create a new tag from an arbitrary query result:
+
+$ alot_tags -vv --learn sourceforge -- sourceforge
+
+Let's see how good the classification is:
+
+$ alot_tags --classify -- tag:inbox and not tag:killed
+Sergio López <slpml@sinrega.org> (2011-10-08) (bug-hurd inbox lists unread) --> no match
+Patrick Totzke <reply+i-1840934-9a702d09342dca2b120126b26b008d0deea1731e@reply.github.com> (2011-10-08) (alot inbox lists) --> alot
+[...]
+
+As soon as you trained some categories, alot_tags will automatically
+tag your new mails using the classifier. If you want to disable this
+feature, either use the --enable-filters option to override the default
+set of filters or remove the files in your alot_tags state dir:
+
+$ ls ~/.local/share/alot_tags/categories
+alot juggling  reference_category  sourceforge  spam
+
+You need to update the category files periodically. I'd suggest to run
+
+$ alot_tags --update
+
+on a weekly and
+
+$ alot_tags --update-reference
+
+on a monthly basis.
+
+
+
+Have fun :)
