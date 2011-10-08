@@ -24,7 +24,7 @@ import subprocess
 class ClassificationError(Exception): pass
 class BackendError(ClassificationError): pass
 
-default_db_path = os.path.expanduser('~/.local/share/alot_tags/categories')
+default_db_path = os.path.expanduser('~/.local/share/afew/categories')
 
 class Classifier(object):
     reference_category = 'reference_category'

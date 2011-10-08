@@ -19,11 +19,11 @@ You'll need dbacl for the text classification:
 
 # aptitude install dbacl
 
-And I'd like to suggest to install alot_tags as your unprivileged user.
+And I'd like to suggest to install afew as your unprivileged user.
 If you do, make sure ~/.local/bin is in your path.
 
 $ python setup.py install --prefix=~/.local
-$ mkdir -p ~/.local/share/alot_tags/categories
+$ mkdir -p ~/.local/share/afew/categories
 
 
 Configuration
@@ -40,8 +40,8 @@ tags=new
 Commandline help
 ================
 
-$ alot_tags --help
-Usage: alot_tags [options] [--] [query]
+$ afew --help
+Usage: afew [options] [--] [query]
 
 Options:
   -h, --help            show this help message and exit
@@ -91,12 +91,12 @@ notmuch db. Add some -vv goodness to see some action.
 
 Basic tagging stuff requires no configuration, just run
 
-$ alot_tags --tag --new
+$ afew --tag --new
 
 To do this automatically you can add the following hook into your
 ~/.offlineimaprc:
 
-postsynchook = ionice -c 3 chrt --idle 0 /bin/sh -c "notmuch new && alot_tags --tag --new"
+postsynchook = ionice -c 3 chrt --idle 0 /bin/sh -c "notmuch new && afew --tag --new"
 
 
 The real deal
@@ -104,39 +104,39 @@ The real deal
 
 Let's train on an existing tag 'spam':
 
-$ alot_tags --learn spam -- tag:spam
+$ afew --learn spam -- tag:spam
 
 Let's build the reference category. This is important to reduce the
 false positive rate. This may take a while...
 
-$ alot_tags --update-reference
+$ afew --update-reference
 
 And now let's create a new tag from an arbitrary query result:
 
-$ alot_tags -vv --learn sourceforge -- sourceforge
+$ afew -vv --learn sourceforge -- sourceforge
 
 Let's see how good the classification is:
 
-$ alot_tags --classify -- tag:inbox and not tag:killed
+$ afew --classify -- tag:inbox and not tag:killed
 Sergio López <slpml@sinrega.org> (2011-10-08) (bug-hurd inbox lists unread) --> no match
 Patrick Totzke <reply+i-1840934-9a702d09342dca2b120126b26b008d0deea1731e@reply.github.com> (2011-10-08) (alot inbox lists) --> alot
 [...]
 
-As soon as you trained some categories, alot_tags will automatically
+As soon as you trained some categories, afew will automatically
 tag your new mails using the classifier. If you want to disable this
 feature, either use the --enable-filters option to override the default
-set of filters or remove the files in your alot_tags state dir:
+set of filters or remove the files in your afew state dir:
 
-$ ls ~/.local/share/alot_tags/categories
+$ ls ~/.local/share/afew/categories
 alot juggling  reference_category  sourceforge  spam
 
 You need to update the category files periodically. I'd suggest to run
 
-$ alot_tags --update
+$ afew --update
 
 on a weekly and
 
-$ alot_tags --update-reference
+$ afew --update-reference
 
 on a monthly basis.
 

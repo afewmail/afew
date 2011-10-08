@@ -22,13 +22,13 @@ import distutils.core
 distutils.core.setup(
     name = 'halot',
     packages = [
-        'alot_tags',
-        'alot_tags.filters',
+        'afew',
+        'afew.filters',
     ],
-    scripts = ['bin/alot_tags'],
+    scripts = ['bin/afew'],
     requires = [
         'notmuch',
         'subprocess (>= 2.7)'
     ],
-    provides = 'alot_tags'
+    provides = 'afew'
 )

@@ -23,8 +23,8 @@ import time
 import logging
 import optparse
 
-from alot_tags.main import main
-from alot_tags.Filter import all_filters
+from afew.main import main
+from afew.Filter import all_filters
 
 option_parser = optparse.OptionParser(
     usage = '%prog [options] [--] [query]'
