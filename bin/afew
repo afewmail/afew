@@ -89,20 +89,20 @@ options_group.add_option(
 options_group.add_option(
     '-e', '--enable-filters',
     default = 'SpamFilter,ClassifyingFilter,KillThreadsFilter,ListMailsFilter,ArchiveSentMailsFilter,InboxFilter',
-    help = "filter classes to use, separated by ',' [all]"
+    help = "filter classes to use, separated by ',' [default: all]"
 )
 options_group.add_option(
     '-d', '--dry-run', default = False, action = 'store_true',
-    help = "don't change the db [False]"
+    help = "don't change the db [default: %default]"
 )
 options_group.add_option(
     '-R', '--reference-set-size', default = 1000,
-    help = 'size of the reference set [1000]'
+    help = 'size of the reference set [default: %default]'
 )
 
 options_group.add_option(
     '-T', '--reference-set-timeframe', default = 30, metavar = 'DAYS',
-    help = 'do not use mails older than DAYS days [30]'
+    help = 'do not use mails older than DAYS days [default: %default]'
 )
 
 options_group.add_option(
