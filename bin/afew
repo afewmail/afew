@@ -39,7 +39,7 @@ action_group = optparse.OptionGroup(
 )
 action_group.add_option(
     '-t', '--tag', default = False, action = 'store_true',
-    help = 'run the tag filter'
+    help = 'run the tag filters'
 )
 action_group.add_option(
     '-l', '--learn', default = False,
