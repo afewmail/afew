@@ -79,7 +79,7 @@ Options:
                         update the reference category (takes quite some time)
                         [requires no query]
     -c, --classify      classify each message matching the given query (to
-                        test the trained categories) [requires no query]
+                        test the trained categories)
 
   Query modifiers:
     Please specify either --all or --new or a query string. The default
@@ -90,15 +90,16 @@ Options:
     -n, --new           operate on all new messages
 
   General options:
-    -m MAILDIR, --maildir=MAILDIR
-                        location of the maildir with the notmuch db
+    -C NOTMUCH_CONFIG, --notmuch-config=NOTMUCH_CONFIG
+                        path to the notmuch configuration file [default:
+                        $NOTMUCH_CONFIG or ~/.notmuch-config]
     -e ENABLE_FILTERS, --enable-filters=ENABLE_FILTERS
-                        filter classes to use, separated by ',' [all]
-    -d, --dry-run       don't change the db [False]
+                        filter classes to use, separated by ',' [default: all]
+    -d, --dry-run       don't change the db [default: False]
     -R REFERENCE_SET_SIZE, --reference-set-size=REFERENCE_SET_SIZE
-                        size of the reference set [1000]
+                        size of the reference set [default: 1000]
     -T DAYS, --reference-set-timeframe=DAYS
-                        do not use mails older than DAYS days [30]
+                        do not use mails older than DAYS days [default: 30]
     -v, --verbose       be more verbose, can be given multiple times
 
 
