@@ -70,7 +70,7 @@ Options:
     Please specify exactly one action (both update actions can be
     specified simultaniously).
 
-    -t, --tag           run the tag filter
+    -t, --tag           run the tag filters
     -l LEARN, --learn=LEARN
                         train the category with the messages matching the
                         given query
