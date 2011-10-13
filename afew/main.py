@@ -21,14 +21,16 @@ import random
 
 from .Database import Database
 from .DBACL import DBACL as Classifier
+from .Settings import notmuch_config
 from .utils import extract_mail_body
 
 def main(options, query_string):
-    database = Database(options.maildir)
+    maildir_path = notmuch_config.get('database', 'path')
+    database = Database(maildir_path)
 
     if options.tag:
         for filter_class in options.enable_filters:
-            filter_ = filter_class(options.maildir)
+            filter_ = filter_class(maildir_path)
             filter_.run(query_string)
             filter_.commit(options.dry_run)
     elif options.learn != False:

@@ -20,6 +20,7 @@ import os
 import ConfigParser
 
 from ..Filter import Filter, register_filter
+from ..Settings import notmuch_config
 
 @register_filter
 class ArchiveSentMailsFilter(Filter):
@@ -27,10 +28,6 @@ class ArchiveSentMailsFilter(Filter):
 
     def __init__(self, *args, **kwargs):
         super(ArchiveSentMailsFilter, self).__init__(*args, **kwargs)
-
-        # TODO: get config via notmuch api
-        notmuch_config = ConfigParser.RawConfigParser()
-        notmuch_config.readfp(open(os.path.expanduser('~/.notmuch-config')))
 
         my_addresses = set()
         my_addresses.add(notmuch_config.get('user', 'primary_email'))

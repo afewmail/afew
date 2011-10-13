@@ -25,6 +25,7 @@ import optparse
 
 from afew.main import main
 from afew.Filter import all_filters
+from afew.Settings import read_notmuch_config
 
 option_parser = optparse.OptionParser(
     usage = '%prog [options] [--] [query]'
@@ -83,8 +84,8 @@ options_group = optparse.OptionGroup(
 )
 # TODO: get config via notmuch api
 options_group.add_option(
-    '-m', '--maildir', default = os.path.expanduser('~/Maildir'),
-    help = 'location of the maildir with the notmuch db'
+    '-C', '--notmuch-config', default = None,
+    help = 'path to the notmuch configuration file [default: $NOTMUCH_CONFIG or ~/.notmuch-config]'
 )
 options_group.add_option(
     '-e', '--enable-filters',
@@ -156,5 +157,7 @@ loglevel = {
     2: logging.DEBUG,
 }[min(2, options.verbosity)]
 logging.basicConfig(level = loglevel)
+
+read_notmuch_config(options.notmuch_config)
 
 main(options, query_string)
