@@ -26,3 +26,9 @@ def read_notmuch_config(path = None):
         path = os.environ.get('NOTMUCH_CONFIG', os.path.expanduser('~/.notmuch-config'))
 
     notmuch_config.readfp(open(path))
+
+settings = ConfigParser.SafeConfigParser()
+settings.readfp(open(os.path.join(os.path.dirname(__file__), 'defaults', 'afew.config')))
+settings.read(os.path.join(os.environ.get('XDG_CONFIG_HOME',
+                                          os.path.expanduser('~/.config')),
+                           'afew', 'config'))
