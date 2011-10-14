@@ -16,9 +16,6 @@
 # OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 #
 
-import os
-import ConfigParser
-
 from ..Filter import Filter, register_filter
 from ..Settings import notmuch_config
 
