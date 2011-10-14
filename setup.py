@@ -25,6 +25,9 @@ distutils.core.setup(
         'afew',
         'afew.filters',
     ],
+    package_data = {
+        'afew': ['defaults/afew.config']
+    },
     scripts = ['bin/afew'],
     requires = [
         'notmuch',
