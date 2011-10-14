@@ -107,9 +107,14 @@ Options:
 Boring stuff
 ============
 
+Simulation
+----------
 Adding --dry-run to any --tag action prevents modification of the
 notmuch db. Add some -vv goodness to see some action.
 
+
+Initial tagging
+---------------
 Basic tagging stuff requires no configuration, just run
 
 $ afew --tag --new
@@ -118,6 +123,15 @@ To do this automatically you can add the following hook into your
 ~/.offlineimaprc:
 
 postsynchook = ionice -c 3 chrt --idle 0 /bin/sh -c "notmuch new && afew --tag --new"
+
+
+Tag filters
+-----------
+Tag filters are plugin-like modules that encapsulate tagging functionality. There is a filter that handles the archiving of mails you sent, one that handles spam, one for killed threads, one for mailing list magic... 
+
+By default, all filters are enabled and when you run afew with the --tag option, you get all of the goodness afew has to offer. If you want to change that behaviour, you can override the default by specifying what filters should be run with the --enable-filters option.
+
+The tag filter concept allows you to easily extend afew's tagging abilities by writing your own filters.
 
 
 The real deal
