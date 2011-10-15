@@ -25,7 +25,7 @@ import optparse
 
 from afew.main import main
 from afew.Filter import all_filters
-from afew.Settings import read_notmuch_config
+from afew.Settings import read_notmuch_config, get_filter_chain
 
 option_parser = optparse.OptionParser(
     usage = '%prog [options] [--] [query]'
@@ -89,8 +89,7 @@ options_group.add_option(
 )
 options_group.add_option(
     '-e', '--enable-filters',
-    default = 'SpamFilter,ClassifyingFilter,KillThreadsFilter,ListMailsFilter,ArchiveSentMailsFilter,InboxFilter',
-    help = "filter classes to use, separated by ',' [default: all]"
+    help = "filter classes to use, separated by ',' [default: filters specified in afew's config]"
 )
 options_group.add_option(
     '-d', '--dry-run', default = False, action = 'store_true',
@@ -142,14 +141,18 @@ elif options.update or options.update_reference:
 else:
     sys.exit('Weird... please file a bug containing your command line.')
 
-options.enable_filters = options.enable_filters.split(',')
+configured_filter_chain = get_filter_chain()
+if options.enable_filters:
+    options.enable_filters = options.enable_filters.split(',')
 
-all_filters_set = set(all_filters.keys())
-enabled_filters_set = set(options.enable_filters)
-if not all_filters_set.issuperset(enabled_filters_set):
-    sys.exit('Unknown filter(s) selected: %s' % (' '.join(enabled_filters_set.difference(all_filters_set))))
+    all_filters_set = set(all_filters.keys())
+    enabled_filters_set = set(options.enable_filters)
+    if not all_filters_set.issuperset(enabled_filters_set):
+        sys.exit('Unknown filter(s) selected: %s' % (' '.join(enabled_filters_set.difference(all_filters_set))))
 
-options.enable_filters = [all_filters[filter_name] for filter_name in options.enable_filters]
+    options.enable_filters = [all_filters[filter_name] for filter_name in options.enable_filters]
+else:
+    options.enable_filters = configured_filter_chain
 
 loglevel = {
     0: logging.WARNING,

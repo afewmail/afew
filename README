@@ -43,7 +43,7 @@ And I'd like to suggest to install afew as your unprivileged user.
 If you do, make sure ~/.local/bin is in your path.
 
 $ python setup.py install --prefix=~/.local
-$ mkdir -p ~/.local/share/afew/categories
+$ mkdir -p ~/.config/afew ~/.local/share/afew/categories
 
 
 Configuration
@@ -55,6 +55,18 @@ Make sure that ~/.notmuch-config reads:
 [new]
 tags=new
 ~~~ snip ~~~
+
+Put a list of filters into ~/.config/afew/config:
+~~~ snip ~~~
+# This is the default filter chain
+[SpamFilter]
+[ClassifyingFilter]
+[KillThreadsFilter]
+[ListMailsFilter]
+[ArchiveSentMailsFilter]
+[InboxFilter]
+~~~ snip ~~~
+
 
 
 Commandline help
@@ -94,7 +106,8 @@ Options:
                         path to the notmuch configuration file [default:
                         $NOTMUCH_CONFIG or ~/.notmuch-config]
     -e ENABLE_FILTERS, --enable-filters=ENABLE_FILTERS
-                        filter classes to use, separated by ',' [default: all]
+                        filter classes to use, separated by ',' [default:
+                        filters specified in afew's config]
     -d, --dry-run       don't change the db [default: False]
     -R REFERENCE_SET_SIZE, --reference-set-size=REFERENCE_SET_SIZE
                         size of the reference set [default: 1000]
@@ -127,11 +140,17 @@ postsynchook = ionice -c 3 chrt --idle 0 /bin/sh -c "notmuch new && afew --tag -
 
 Tag filters
 -----------
-Tag filters are plugin-like modules that encapsulate tagging functionality. There is a filter that handles the archiving of mails you sent, one that handles spam, one for killed threads, one for mailing list magic... 
+Tag filters are plugin-like modules that encapsulate tagging
+functionality. There is a filter that handles the archiving of mails
+you sent, one that handles spam, one for killed threads, one for
+mailing list magic...
 
-By default, all filters are enabled and when you run afew with the --tag option, you get all of the goodness afew has to offer. If you want to change that behaviour, you can override the default by specifying what filters should be run with the --enable-filters option.
+The tag filter concept allows you to easily extend afew's tagging
+abilities by writing your own filters. Take a look at the default
+configuration file (afew/defaults/afew.config) for a list of
+available filters and how to enable filters and create customize
+filter types.
 
-The tag filter concept allows you to easily extend afew's tagging abilities by writing your own filters.
 
 
 The real deal
