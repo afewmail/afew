@@ -31,8 +31,11 @@ def register_filter(klass):
 class Filter(Database):
     message = 'No message specified for filter'
 
-    def __init__(self, db_path):
+    def __init__(self, db_path, **kwargs):
         super(Filter, self).__init__(db_path)
+        for key, value in kwargs.items():
+            setattr(self, key, value)
+
         self._add_tags = collections.defaultdict(lambda: set())
         self._remove_tags = collections.defaultdict(lambda: set())
         self._flush_tags = list()
