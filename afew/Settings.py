@@ -23,25 +23,11 @@ import ConfigParser
 
 from .Filter import all_filters, register_filter
 
-notmuch_config = ConfigParser.RawConfigParser()
-
-def read_notmuch_config(path = None):
-    if path == None:
-        path = os.environ.get('NOTMUCH_CONFIG', os.path.expanduser('~/.notmuch-config'))
-
-    notmuch_config.readfp(open(path))
-
 settings = ConfigParser.SafeConfigParser()
 settings.readfp(open(os.path.join(os.path.dirname(__file__), 'defaults', 'afew.config')))
 settings.read(os.path.join(os.environ.get('XDG_CONFIG_HOME',
                                           os.path.expanduser('~/.config')),
                            'afew', 'config'))
-
-def make_factory(klass, kwargs):
-    @functools.wraps(klass)
-    def factory(db_path):
-        return klass(db_path, **kwargs)
-    return factory
 
 section_re = re.compile(r'''^(?P<name>[a-z_][a-z0-9_]*)(\((?P<parent_class>[a-z_][a-z0-9_]*)\)|\.(?P<index>\d+))?$''', re.I)
 def get_filter_chain():
@@ -69,6 +55,6 @@ def get_filter_chain():
             except KeyError as e:
                 raise NameError('Filter type %r not found.' % match.group('name'))
 
-            filter_chain.append(make_factory(klass, dict(settings.items(section))))
+            filter_chain.append(klass(**dict(settings.items(section))))
 
     return filter_chain

@@ -22,9 +22,5 @@ from ..Filter import Filter, register_filter
 class InboxFilter(Filter):
     message = 'Retags all messages not tagged as junk or killed as inbox'
     query = 'tag:new'
-    tag_blacklist = set(['spam', 'killed'])
-
-    def handle_message(self, message):
-        self.remove_tags(message, 'new')
-        if not self.tag_blacklist.intersection(message.get_tags()):
-            self.add_tags(message, 'inbox')
+    tags = '-new +inbox'
+    tag_blacklist = 'killed'

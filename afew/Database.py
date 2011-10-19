@@ -20,12 +20,12 @@ import logging
 
 import notmuch
 
+from .NotmuchSettings import notmuch_settings
 from .utils import extract_mail_body
 
 class Database(object):
-    def __init__(self, db_path):
-        self.db_path = db_path
-        self.db = notmuch.Database(db_path)
+    def __init__(self):
+        self.db_path = notmuch_settings.get('database', 'path')
 
     def do_query(self, query):
         if hasattr(self, 'query'):
@@ -35,7 +35,8 @@ class Database(object):
                 query = self.query
 
         logging.debug('Executing query %r' % query)
-        return notmuch.Query(self.db, query)
+        db = notmuch.Database(self.db_path)
+        return notmuch.Query(db, query)
 
     def get_messages(self, query, full_thread = False):
         if not full_thread:

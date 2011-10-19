@@ -17,7 +17,7 @@
 #
 
 from ..Filter import Filter, register_filter
-from ..Settings import notmuch_config
+from ..NotmuchSettings import notmuch_settings
 
 @register_filter
 class ArchiveSentMailsFilter(Filter):
@@ -27,9 +27,9 @@ class ArchiveSentMailsFilter(Filter):
         super(ArchiveSentMailsFilter, self).__init__(*args, **kwargs)
 
         my_addresses = set()
-        my_addresses.add(notmuch_config.get('user', 'primary_email'))
-        if notmuch_config.has_option('user', 'other_email'):
-            my_addresses.update(filter(None, notmuch_config.get('user', 'other_email').split(';')))
+        my_addresses.add(notmuch_settings.get('user', 'primary_email'))
+        if notmuch_settings.has_option('user', 'other_email'):
+            my_addresses.update(filter(None, notmuch_settings.get('user', 'other_email').split(';')))
 
         self.query = ' OR '.join('from:"%s"' % address for address in my_addresses)
 

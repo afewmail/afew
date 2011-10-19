@@ -28,11 +28,14 @@ def register_filter(klass):
     all_filters[klass.__name__] = klass
     return klass
 
+@register_filter
 class Filter(Database):
     message = 'No message specified for filter'
+    tags = ''
+    tag_blacklist = ''
 
-    def __init__(self, db_path, **kwargs):
-        super(Filter, self).__init__(db_path)
+    def __init__(self, **kwargs):
+        super(Filter, self).__init__()
         for key, value in kwargs.items():
             setattr(self, key, value)
 
@@ -40,18 +43,35 @@ class Filter(Database):
         self._remove_tags = collections.defaultdict(lambda: set())
         self._flush_tags = list()
 
+        self._tags_to_add = list()
+        self._tags_to_remove = list()
+        for tag_action in self.tags.split():
+            if tag_action[0] not in '+-':
+                raise ValueError('Each tag must be preceded by either + or -')
+
+            (self._tags_to_add if tag_action[0] == '+' else self._tags_to_remove).append(tag_action[1:])
+
+        self._tag_blacklist = set(self.tag_blacklist.split())
+
     def run(self, query):
         logging.info(self.message)
         for message in self.get_messages(query):
             self.handle_message(message)
 
+    def handle_message(self, message):
+        if not self._tag_blacklist.intersection(message.get_tags()):
+            self.remove_tags(message, *self._tags_to_remove)
+            self.add_tags(message, *self._tags_to_add)
+
     def add_tags(self, message, *tags):
-        logging.debug('Adding tags %s to %s' % (', '.join(tags), message))
-        self._add_tags[message.get_message_id()].update(unicode(tag) for tag in tags)
+        if tags:
+            logging.debug('Adding tags %s to %s' % (', '.join(tags), message))
+            self._add_tags[message.get_message_id()].update(unicode(tag) for tag in tags)
 
     def remove_tags(self, message, *tags):
-        logging.debug('Removing tags %s from %s' % (', '.join(tags), message))
-        self._remove_tags[message.get_message_id()].update(unicode(tag) for tag in tags)
+        if tags:
+            logging.debug('Removing tags %s from %s' % (', '.join(tags), message))
+            self._remove_tags[message.get_message_id()].update(unicode(tag) for tag in tags)
 
     def flush_tags(self, message):
         logging.debug('Removing all tags from %s' % message)

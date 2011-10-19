@@ -16,17 +16,13 @@
 # OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 #
 
-from ..Filter import Filter, register_filter
-from ..Database import Database
+import os
+import ConfigParser
 
-@register_filter
-class KillThreadsFilter(Filter):
-    message = 'Looking for messages in killed threads that are not yet killed'
-    query = 'NOT tag:killed'
+notmuch_settings = ConfigParser.RawConfigParser()
 
-    def handle_message(self, message):
-        db = Database()
-        query = db.get_messages('thread:"%s" AND tag:killed' % message.get_thread_id())
+def read_notmuch_settings(path = None):
+    if path == None:
+        path = os.environ.get('NOTMUCH_CONFIG', os.path.expanduser('~/.notmuch-config'))
 
-        if len(list(query)):
-            self.add_tags(message, 'killed')
+    notmuch_settings.readfp(open(path))

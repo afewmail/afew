@@ -25,7 +25,8 @@ import optparse
 
 from afew.main import main
 from afew.Filter import all_filters
-from afew.Settings import read_notmuch_config, get_filter_chain
+from afew.Settings import get_filter_chain
+from afew.NotmuchSettings import read_notmuch_settings
 
 option_parser = optparse.OptionParser(
     usage = '%prog [options] [--] [query]'
@@ -141,6 +142,8 @@ elif options.update or options.update_reference:
 else:
     sys.exit('Weird... please file a bug containing your command line.')
 
+read_notmuch_settings(options.notmuch_config)
+
 configured_filter_chain = get_filter_chain()
 if options.enable_filters:
     options.enable_filters = options.enable_filters.split(',')
@@ -160,7 +163,5 @@ loglevel = {
     2: logging.DEBUG,
 }[min(2, options.verbosity)]
 logging.basicConfig(level = loglevel)
-
-read_notmuch_config(options.notmuch_config)
 
 main(options, query_string)
