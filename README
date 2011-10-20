@@ -148,7 +148,7 @@ mailing list magic...
 The tag filter concept allows you to easily extend afew's tagging
 abilities by writing your own filters. Take a look at the default
 configuration file (afew/defaults/afew.config) for a list of
-available filters and how to enable filters and create customize
+available filters and how to enable filters and create customized
 filter types.
 
 
