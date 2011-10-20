@@ -23,7 +23,6 @@ import logging
 @register_filter
 class FolderNameFilter(Filter):
     message = 'Tags all new messages with their folder'
-    query = 'tag:new'
 
     def handle_message(self, message):
         filename_pattern = '(/.+)/(?P<maildirs>.*)/(cur|new)/[^/]+'
