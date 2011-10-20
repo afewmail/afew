@@ -23,6 +23,7 @@ import logging
 @register_filter
 class FolderNameFilter(Filter):
     message = 'Tags all new messages with their folder'
+    folder_blacklist = ['INBOX']
 
     def handle_message(self, message):
         filename_pattern = '(/.+)/(?P<maildirs>.*)/(cur|new)/[^/]+'
@@ -31,6 +32,8 @@ class FolderNameFilter(Filter):
             #todo: make separator configurable
             tags = maildirs.group('maildirs').split('.')
             logging.debug('found tags {0} for message \'{1}\''.format(tags, message.get_filename()))
+            # remove blacklisted folder
+            tags = set(tags) - set(self.folder_blacklist)
             self.add_tags(message, *tags)
         else:
             #todo: error handling in tag filters?
