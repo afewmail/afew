@@ -23,4 +23,4 @@ class InboxFilter(Filter):
     message = 'Retags all messages not tagged as junk or killed as inbox'
     query = 'tag:new'
     tags = '-new +inbox'
-    tag_blacklist = 'killed'
+    tag_blacklist = 'killed spam'
