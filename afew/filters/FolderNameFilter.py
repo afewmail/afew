@@ -24,26 +24,24 @@ import logging
 @register_filter
 class FolderNameFilter(Filter):
     message = 'Tags all new messages with their folder'
-    filename_pattern = ''
-    maildir_separator = '.'
-    folder_blacklist = ''
     
-    def __init__(self, *args, **kwargs):
-        super(FolderNameFilter, self).__init__(*args, **kwargs)
+    def __init__(self, folder_blacklist='', maildir_separator='.'):
+        super(FolderNameFilter, self).__init__()
 
-        self.filename_pattern = '{mail_root}/(?P<maildirs>.*)/(cur|new)/[^/]+'.format(
+        self.__filename_pattern = '{mail_root}/(?P<maildirs>.*)/(cur|new)/[^/]+'.format(
             mail_root=notmuch_settings.get('database', 'path').rstrip('/'))
         
-        self._folder_blacklist = set(self.folder_blacklist.split())
+        self.__folder_blacklist = set(folder_blacklist.split())
+        self.__maildir_separator = maildir_separator
 
 
     def handle_message(self, message):
-        maildirs = re.match(self.filename_pattern, message.get_filename())
+        maildirs = re.match(self.__filename_pattern, message.get_filename())
         if maildirs:
-            tags = set(maildirs.group('maildirs').split(self.maildir_separator))
-            logging.debug('found tags {0} for message \'{1}\''.format(tags, message.get_filename()))
+            tags = set(maildirs.group('maildirs').split(self.__maildir_separator))
+            logging.debug('found tags {0} for message \'{1}\''.format(tags, message.get_header('subject').encode('utf8')))
             # remove blacklisted folders
-            tags = tags - self._folder_blacklist
+            tags = tags - self.__folder_blacklist
             self.add_tags(message, *tags)
         else:
             logging.error('Could not extract folder names from message \'{0}\''.format(message))
