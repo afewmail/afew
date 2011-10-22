@@ -25,23 +25,53 @@ import logging
 class FolderNameFilter(Filter):
     message = 'Tags all new messages with their folder'
     
-    def __init__(self, folder_blacklist='', maildir_separator='.'):
+    def __init__(self, folder_blacklist='', folder_transforms='', maildir_separator='.'):
         super(FolderNameFilter, self).__init__()
 
         self.__filename_pattern = '{mail_root}/(?P<maildirs>.*)/(cur|new)/[^/]+'.format(
             mail_root=notmuch_settings.get('database', 'path').rstrip('/'))
-        
         self.__folder_blacklist = set(folder_blacklist.split())
+        self.__folder_transforms = self.__parse_transforms(folder_transforms)
         self.__maildir_separator = maildir_separator
 
 
     def handle_message(self, message):
         maildirs = re.match(self.__filename_pattern, message.get_filename())
         if maildirs:
-            tags = set(maildirs.group('maildirs').split(self.__maildir_separator))
-            logging.debug('found tags {0} for message \'{1}\''.format(tags, message.get_header('subject').encode('utf8')))
+            folders = set(maildirs.group('maildirs').split(self.__maildir_separator))
+            logging.debug('found folders {0} for message \'{1}\''.format(
+                folders, message.get_header('subject').encode('utf8')))
+
             # remove blacklisted folders
-            tags = tags - self.__folder_blacklist
-            self.add_tags(message, *tags)
+            clean_folders = folders - self.__folder_blacklist
+            # apply transformations
+            transformed_folders = self.__transform_folders(clean_folders)
+
+            self.add_tags(message, *transformed_folders)
         else:
             logging.error('Could not extract folder names from message \'{0}\''.format(message))
+
+
+    def __transform_folders(self, folders):
+        '''
+        Transforms the given collection of folders according to the transformation rules.
+        '''
+        transformations = set()
+        for folder in folders:
+            if folder in self.__folder_transforms:
+                transformations.add(self.__folder_transforms[folder])
+            else:
+                transformations.add(folder)
+        return transformations
+
+
+    def __parse_transforms(self, transformation_description):
+        '''
+        Parses the transformation rules specified in the config file.
+        '''
+        transformations = dict()
+        for rule in transformation_description.split():
+            folder, tag = rule.split(':')
+            transformations[folder] = tag
+        return transformations
+
