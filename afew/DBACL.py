@@ -47,6 +47,16 @@ class DBACL(Classifier):
         categories = glob.glob1(database_directory, '*')
         super(DBACL, self).__init__(categories, database_directory)
 
+    sane_environ = {
+        key: value
+        for key, value in os.environ.items()
+        if not (
+            key.startswith('LC_') or
+            key == 'LANG' or
+            key == 'LANGUAGE'
+        )
+    }
+
     def _call_dbacl(self, args, **kwargs):
         command_line = ['dbacl'] + args
         logging.debug('executing %r' % command_line)
@@ -56,6 +66,7 @@ class DBACL(Classifier):
             stdin = subprocess.PIPE,
             stdout = subprocess.PIPE,
             stderr = subprocess.PIPE,
+            env = self.sane_environ,
             **kwargs
         )
 
