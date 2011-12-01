@@ -36,7 +36,7 @@ option_parser = optparse.OptionParser(
 action_group = optparse.OptionGroup(
     option_parser,
     'Actions',
-    'Please specify exactly one action (both update actions can be specified simultaniously).'
+    'Please specify exactly one action (both update actions can be specified simultaneously).'
 )
 action_group.add_option(
     '-t', '--tag', default = False, action = 'store_true',
