@@ -66,5 +66,7 @@ def main(options, query_string):
                 category = 'no match'
 
             print('%s --> %s' % (unicode(message), category))
+    elif options.sync_tags:
+        print 'syncing tags to their respective folders...'
     else:
         sys.exit('Weird... please file a bug containing your command line.')
