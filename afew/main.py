@@ -21,6 +21,7 @@ import random
 
 from .Database import Database
 from .DBACL import DBACL as Classifier
+from .TagSyncher import TagSyncher
 from .NotmuchSettings import notmuch_settings
 from .utils import extract_mail_body
 
@@ -68,5 +69,7 @@ def main(options, query_string):
             print('%s --> %s' % (unicode(message), category))
     elif options.sync_tags:
         print 'syncing tags to their respective folders...'
+        syncher = TagSyncher()
+        syncher.sync('INBOX', None)
     else:
         sys.exit('Weird... please file a bug containing your command line.')
