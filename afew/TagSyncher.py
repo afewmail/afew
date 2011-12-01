@@ -41,5 +41,9 @@ class TagSyncher(Database):
         '''
         messages = notmuch.Query(self.db, self.query.format(folder=maildir)).search_messages()
         for message in messages:
-            print u"{}: {} -- {}".format(message, message.get_header('Subject'),
-                         message.get_filename().rsplit('/', 1)[1].split('.')[0])
+            print u"{} -- {}".format(message, message.get_header('Subject'))
+            tags = list(message.get_tags())
+            for tag in rules.keys():
+                if tag in tags:
+                    print " WOULD MOVE TO: {}/{}/cur/ ".format(self.db_path,
+                                                               rules[tag])

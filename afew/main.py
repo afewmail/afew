@@ -70,6 +70,7 @@ def main(options, query_string):
     elif options.sync_tags:
         print 'syncing tags to their respective folders...'
         syncher = TagSyncher()
-        syncher.sync('INBOX', None)
+        syncher.sync('INBOX', {'spam': 'Junk', 'sailing': 'interests.sailing',
+                               '!inbox': 'Archive'})
     else:
         sys.exit('Weird... please file a bug containing your command line.')
