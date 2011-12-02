@@ -42,8 +42,18 @@ class TagSyncher(Database):
         messages = notmuch.Query(self.db, self.query.format(folder=maildir)).search_messages()
         for message in messages:
             print u"{} -- {}".format(message, message.get_header('Subject'))
-            tags = list(message.get_tags())
+            mail_tags = list(message.get_tags())
             for tag in rules.keys():
-                if tag in tags:
+                if self.__rule_matches(tag, mail_tags):
                     print " WOULD MOVE TO: {}/{}/cur/ ".format(self.db_path,
                                                                rules[tag])
+                    break
+
+
+    def __rule_matches(self, test_tag, existing_tags):
+        return (self.__is_positive_tag(test_tag) and test_tag in existing_tags) or \
+               (self.__is_negative_tag(test_tag) and not test_tag[1:] in existing_tags)
+
+
+    def __is_positive_tag(self, tag): return not self.__is_negative_tag(tag)
+    def __is_negative_tag(self, tag): return tag.startswith('!')

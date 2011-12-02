@@ -26,6 +26,8 @@ from .TagSyncher import TagSyncher
 from .NotmuchSettings import notmuch_settings
 from .utils import extract_mail_body
 
+from collections import OrderedDict
+
 def main(options, query_string):
     database = Database()
 
@@ -71,7 +73,9 @@ def main(options, query_string):
     elif options.sync_tags:
         print 'syncing tags to their respective folders...'
         syncher = TagSyncher()
-        syncher.sync('INBOX', {'spam': 'Junk', 'sailing': 'interests.sailing',
-                               '!inbox': 'Archive'})
+        syncher.sync('INBOX', OrderedDict([('spam', 'Junk'),
+                                           ('sailing', 'interests.sailing'),
+                                           ('!inbox', 'Archive')])
+                    )
     else:
         sys.exit('Weird... please file a bug containing your command line.')
