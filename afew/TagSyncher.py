@@ -18,6 +18,7 @@
 
 
 import notmuch
+from shutil import move
 
 from .Database import Database
 
@@ -41,12 +42,15 @@ class TagSyncher(Database):
         '''
         messages = notmuch.Query(self.db, self.query.format(folder=maildir)).search_messages()
         for message in messages:
-            print u"{} -- {}".format(message, message.get_header('Subject'))
             mail_tags = list(message.get_tags())
             for tag in rules.keys():
                 if self.__rule_matches(tag, mail_tags):
-                    print " WOULD MOVE TO: {}/{}/cur/ ".format(self.db_path,
-                                                               rules[tag])
+                    destination = '{}/{}/cur/'.format(self.db_path, rules[tag])
+                    print u"DEBUG: {} -- {} [{}]".format(message,
+                                                  message.get_header('Subject'),
+                                       message.get_filename().rsplit('/', 1)[1])
+                    print u"DEBUG:     MOVING TO: {}".format(destination)
+                    move(message.get_filename(), destination)                                           
                     break
 
 

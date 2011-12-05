@@ -76,5 +76,6 @@ def main(options, query_string):
                                            ('sailing', 'interests.sailing'),
                                            ('!inbox', 'Archive')])
                     )
+        syncher.sync('Junk', OrderedDict([('!spam', 'Archive')]))
     else:
         sys.exit('Weird... please file a bug containing your command line.')
