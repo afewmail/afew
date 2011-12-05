@@ -18,6 +18,7 @@
 
 
 import notmuch
+import logging
 from shutil import move
 from subprocess import check_call, CalledProcessError
 
@@ -42,26 +43,28 @@ class TagSyncher(Database):
         Move mails in folder maildir according to the given rules.
         '''
         # identify and move messages
+        logging.info("syncing tags in '{}'".format(maildir))
         messages = notmuch.Query(self.db, self.query.format(folder=maildir)).search_messages()
         for message in messages:
             mail_tags = list(message.get_tags())
             for tag in rules.keys():
                 if self.__rule_matches(tag, mail_tags):
                     destination = '{}/{}/cur/'.format(self.db_path, rules[tag])
-                    print u"DEBUG: {} -- {} [{}]".format(message,
+                    logging.debug("{} -- {} [{}]".format(message,
                                                   message.get_header('Subject'),
                                        message.get_filename().rsplit('/', 1)[1])
-                    print u"DEBUG:     MOVING TO: {}".format(destination)
+                                 )      
+                    logging.debug("    MOVING TO: {}".format(destination))
                     move(message.get_filename(), destination)                                           
                     break
 
         # update notmuch database
-        print "DEBUG: updating database"
+        logging.info("updating database")
         try:
             check_call(['notmuch', 'new'])
         except CalledProcessError as err:
-            print "ERROR: Could not update notmuch database " \
-                  "after syncing maildir '{}': {}".format(maildir, err)
+            logging.error("Could not update notmuch database " \
+                          "after syncing maildir '{}': {}".format(maildir, err))
             raise SystemExit 
             
 
