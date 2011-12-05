@@ -70,7 +70,6 @@ def main(options, query_string):
 
             print('%s --> %s' % (unicode(message), category))
     elif options.sync_tags:
-        print 'syncing tags to their respective folders...'
         syncher = TagSyncher()
         syncher.sync('INBOX', OrderedDict([('spam', 'Junk'),
                                            ('sailing', 'interests.sailing'),
