@@ -25,8 +25,10 @@ from collections import OrderedDict
 from .configparser import SafeConfigParser
 from .Filter import all_filters, register_filter
 
+# config values for the TagSyncher
 tag_syncher = 'TagSyncher'
 sync_folders = 'folders'
+sync_age = 'max_age'
 
 settings = SafeConfigParser()
 # preserve the capitalization of the keys.
@@ -95,3 +97,10 @@ def get_tag_sync_rules():
         return all_rules
     else:
         raise NameError("No folders for synching your tags have been defined.")
+
+
+def get_tag_sync_age():
+    max_age = 0
+    if settings.has_option(tag_syncher, sync_age):
+        max_age = settings.get(tag_syncher, sync_age)
+    return max_age

@@ -27,7 +27,7 @@ import optparse
 from afew.main import main
 from afew.utils import filter_compat
 from afew.Filter import all_filters
-from afew.Settings import get_filter_chain, get_tag_sync_rules
+from afew.Settings import get_filter_chain, get_tag_sync_rules, get_tag_sync_age
 from afew.NotmuchSettings import read_notmuch_settings, get_notmuch_new_query
 
 option_parser = optparse.OptionParser(
@@ -168,6 +168,7 @@ else:
 
 if options.sync_tags:
     options.tag_sync_rules = get_tag_sync_rules()
+    options.tag_sync_age = get_tag_sync_age()
 
 loglevel = {
     0: logging.WARNING,
