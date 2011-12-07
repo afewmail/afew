@@ -24,6 +24,7 @@ from subprocess import check_call, CalledProcessError
 
 from .Database import Database
 from .utils import get_message_summary
+from datetime import date, datetime, timedelta
 
 
 class TagSyncher(Database):
@@ -33,10 +34,16 @@ class TagSyncher(Database):
     '''
 
 
-    def __init__(self, dry_run=False):
+    def __init__(self, max_age=0, dry_run=False):
         super(TagSyncher, self).__init__()
         self.db = notmuch.Database(self.db_path)
         self.query = 'folder:{folder}'
+        if max_age:
+            days = timedelta(max_age)
+            start = date.today() - days
+            now = datetime.now()
+            self.query += ' AND {start}..{now}'.format(start=start.strftime('%s'),
+                                                       now=now.strftime('%s'))
         self.dry_run = dry_run
 
 
@@ -46,6 +53,7 @@ class TagSyncher(Database):
         '''
         # identify and move messages
         logging.info("syncing tags in '{}'".format(maildir))
+        logging.debug("query: {}".format(self.query.format(folder=maildir)))
         messages = notmuch.Query(self.db, self.query.format(folder=maildir)).search_messages()
         for message in messages:
             mail_tags = list(message.get_tags())
