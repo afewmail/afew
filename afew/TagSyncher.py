@@ -23,6 +23,7 @@ from shutil import move
 from subprocess import check_call, CalledProcessError
 
 from .Database import Database
+from .utils import get_message_summary
 
 
 class TagSyncher(Database):
@@ -32,10 +33,11 @@ class TagSyncher(Database):
     '''
 
 
-    def __init__(self):
+    def __init__(self, dry_run=False):
         super(TagSyncher, self).__init__()
         self.db = notmuch.Database(self.db_path)
         self.query = 'folder:{folder}'
+        self.dry_run = dry_run
 
 
     def sync(self, maildir, rules):
@@ -50,22 +52,24 @@ class TagSyncher(Database):
             for tag in rules.keys():
                 if self.__rule_matches(tag, mail_tags):
                     destination = '{}/{}/cur/'.format(self.db_path, rules[tag])
-                    logging.debug("{} -- {} [{}]".format(message,
-                                                  message.get_header('Subject'),
-                                       message.get_filename().rsplit('/', 1)[1])
-                                 )      
-                    logging.debug("    MOVING TO: {}".format(destination))
-                    move(message.get_filename(), destination)                                           
+                    if not self.dry_run:
+                        self.__log_move_action(message, maildir, tag, rules, self.dry_run)
+                        move(message.get_filename(), destination)                                           
+                    else:
+                        self.__log_move_action(message, maildir, tag, rules, self.dry_run)
                     break
 
         # update notmuch database
         logging.info("updating database")
-        try:
-            check_call(['notmuch', 'new'])
-        except CalledProcessError as err:
-            logging.error("Could not update notmuch database " \
-                          "after syncing maildir '{}': {}".format(maildir, err))
-            raise SystemExit 
+        if not self.dry_run:
+            try:
+                check_call(['notmuch', 'new'])
+            except CalledProcessError as err:
+                logging.error("Could not update notmuch database " \
+                              "after syncing maildir '{}': {}".format(maildir, err))
+                raise SystemExit
+        else:
+            logging.info("Would update database")
             
 
     def __rule_matches(self, test_tag, existing_tags):
@@ -75,3 +79,16 @@ class TagSyncher(Database):
 
     def __is_positive_tag(self, tag): return not self.__is_negative_tag(tag)
     def __is_negative_tag(self, tag): return tag.startswith('!')
+
+    def __log_move_action(self, message, maildir, tag, rules, dry_run):
+        if not dry_run:
+            level = logging.DEBUG
+            prefix = 'moving mail'
+        else:
+            level = logging.INFO
+            prefix = 'I would move mail'
+        logging.log(level, prefix)
+        logging.log(level, "    {}".format(get_message_summary(message)))
+        logging.log(level, "from '{}' to '{}'".format(maildir, rules[tag]))
+        logging.debug("rule: '{}' in [{}]".format(tag, message.get_tags()))
+            

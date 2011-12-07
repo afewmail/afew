@@ -69,7 +69,7 @@ def main(options, query_string):
 
             print('%s --> %s' % (message, category))
     elif options.sync_tags:
-        syncher = TagSyncher()
+        syncher = TagSyncher(options.dry_run)
         for maildir, rules in options.tag_sync_rules.iteritems():
             syncher.sync(maildir, rules)
     else:
