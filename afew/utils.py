@@ -18,6 +18,7 @@
 
 import re
 import email
+from datetime import datetime
 
 signature_line_re = re.compile(r'^((--)|(__)|(==)|(\*\*)|(##))')
 def strip_signatures(lines, max_signature_size = 10):
@@ -69,3 +70,17 @@ def extract_mail_body(message):
 
             content.append('\n'.join(lines))
     return '\n'.join(content)
+
+def get_message_summary(message):
+    when = datetime.fromtimestamp(float(message.get_date()))
+    sender = get_sender(message)
+    subject = message.get_header('Subject')
+    return '[{date}] {sender} | {subject}'.format(date=when, sender=sender,
+                                                 subject=subject)
+
+def get_sender(message):
+    sender = message.get_header('From')
+    name_match = re.search('(.+) <.+@.+\..+>', sender)
+    if name_match:
+        sender = name_match.group(1)
+    return sender
