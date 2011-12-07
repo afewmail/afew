@@ -39,7 +39,7 @@ class TagSyncher(Database):
         self.db = notmuch.Database(self.db_path)
         self.query = 'folder:{folder}'
         if max_age:
-            days = timedelta(max_age)
+            days = timedelta(int(max_age))
             start = date.today() - days
             now = datetime.now()
             self.query += ' AND {start}..{now}'.format(start=start.strftime('%s'),
