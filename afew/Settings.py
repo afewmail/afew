@@ -25,6 +25,7 @@ from collections import OrderedDict
 from .Filter import all_filters, register_filter
 
 tag_syncher = 'TagSyncher'
+sync_folders = 'folders'
 
 settings = ConfigParser.SafeConfigParser()
 # preserve the capitalization of the keys.
@@ -66,18 +67,19 @@ def get_filter_chain():
 
 
 def get_tag_sync_rules():
-    if settings.has_section(tag_syncher) and settings.items(tag_syncher):
+    if settings.has_option(tag_syncher, sync_folders):
         all_rules = OrderedDict()
 
-        # each line in the config file
-        for maildir, raw_rules in settings.items(tag_syncher):
-            rules = OrderedDict()
-            for rule in raw_rules.split():
-                tag, destination = rule.split(':')
-                rules[tag] = destination
-            all_rules[maildir] = rules
+        for folder in settings.get(tag_syncher, sync_folders).split():
+            if settings.has_option(tag_syncher, folder):
+                rules = OrderedDict()
+                for rule in settings.get(tag_syncher, folder).split():
+                    tag, destination = rule.split(':')
+                    rules[tag] = destination
+                all_rules[folder] = rules
+            else:
+                raise NameError("No rules specified for maildir '{}'.".format(folder))
 
         return all_rules
     else:
-        raise NameError('No rules for synching your tags have been defined.')
-    
+        raise NameError("No folders for synching your tags have been defined.")
