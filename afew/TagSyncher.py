@@ -62,12 +62,7 @@ class TagSyncher(Database):
         # update notmuch database
         logging.info("updating database")
         if not self.dry_run:
-            try:
-                check_call(['notmuch', 'new'])
-            except CalledProcessError as err:
-                logging.error("Could not update notmuch database " \
-                              "after syncing maildir '{}': {}".format(maildir, err))
-                raise SystemExit
+            self.__update_db(maildir)
         else:
             logging.info("Would update database")
             
@@ -79,6 +74,16 @@ class TagSyncher(Database):
 
     def __is_positive_tag(self, tag): return not self.__is_negative_tag(tag)
     def __is_negative_tag(self, tag): return tag.startswith('!')
+
+
+    def __update_db(self, maildir):
+        try:
+            check_call(['notmuch', 'new'])
+        except CalledProcessError as err:
+            logging.error("Could not update notmuch database " \
+                          "after syncing maildir '{}': {}".format(maildir, err))
+            raise SystemExit
+
 
     def __log_move_action(self, message, maildir, tag, rules, dry_run):
         if not dry_run:
