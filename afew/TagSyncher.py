@@ -65,9 +65,17 @@ class TagSyncher(Database):
             self.__update_db(maildir)
         else:
             logging.info("Would update database")
-            
+
+
+    #
+    # private:
+    #
 
     def __rule_matches(self, test_tag, existing_tags):
+        '''
+        Returns true if a mail is tagged with a positive tag or
+                               is not tagged with a negative tag.
+        '''
         return (self.__is_positive_tag(test_tag) and test_tag in existing_tags) or \
                (self.__is_negative_tag(test_tag) and not test_tag[1:] in existing_tags)
 
@@ -77,6 +85,9 @@ class TagSyncher(Database):
 
 
     def __update_db(self, maildir):
+        '''
+        Update the database after mail files have been moved in the filesystem.
+        '''
         try:
             check_call(['notmuch', 'new'])
         except CalledProcessError as err:
@@ -86,6 +97,9 @@ class TagSyncher(Database):
 
 
     def __log_move_action(self, message, maildir, tag, rules, dry_run):
+        '''
+        Report which mails have been identified for moving.
+        '''
         if not dry_run:
             level = logging.DEBUG
             prefix = 'moving mail'
