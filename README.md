@@ -15,6 +15,9 @@ headers or maildir folders, handling killed threads and spam, it can do some
 heavy magic in order to /learn/ how to initially tag your mails based on their
 content.
 
+In sync mode, afew will sync tags back to the underlying maildir structure by
+moving tagged mails between folders according to configurable rules.
+
 fyi: afew plays nicely with alot, a GUI for notmuch mail ;)
 
 * https://github.com/pazz/alot
@@ -40,6 +43,8 @@ Features
 * catchall -> remove `new`, add `inbox`
 * can operate on new messages [default], `--all` messages or on custom
   query results
+* can sync tags to maildir folders, so your sorting will show on your
+  traditional mail server (well, almost ;))
 * has a `--dry-run` mode for safe testing
 * works with both python2.7 and python3.2
 
@@ -80,6 +85,16 @@ Put a list of filters into `~/.config/afew/config`:
 [InboxFilter]
 ```
 
+And configure rules to sync your tags back to disk, if you want:
+~~~ snip ~~~
+[TagSyncher]
+folders = INBOX Junk
+max_age = 15
+
+#rules
+INBOX = spam:Junk !inbox:Archive
+Junk = !spam:Archive
+~~~ snip ~~~
 
 
 Commandline help
@@ -106,6 +121,7 @@ Options:
                         [requires no query]
     -c, --classify      classify each message matching the given query (to
                         test the trained categories)
+    -s, --sync-tags     sync tags to maildirs
 
   Query modifiers:
     Please specify either --all or --new or a query string. The default
@@ -136,8 +152,9 @@ Boring stuff
 
 Simulation
 ----------
-Adding `--dry-run` to any `--tag` action prevents modification of the
-notmuch db. Add some `-vv` goodness to see some action.
+Adding `--dry-run` to any `--tag` or `--sync-tags` action prevents
+modification of the notmuch db. Add some `-vv` goodness to see some
+action.
 
 
 Initial tagging
@@ -165,6 +182,106 @@ configuration file (`afew/defaults/afew.config`) for a list of
 available filters and how to enable filters and create customized
 filter types.
 
+
+Sync mode
+---------
+To invoke afew in sync mode, provide the --sync-tags option on the command line.
+Sync mode will respect --dry-run, so throw in --verbose and watch what effects
+a real run would have.
+
+In sync mode, afew will check all mails (or only recent ones) in the configured
+maildir folders, deciding whether they should be moved to another folder by
+inspecting their tags. 
+
+The decision is based on rules defined in your config file. A rule is bound to a
+source folder and specifies a target folder into which a mail will be moved
+that is or is not tagged with an associated tag.
+
+
+-- Rules --
+
+First you need to specify which folders should be synced (as a whitespace
+separated list): 
+
+~~~ snip ~~~
+folders = INBOX Junk
+~~~ snip ~~~
+
+Then the option
+
+~~~ snip ~~~
+INBOX = spam:Junk
+~~~ snip
+
+will bind one rule to the maildir folder 'INBOX' that states that all mails in
+said folder that carry (potentially among others) the tag 'spam' are to be moved
+into the folder 'Junk'.
+
+You can also check for the absence of tags:
+
+~~~ snip ~~~
+Junk = !spam:Archive
+~~~ snip ~~~
+
+Above rule will move all mails in 'Junk' that don't have the spam tag into the
+directory 'Archive'.
+
+You can bind as many rules to a maildir folder as you deem necessary and mix
+positive and negative tags. Just provide additional rules for the same maildir
+folder as a whitespace separated list:
+
+~~~ snip ~~~
+INBOX = spam:Junk !inbox:Archive juggling:sparetime work:office
+~~~ snip ~~~
+
+Just note that you need to specify at least one rule for every folder given
+by the 'folders' option and at least one folder to sync in order to use the sync
+mode.
+
+
+-- Max Age --
+
+If checking *all* the mails in a maildir folder *every* time you sync proves
+problematic, you can limit the age of mails you wanna sync. By providing
+
+~~~ snip ~~~
+max_age = 15
+~~~ snip ~~~
+
+afew will only check mails at most 15 days old. This might help performance with
+large maildir folders.
+
+
+-- Limitations --
+
+(1) Rules don't manipulate tags.
+
+~~~ snip ~~~
+INBOX = !inbox:Archive
+Junk = !spam:INBOX
+~~~ snip ~~~
+
+Above combination of rules might prove tricky, since you might expect de-spammed
+mails to end up in 'INBOX'. But since the 'Junk' rule *doesn't* add an inbox
+tag, the next run in sync mode might very well move the matching mails into
+'Archive'.
+
+Then again, if you remove the spam tag and do not add an inbox tag, how would
+you come to expect the mail would end up in your INBOX folder after a sync? ;)
+
+(2) There is no 1:1 mapping between folders and tags. And that's a feature. If
+you tag a mail with two tags and there is a rule for each of them, the rule you
+specified first will apply.
+
+(3) The rules syntax only supports atomic rules so far. I.e. you can emulate
+disjunctions by binding several rules with different tags but the same target to
+one source folder, but you cannot have conjunctions of tags.
+
+~~~ snip ~~~
+Junk = !spam,inbox:INBOX !spam,!inbox:Archive
+~~~ snip ~~~
+
+Above rules cannot be enforced at this point.
 
 
 The real deal
