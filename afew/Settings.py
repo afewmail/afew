@@ -69,15 +69,18 @@ def get_filter_chain():
 
 
 def get_tag_sync_rules():
+    rule_pattern = re.compile("'(.+?)':(\S+)")
+    query_target_pattern = re.compile("")
     if settings.has_option(tag_syncher, sync_folders):
         all_rules = OrderedDict()
 
         for folder in settings.get(tag_syncher, sync_folders).split():
             if settings.has_option(tag_syncher, folder):
                 rules = OrderedDict()
-                for rule in settings.get(tag_syncher, folder).split():
-                    tag, destination = rule.split(':')
-                    rules[tag] = destination
+                raw_rules = re.findall(rule_pattern,
+                                       settings.get(tag_syncher, folder))
+                for rule in raw_rules:
+                    rules[rule[0]] = rule[1]
                 all_rules[folder] = rules
             else:
                 raise NameError("No rules specified for maildir '{}'.".format(folder))

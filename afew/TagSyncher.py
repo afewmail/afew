@@ -37,7 +37,7 @@ class TagSyncher(Database):
     def __init__(self, max_age=0, dry_run=False):
         super(TagSyncher, self).__init__()
         self.db = notmuch.Database(self.db_path)
-        self.query = 'folder:{folder} AND {tag}'
+        self.query = 'folder:{folder} AND {tags}'
         if max_age:
             days = timedelta(int(max_age))
             start = date.today() - days
@@ -53,17 +53,17 @@ class TagSyncher(Database):
         '''
         # identify and move messages
         logging.info("syncing tags in '{}'".format(maildir))
-        for tag in rules.keys():
-            destination = '{}/{}/cur/'.format(self.db_path, rules[tag])
-            query = self.__construct_query(maildir, tag)
+        for tags in rules.keys():
+            destination = '{}/{}/cur/'.format(self.db_path, rules[tags])
+            query = self.query.format(folder=maildir, tags=tags)
             logging.debug("query: {}".format(query))
             messages = notmuch.Query(self.db, query).search_messages()
             for message in messages:
                 if not self.dry_run:
-                    self.__log_move_action(message, maildir, tag, rules, self.dry_run)
+                    self.__log_move_action(message, maildir, rules[tags], self.dry_run)
                     move(message.get_filename(), destination)                                           
                 else:
-                    self.__log_move_action(message, maildir, tag, rules, self.dry_run)
+                    self.__log_move_action(message, maildir, rules[tags], self.dry_run)
                 break
 
         # update notmuch database
@@ -78,18 +78,6 @@ class TagSyncher(Database):
     # private:
     #
 
-    def __construct_query(self, folder, tag):
-        subquery = ''
-        if self.__is_negative_tag(tag):
-            subquery = 'NOT tag:{}'.format(tag.lstrip('!'))
-        else:
-            subquery = 'tag:{}'.format(tag)
-        return self.query.format(folder=folder, tag=subquery)
-
-
-    def __is_negative_tag(self, tag): return tag.startswith('!')
-
-
     def __update_db(self, maildir):
         '''
         Update the database after mail files have been moved in the filesystem.
@@ -102,7 +90,7 @@ class TagSyncher(Database):
             raise SystemExit
 
 
-    def __log_move_action(self, message, maildir, tag, rules, dry_run):
+    def __log_move_action(self, message, source, destination, dry_run):
         '''
         Report which mails have been identified for moving.
         '''
@@ -114,6 +102,6 @@ class TagSyncher(Database):
             prefix = 'I would move mail'
         logging.log(level, prefix)
         logging.log(level, u"    {}".format(get_message_summary(message)))
-        logging.log(level, u"from '{}' to '{}'".format(maildir, rules[tag]))
-        logging.debug("rule: '{}' in [{}]".format(tag, message.get_tags()))
+        logging.log(level, u"from '{}' to '{}'".format(source, destination))
+        #logging.debug("rule: '{}' in [{}]".format(tag, message.get_tags()))
             
