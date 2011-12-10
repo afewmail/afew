@@ -20,10 +20,18 @@ import os
 import re
 import functools
 import ConfigParser
+from collections import OrderedDict
 
 from .Filter import all_filters, register_filter
 
+# config values for the TagSyncher
+tag_syncher = 'TagSyncher'
+sync_folders = 'folders'
+sync_age = 'max_age'
+
 settings = ConfigParser.SafeConfigParser()
+# preserve the capitalization of the keys.
+settings.optionxform = str
 settings.readfp(open(os.path.join(os.path.dirname(__file__), 'defaults', 'afew.config')))
 settings.read(os.path.join(os.environ.get('XDG_CONFIG_HOME',
                                           os.path.expanduser('~/.config')),
@@ -34,7 +42,7 @@ def get_filter_chain():
     filter_chain = []
 
     for section in settings.sections():
-        if section == 'global':
+        if section == 'global' or section == tag_syncher:
             continue
 
         match = section_re.match(section)
@@ -58,3 +66,32 @@ def get_filter_chain():
             filter_chain.append(klass(**dict(settings.items(section))))
 
     return filter_chain
+
+
+def get_tag_sync_rules():
+    rule_pattern = re.compile("'(.+?)':(\S+)")
+    query_target_pattern = re.compile("")
+    if settings.has_option(tag_syncher, sync_folders):
+        all_rules = OrderedDict()
+
+        for folder in settings.get(tag_syncher, sync_folders).split():
+            if settings.has_option(tag_syncher, folder):
+                rules = OrderedDict()
+                raw_rules = re.findall(rule_pattern,
+                                       settings.get(tag_syncher, folder))
+                for rule in raw_rules:
+                    rules[rule[0]] = rule[1]
+                all_rules[folder] = rules
+            else:
+                raise NameError("No rules specified for maildir '{}'.".format(folder))
+
+        return all_rules
+    else:
+        raise NameError("No folders for synching your tags have been defined.")
+
+
+def get_tag_sync_age():
+    max_age = 0
+    if settings.has_option(tag_syncher, sync_age):
+        max_age = settings.get(tag_syncher, sync_age)
+    return max_age

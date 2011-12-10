@@ -25,8 +25,8 @@ import optparse
 
 from afew.main import main
 from afew.Filter import all_filters
-from afew.Settings import get_filter_chain
 from afew.NotmuchSettings import read_notmuch_settings
+from afew.Settings import get_filter_chain, get_tag_sync_rules, get_tag_sync_age
 
 option_parser = optparse.OptionParser(
     usage = '%prog [options] [--] [query]'
@@ -57,6 +57,10 @@ action_group.add_option(
 action_group.add_option(
     '-c', '--classify', default = False, action = 'store_true',
     help = 'classify each message matching the given query (to test the trained categories)'
+)
+action_group.add_option(
+    '-s', '--sync-tags', default = False, action = 'store_true',
+    help = 'sync tags to maildirs'
 )
 option_parser.add_option_group(action_group)
 
@@ -119,6 +123,7 @@ no_actions = len(filter(None, (
     options.update or options.update_reference,
     options.learn,
     options.classify,
+    options.sync_tags
 )))
 if no_actions == 0:
     sys.exit('You need to specify an action')
@@ -126,7 +131,9 @@ elif no_actions > 1:
     sys.exit('Please specify exactly one action (both update actions can be given at once)')
 
 no_query_modifiers = len(filter(None, (options.all, options.new, args)))
-if no_query_modifiers == 0 and not (options.update or options.update_reference):
+if no_query_modifiers == 0 and not \
+   (options.update or options.update_reference) and not \
+   options.sync_tags:
     sys.exit('You need to specify one of --new, --all or a query string')
 elif no_query_modifiers > 1:
     sys.exit('Please specify either --all, --new or a query string')
@@ -156,6 +163,10 @@ if options.enable_filters:
     options.enable_filters = [all_filters[filter_name]() for filter_name in options.enable_filters]
 else:
     options.enable_filters = configured_filter_chain
+
+if options.sync_tags:
+    options.tag_sync_rules = get_tag_sync_rules()
+    options.tag_sync_age = get_tag_sync_age()
 
 loglevel = {
     0: logging.WARNING,
