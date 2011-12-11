@@ -22,7 +22,7 @@ import random
 
 from .Database import Database
 from .DBACL import DBACL as Classifier
-from .TagSyncher import TagSyncher
+from .MailMover import MailMover
 from .NotmuchSettings import notmuch_settings
 from .utils import extract_mail_body
 
@@ -69,8 +69,8 @@ def main(options, query_string):
 
             print('%s --> %s' % (message, category))
     elif options.move_mails:
-        syncher = TagSyncher(options.mail_move_age, options.dry_run)
+        mover = MailMover(options.mail_move_age, options.dry_run)
         for maildir, rules in options.mail_move_rules.iteritems():
-            syncher.sync(maildir, rules)
+            mover.move(maildir, rules)
     else:
         sys.exit('Weird... please file a bug containing your command line.')
