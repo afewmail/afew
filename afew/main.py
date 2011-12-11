@@ -69,8 +69,8 @@ def main(options, query_string):
 
             print('%s --> %s' % (message, category))
     elif options.move_mails:
-        syncher = TagSyncher(options.tag_sync_age, options.dry_run)
-        for maildir, rules in options.tag_sync_rules.iteritems():
+        syncher = TagSyncher(options.mail_move_age, options.dry_run)
+        for maildir, rules in options.mail_move_rules.iteritems():
             syncher.sync(maildir, rules)
     else:
         sys.exit('Weird... please file a bug containing your command line.')
