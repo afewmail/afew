@@ -26,7 +26,7 @@ import optparse
 from afew.main import main
 from afew.Filter import all_filters
 from afew.NotmuchSettings import read_notmuch_settings
-from afew.Settings import get_filter_chain, get_tag_sync_rules, get_tag_sync_age
+from afew.Settings import get_filter_chain, get_mail_move_rules, get_mail_move_age
 
 option_parser = optparse.OptionParser(
     usage = '%prog [options] [--] [query]'
@@ -165,8 +165,8 @@ else:
     options.enable_filters = configured_filter_chain
 
 if options.move_mails:
-    options.tag_sync_rules = get_tag_sync_rules()
-    options.tag_sync_age = get_tag_sync_age()
+    options.mail_move_rules = get_mail_move_rules()
+    options.mail_move_age = get_mail_move_age()
 
 loglevel = {
     0: logging.WARNING,

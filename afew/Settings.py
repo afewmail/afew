@@ -24,10 +24,10 @@ from collections import OrderedDict
 
 from .Filter import all_filters, register_filter
 
-# config values for the TagSyncher
-tag_syncher = 'TagSyncher'
-sync_folders = 'folders'
-sync_age = 'max_age'
+# config values for the MailMover
+mail_mover = 'MailMover'
+move_folders = 'folders'
+move_age = 'max_age'
 
 settings = ConfigParser.SafeConfigParser()
 # preserve the capitalization of the keys.
@@ -42,7 +42,7 @@ def get_filter_chain():
     filter_chain = []
 
     for section in settings.sections():
-        if section == 'global' or section == tag_syncher:
+        if section == 'global' or section == mail_mover:
             continue
 
         match = section_re.match(section)
@@ -68,17 +68,17 @@ def get_filter_chain():
     return filter_chain
 
 
-def get_tag_sync_rules():
+def get_mail_move_rules():
     rule_pattern = re.compile("'(.+?)':(\S+)")
     query_target_pattern = re.compile("")
-    if settings.has_option(tag_syncher, sync_folders):
+    if settings.has_option(mail_mover, move_folders):
         all_rules = OrderedDict()
 
-        for folder in settings.get(tag_syncher, sync_folders).split():
-            if settings.has_option(tag_syncher, folder):
+        for folder in settings.get(mail_mover, move_folders).split():
+            if settings.has_option(mail_mover, folder):
                 rules = OrderedDict()
                 raw_rules = re.findall(rule_pattern,
-                                       settings.get(tag_syncher, folder))
+                                       settings.get(mail_mover, folder))
                 for rule in raw_rules:
                     rules[rule[0]] = rule[1]
                 all_rules[folder] = rules
@@ -87,11 +87,11 @@ def get_tag_sync_rules():
 
         return all_rules
     else:
-        raise NameError("No folders for synching your tags have been defined.")
+        raise NameError("No folders defined to move mails from.")
 
 
-def get_tag_sync_age():
+def get_mail_move_age():
     max_age = 0
-    if settings.has_option(tag_syncher, sync_age):
-        max_age = settings.get(tag_syncher, sync_age)
+    if settings.has_option(mail_mover, move_age):
+        max_age = settings.get(mail_mover, move_age)
     return max_age
