@@ -27,17 +27,16 @@ from .utils import get_message_summary
 from datetime import date, datetime, timedelta
 
 
-class TagSyncher(Database):
+class MailMover(Database):
     '''
-    Move files of tagged mails into the maildir folder corresponding to the
-    respective tag.
+    Move mail files matching a given notmuch query into a target maildir folder.
     '''
 
 
     def __init__(self, max_age=0, dry_run=False):
-        super(TagSyncher, self).__init__()
+        super(MailMover, self).__init__()
         self.db = notmuch.Database(self.db_path)
-        self.query = 'folder:{folder} AND {tags}'
+        self.query = 'folder:{folder} AND {subquery}'
         if max_age:
             days = timedelta(int(max_age))
             start = date.today() - days
@@ -47,23 +46,23 @@ class TagSyncher(Database):
         self.dry_run = dry_run
 
 
-    def sync(self, maildir, rules):
+    def move(self, maildir, rules):
         '''
         Move mails in folder maildir according to the given rules.
         '''
         # identify and move messages
-        logging.info("syncing tags in '{}'".format(maildir))
-        for tags in rules.keys():
-            destination = '{}/{}/cur/'.format(self.db_path, rules[tags])
-            query = self.query.format(folder=maildir, tags=tags)
-            logging.debug("query: {}".format(query))
-            messages = notmuch.Query(self.db, query).search_messages()
+        logging.info("checking mails in '{}'".format(maildir))
+        for query in rules.keys():
+            destination = '{}/{}/cur/'.format(self.db_path, rules[query])
+            main_query = self.query.format(folder=maildir, subquery=query)
+            logging.debug("query: {}".format(main_query))
+            messages = notmuch.Query(self.db, main_query).search_messages()
             for message in messages:
                 if not self.dry_run:
-                    self.__log_move_action(message, maildir, rules[tags], self.dry_run)
+                    self.__log_move_action(message, maildir, rules[query], self.dry_run)
                     move(message.get_filename(), destination)                                           
                 else:
-                    self.__log_move_action(message, maildir, rules[tags], self.dry_run)
+                    self.__log_move_action(message, maildir, rules[query], self.dry_run)
                 break
 
         # update notmuch database
