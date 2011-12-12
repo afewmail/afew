@@ -1,4 +1,5 @@
 # coding=utf-8
+from __future__ import print_function, absolute_import, unicode_literals
 
 #
 # Copyright (c) dtk <dtk@gmx.de>
@@ -24,7 +25,7 @@ import logging
 @register_filter
 class FolderNameFilter(Filter):
     message = 'Tags all new messages with their folder'
-    
+
     def __init__(self, folder_blacklist='', folder_transforms='', maildir_separator='.'):
         super(FolderNameFilter, self).__init__()
 

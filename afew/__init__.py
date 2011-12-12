@@ -1,4 +1,5 @@
 # coding=utf-8
+from __future__ import print_function, absolute_import, unicode_literals
 
 #
 # Copyright (c) Justus Winter <4winter@informatik.uni-hamburg.de>
@@ -16,5 +17,5 @@
 # OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 #
 
-import Filter
-from filters import *
+from .Filter import Filter
+from .filters import *
