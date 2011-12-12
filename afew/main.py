@@ -21,6 +21,7 @@ import random
 
 from .Database import Database
 from .DBACL import DBACL as Classifier
+from .MailMover import MailMover
 from .NotmuchSettings import notmuch_settings
 from .utils import extract_mail_body
 
@@ -66,5 +67,9 @@ def main(options, query_string):
                 category = 'no match'
 
             print('%s --> %s' % (unicode(message), category))
+    elif options.move_mails:
+        mover = MailMover(options.mail_move_age, options.dry_run)
+        for maildir, rules in options.mail_move_rules.iteritems():
+            mover.move(maildir, rules)
     else:
         sys.exit('Weird... please file a bug containing your command line.')

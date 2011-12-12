@@ -14,6 +14,10 @@ headers or maildir folders, handling killed threads and spam, it can do some
 heavy magic in order to /learn/ how to initially tag your mails based on their
 content.
 
+In move mode, afew will move mails between maildir folders according to
+configurable rules that can contain arbitrary notmuch queries to match against
+any searchable attributes.
+
 fyi: afew plays nicely with alot, a GUI for notmuch mail ;)
  * https://github.com/pazz/alot
 
@@ -29,6 +33,8 @@ Features
 * catchall -> remove new, add inbox
 * can operate on new messages [default], --all messages or on custom
   query results
+* can move mails based on arbitrary notmuch queries, so your sorting may show on
+  your traditional mail server (almost ;))
 * has a --dry-run mode for safe testing
 
 
@@ -67,6 +73,16 @@ Put a list of filters into ~/.config/afew/config:
 [InboxFilter]
 ~~~ snip ~~~
 
+And configure rules to sort mails on your disk, if you want:
+~~~ snip ~~~
+[MailMover]
+folders = INBOX Junk
+max_age = 15
+
+#rules
+INBOX = 'tag:spam':Junk 'NOT tag:inbox':Archive
+Junk = 'NOT tag:spam AND tag:inbox':INBOX 'NOT tag:spam':Archive
+~~~ snip ~~~
 
 
 Commandline help
@@ -92,6 +108,7 @@ Options:
                         [requires no query]
     -c, --classify      classify each message matching the given query (to
                         test the trained categories)
+    -m, --move-mails    move mail files between maildir folders
 
   Query modifiers:
     Please specify either --all or --new or a query string. The default
@@ -122,7 +139,7 @@ Boring stuff
 
 Simulation
 ----------
-Adding --dry-run to any --tag action prevents modification of the
+Adding --dry-run to any --tag or --move-mails action prevents modification of the
 notmuch db. Add some -vv goodness to see some action.
 
 
@@ -151,6 +168,27 @@ configuration file (afew/defaults/afew.config) for a list of
 available filters and how to enable filters and create customized
 filter types.
 
+
+Move mode
+---------
+To invoke afew in move mode, provide the --move-mails option on the command line.
+Move mode will respect --dry-run, so throw in --verbose and watch what effects
+a real run would have.
+
+In move mode, afew will check all mails (or only recent ones) in the configured
+maildir folders, deciding whether they should be moved to another folder.
+
+The decision is based on rules defined in your config file. A rule is bound to a
+source folder and specifies a target folder into which a mail will be moved
+that is matched by an associated query.
+
+This way you will be able to transfer your sorting principles roughly to the
+classic folder based maildir structure understood by your traditional mail
+server. Tag your mails with notmuch, call afew -m in an offlineimap presynchook
+and enjoy a clean inbox in your webinterface/GUI-client at work, ...
+
+For information on how to configure rules for move mode, what you can do with it
+and what you can't, please refer to docs/move_mode.
 
 
 The real deal
