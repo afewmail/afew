@@ -20,11 +20,16 @@ from __future__ import print_function, absolute_import, unicode_literals
 import os
 import re
 import functools
-import ConfigParser
+
+try:
+    # py3k
+    import configparser
+except ImportError:
+    import ConfigParser as configparser
 
 from .Filter import all_filters, register_filter
 
-settings = ConfigParser.SafeConfigParser()
+settings = configparser.SafeConfigParser()
 settings.readfp(open(os.path.join(os.path.dirname(__file__), 'defaults', 'afew.config')))
 settings.read(os.path.join(os.environ.get('XDG_CONFIG_HOME',
                                           os.path.expanduser('~/.config')),

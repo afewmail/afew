@@ -18,9 +18,14 @@ from __future__ import print_function, absolute_import, unicode_literals
 #
 
 import os
-import ConfigParser
 
-notmuch_settings = ConfigParser.RawConfigParser()
+try:
+    # py3k
+    import configparser
+except ImportError:
+    import ConfigParser as configparser
+
+notmuch_settings = configparser.RawConfigParser()
 
 def read_notmuch_settings(path = None):
     if path == None:
