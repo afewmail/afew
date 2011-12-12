@@ -25,7 +25,7 @@ class ListMailsFilter(Filter):
     message = 'Tagging mailing list posts'
     query = 'NOT tag:lists'
 
-    list_id_re = re.compile(r'<(?P<list_id>[a-z0-9-]+)[.@]', re.I)
+    list_id_re = re.compile(r"<(?P<list_id>[a-z0-9!#$%&'*+/=?^_`{|}~-]+)\.", re.I)
     def handle_message(self, message):
         list_id_header = message.get_header('List-Id')
         match = self.list_id_re.search(list_id_header)
