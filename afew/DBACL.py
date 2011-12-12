@@ -19,6 +19,7 @@
 import os
 import glob
 import logging
+import functools
 import subprocess
 
 class ClassificationError(Exception): pass
@@ -87,7 +88,7 @@ class DBACL(Classifier):
             raise BackendError('dbacl learning failed:\n%s' % process.stderr.read())
 
     def classify(self, text):
-        categories = reduce(list.__add__, [
+        categories = functools.reduce(list.__add__, [
             ['-c', self.get_category_path(category)]
             for category in self.categories
         ], [])
