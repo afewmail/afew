@@ -50,7 +50,10 @@ def strip_signatures(lines, max_signature_size = 10):
     return lines
 
 def extract_mail_body(message):
-    mail = email.message_from_file(open(message.get_filename()))
+    if hasattr(email, 'message_from_binary_file'):
+        mail = email.message_from_binary_file(open(message.get_filename(), 'br'))
+    else:
+        mail = email.message_from_file(open(message.get_filename()))
 
     content = []
     for part in mail.walk():
