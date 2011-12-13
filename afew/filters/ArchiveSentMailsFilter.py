@@ -17,6 +17,7 @@ from __future__ import print_function, absolute_import, unicode_literals
 # OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 #
 
+from ..utils import filter_compat
 from ..Filter import Filter, register_filter
 from ..NotmuchSettings import notmuch_settings
 
@@ -30,7 +31,7 @@ class ArchiveSentMailsFilter(Filter):
         my_addresses = set()
         my_addresses.add(notmuch_settings.get('user', 'primary_email'))
         if notmuch_settings.has_option('user', 'other_email'):
-            my_addresses.update(filter(None, notmuch_settings.get('user', 'other_email').split(';')))
+            my_addresses.update(filter_compat(None, notmuch_settings.get('user', 'other_email').split(';')))
 
         self.query = ' OR '.join('from:"%s"' % address for address in my_addresses)
         self.sent_tag = sent_tag

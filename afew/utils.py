@@ -70,3 +70,9 @@ def extract_mail_body(message):
 
             content.append('\n'.join(lines))
     return '\n'.join(content)
+
+def filter_compat(*args):
+    r'''
+    Compatibility wrapper for filter builtin
+    '''
+    return list(filter(*args))

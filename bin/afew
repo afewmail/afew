@@ -25,6 +25,7 @@ import logging
 import optparse
 
 from afew.main import main
+from afew.utils import filter_compat
 from afew.Filter import all_filters
 from afew.Settings import get_filter_chain
 from afew.NotmuchSettings import read_notmuch_settings
@@ -115,7 +116,7 @@ option_parser.add_option_group(options_group)
 
 options, args = option_parser.parse_args()
 
-no_actions = len(filter(None, (
+no_actions = len(filter_compat(None, (
     options.tag,
     options.update or options.update_reference,
     options.learn,
@@ -126,7 +127,7 @@ if no_actions == 0:
 elif no_actions > 1:
     sys.exit('Please specify exactly one action (both update actions can be given at once)')
 
-no_query_modifiers = len(filter(None, (options.all, options.new, args)))
+no_query_modifiers = len(filter_compat(None, (options.all, options.new, args)))
 if no_query_modifiers == 0 and not (options.update or options.update_reference):
     sys.exit('You need to specify one of --new, --all or a query string')
 elif no_query_modifiers > 1:
