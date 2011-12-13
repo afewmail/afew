@@ -59,11 +59,11 @@ def extract_mail_body(message):
             encoding = part.get_content_charset()
             if encoding:
                 try:
-                    raw_payload = unicode(raw_payload, encoding, errors = 'replace')
+                    raw_payload = raw_payload.decode(encoding, errors = 'replace')
                 except LookupError:
-                    raw_payload = unicode(raw_payload, errors = 'replace')
+                    raw_payload = raw_payload.decode(errors = 'replace')
             else:
-                raw_payload = unicode(raw_payload, errors = 'replace')
+                raw_payload = raw_payload.decode(errors = 'replace')
 
             lines = raw_payload.split('\n')
             lines = strip_signatures(lines)

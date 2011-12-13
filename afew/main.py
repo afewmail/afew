@@ -66,6 +66,6 @@ def main(options, query_string):
             if category == classifier.reference_category:
                 category = 'no match'
 
-            print('%s --> %s' % (unicode(message), category))
+            print('%s --> %s' % (message, category))
     else:
         sys.exit('Weird... please file a bug containing your command line.')

@@ -67,12 +67,12 @@ class Filter(Database):
     def add_tags(self, message, *tags):
         if tags:
             logging.debug('Adding tags %s to %s' % (', '.join(tags), message))
-            self._add_tags[message.get_message_id()].update(unicode(tag) for tag in tags)
+            self._add_tags[message.get_message_id()].update(tags)
 
     def remove_tags(self, message, *tags):
         if tags:
             logging.debug('Removing tags %s from %s' % (', '.join(tags), message))
-            self._remove_tags[message.get_message_id()].update(unicode(tag) for tag in tags)
+            self._remove_tags[message.get_message_id()].update(tags)
 
     def flush_tags(self, message):
         logging.debug('Removing all tags from %s' % message)
