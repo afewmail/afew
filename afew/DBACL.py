@@ -97,12 +97,12 @@ class DBACL(Classifier):
         process = self._call_dbacl(categories + ['-n'])
         stdout, stderr = process.communicate(text.encode('utf-8'))
 
-        if stderr == '':
+        if len(stderr) == 0:
             result = stdout.split()
             scores = list()
             while result:
                 category, score = result.pop(0), float(result.pop(0))
-                scores.append((category, score))
+                scores.append((str(category), score))
             scores.sort(key = lambda category_score: category_score[1])
         else:
             raise BackendError('dbacl classification failed:\n%s' % stderr)
