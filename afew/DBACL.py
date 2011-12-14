@@ -101,8 +101,9 @@ class DBACL(Classifier):
             result = stdout.split()
             scores = list()
             while result:
-                category, score = result.pop(0), float(result.pop(0))
-                scores.append((str(category), score))
+                category = result.pop(0).decode('utf-8', 'replace')
+                score = float(result.pop(0))
+                scores.append((category, score))
             scores.sort(key = lambda category_score: category_score[1])
         else:
             raise BackendError('dbacl classification failed:\n%s' % stderr)
