@@ -79,8 +79,7 @@ class DBACL(Classifier):
         process = self._call_dbacl(['-l', self.get_category_path(category)])
 
         for text in texts:
-            process.stdin.write(text.encode('utf-8'))
-            process.stdin.write('\n')
+            process.stdin.write((text + '\n').encode('utf-8'))
 
         process.stdin.close()
         process.wait()
