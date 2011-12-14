@@ -30,6 +30,7 @@ Features
 * can operate on new messages [default], --all messages or on custom
   query results
 * has a --dry-run mode for safe testing
+* works with both python2.7 and python3.2
 
 
 Installation
