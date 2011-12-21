@@ -18,14 +18,23 @@ from __future__ import print_function, absolute_import, unicode_literals
 #
 
 from ..Filter import Filter, register_filter
+from ..NotmuchSettings import get_notmuch_new_tags, get_notmuch_new_query
 
 @register_filter
 class InboxFilter(Filter):
     message = 'Retags all messages not tagged as junk or killed as inbox'
-    query = 'tag:new'
     tags = '+inbox'
     tag_blacklist = 'killed spam'
 
+    @property
+    def query(self):
+        '''
+        Need to read the notmuch settings first. Using a property here
+        so that the setting is looked up on demand.
+        '''
+        return get_notmuch_new_query()
+
+
     def handle_message(self, message):
-        self.remove_tags(message, 'new')
+        self.remove_tags(message, *get_notmuch_new_tags())
         super(InboxFilter, self).handle_message(message)

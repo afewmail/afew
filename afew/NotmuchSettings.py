@@ -32,3 +32,9 @@ def read_notmuch_settings(path = None):
         path = os.environ.get('NOTMUCH_CONFIG', os.path.expanduser('~/.notmuch-config'))
 
     notmuch_settings.readfp(open(path))
+
+def get_notmuch_new_tags():
+    return notmuch_settings.get('new', 'tags').split(';')
+
+def get_notmuch_new_query():
+    return '(%s)' % ' AND '.join('tag:%s' % tag for tag in get_notmuch_new_tags())

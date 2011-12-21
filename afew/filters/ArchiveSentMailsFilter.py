@@ -19,7 +19,7 @@ from __future__ import print_function, absolute_import, unicode_literals
 
 from ..utils import filter_compat
 from ..Filter import Filter, register_filter
-from ..NotmuchSettings import notmuch_settings
+from ..NotmuchSettings import notmuch_settings, get_notmuch_new_tags
 
 @register_filter
 class ArchiveSentMailsFilter(Filter):
@@ -40,4 +40,4 @@ class ArchiveSentMailsFilter(Filter):
     def handle_message(self, message):
         if self.sent_tag:
             self.add_tags(message, self.sent_tag)
-        self.remove_tags(message, 'new')
+        self.remove_tags(message, *get_notmuch_new_tags())
