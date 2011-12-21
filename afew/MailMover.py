@@ -100,7 +100,7 @@ class MailMover(Database):
             level = logging.INFO
             prefix = 'I would move mail'
         logging.log(level, prefix)
-        logging.log(level, u"    {}".format(get_message_summary(message)))
-        logging.log(level, u"from '{}' to '{}'".format(source, destination))
+        logging.log(level, "    {}".format(get_message_summary(message)))
+        logging.log(level, "from '{}' to '{}'".format(source, destination))
         #logging.debug("rule: '{}' in [{}]".format(tag, message.get_tags()))
             

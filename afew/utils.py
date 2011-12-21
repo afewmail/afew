@@ -121,8 +121,8 @@ def get_message_summary(message):
     when = datetime.fromtimestamp(float(message.get_date()))
     sender = get_sender(message)
     subject = message.get_header('Subject')
-    return u'[{date}] {sender} | {subject}'.format(date=when, sender=sender,
-                                                   subject=subject)
+    return '[{date}] {sender} | {subject}'.format(date=when, sender=sender,
+                                                  subject=subject)
 
 def get_sender(message):
     sender = message.get_header('From')
