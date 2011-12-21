@@ -60,7 +60,7 @@ class MailMover(Database):
             for message in messages:
                 if not self.dry_run:
                     self.__log_move_action(message, maildir, rules[query], self.dry_run)
-                    move(message.get_filename(), destination)                                           
+                    move(message.get_filename(), destination)
                 else:
                     self.__log_move_action(message, maildir, rules[query], self.dry_run)
                 break
@@ -103,4 +103,4 @@ class MailMover(Database):
         logging.log(level, "    {}".format(get_message_summary(message)))
         logging.log(level, "from '{}' to '{}'".format(source, destination))
         #logging.debug("rule: '{}' in [{}]".format(tag, message.get_tags()))
-            
+
