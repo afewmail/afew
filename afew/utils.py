@@ -95,6 +95,10 @@ def extract_mail_body(message):
 
 def filter_compat(*args):
     r'''
-    Compatibility wrapper for filter builtin
+    Compatibility wrapper for filter builtin.
+
+    The semantic of the filter builtin has been changed in
+    python3.x. This is a temporary workaround to support both python
+    versions in one code base.
     '''
     return list(filter(*args))
