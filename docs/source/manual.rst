@@ -1,56 +1,58 @@
-About
-=====
+User manual
+===========
 
 This file contains more detailed information on how to configure afew's tag
 filters than has been presented in the README.
 
 
 Customizing filters
-===================
+-------------------
 
 Customization of tag filters takes place in afew's config file in
-~/.config/afew/config.
+`~/.config/afew/config`.
 
-To customize your filters, there are basically two different possibilities:
+To customize your filters, there are basically two different
+possibilities:
 
 Let's say you like the SpamFilter, but it is way too polite
 
- 1. Create an filter object and customize it
+1. Create an filter object and customize it
 
-    ~~~snip~~~
+.. code-block:: ini
+
     [SpamFilter.0] # note the index
     message = meh
-    ~~~snip~~~
 
-    The index is required iff you want to create a new SpamFilter *in addition
-    to* the default one. If you need just one customized SpamFilter, you can
-    drop the index and customize the default instance.
+The index is required iff you want to create a new SpamFilter *in
+addition to* the default one. If you need just one customized
+SpamFilter, you can drop the index and customize the default instance.
 
- 2. Create a new type...
+2. Create a new type...
 
-    ~~~snip~~~    
+.. code-block:: ini
+
     [ShitFilter(SpamFilter)]
     message = I hatez teh spam!
-    ~~~snip~~~
 
-    and create an object or two
+and create an object or two
 
-    ~~~snip~~~
+.. code-block:: ini
+
     [ShitFilter.0]
     [ShitFilter.1]
     message = Me hatez it too.
-    ~~~snip~~~
 
 
 Configuration options
-=====================
+---------------------
 
 This sections explains how the different filters may be tweaked.
 
 
 SpamFilter
-----------
-spam_tag = <tag>
+^^^^^^^^^^
+
+* spam_tag = <tag>
 
  * Add <tag> to all mails recognized as spam.
  * The default is 'spam'.
@@ -59,8 +61,9 @@ spam_tag = <tag>
 
 
 ArchiveSentMailFilter
----------------------
-sent_tag = <tag>
+^^^^^^^^^^^^^^^^^^^^^
+
+* sent_tag = <tag>
 
  * Add <tag> to all mails sent from one of your configured mail addresses.
  * The default is to add no tag.
@@ -70,8 +73,9 @@ sent_tag = <tag>
 
 
 FolderNameFilter
-----------------
-folder_blacklist = <folder list>
+^^^^^^^^^^^^^^^^
+
+* folder_blacklist = <folder list>
 
  * Never tag mails with tag in <folder list>. <folder list> is a space separated
    list, not enclosed in quotes or any other way.
@@ -79,7 +83,7 @@ folder_blacklist = <folder list>
  * You may use it e.g. to avoid mails being tagged as 'INBOX' when there is the more
    standard 'inbox' tag.
 
-folder_transforms = <transformation rules>
+* folder_transforms = <transformation rules>
 
  * Transform folder names according to the specified rules before tagging mails.
    <transformation rules> is a space separated list consisting of
@@ -87,37 +91,43 @@ folder_transforms = <transformation rules>
    transformed from the tag it is to be transformed into.
  * The default is to transform to folder names.
  * You may use the rules e.g. to transform the name of your 'Junk' folder into your
-   'spam' tag or fix capitalization of your draft and sent folder: 
-    ~~~snip~~~
-    folder transforms = Junk:spam Drafts:draft Sent:sent
-    ~~~snip~~~
+   'spam' tag or fix capitalization of your draft and sent folder:
 
-maildir_separator = <sep>
+.. code-block:: ini
+
+    folder transforms = Junk:spam Drafts:draft Sent:sent
+
+* maildir_separator = <sep>
 
  * Use <sep> to split your maildir hierarchy into individual tags.
  * The default is to split on '.'
  * If your maildir hierarchy is represented in the filesystem as collapsed dirs,
    <sep> is used to split it again before applying tags. If your maildir looks
    like this:
-   ~~~snip~~~
+
+.. code-block:: ini
+
    [...]
    /path/to/maildir/devel.afew/[cur|new|tmp]/...
    /path/to/maildir/devel.alot/[cur|new|tmp]/...
    /path/to/maildir/devel.notmuch/[cur|new|tmp]/...
    [...]
-   ~~~snip~~~
-   the mails in your afew folder will be tagged with 'devel' and 'afew'.
-   
-   If instead your hierarchy is split by a more conventional '/' or any other
-   divider
-   ~~~snip~~~
+
+the mails in your afew folder will be tagged with 'devel' and 'afew'.
+
+If instead your hierarchy is split by a more conventional '/' or any
+other divider
+
+.. code-block:: ini
+
    [...]
    /path/to/maildir/devel/afew/[cur|new|tmp]/...
    /path/to/maildir/devel/alot/[cur|new|tmp]/...
    /path/to/maildir/devel/notmuch/[cur|new|tmp]/...
    [...]
-   ~~~snip~~~
-   you need to configure that divider to have your mails properly tagged:
-   ~~~snip~~~
+
+you need to configure that divider to have your mails properly tagged:
+
+.. code-block:: ini
+
    maildir_separator = /
-   ~~~snip~~~
