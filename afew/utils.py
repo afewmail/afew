@@ -23,6 +23,16 @@ import email
 signature_line_re = re.compile(r'^((--)|(__)|(==)|(\*\*)|(##))')
 def strip_signatures(lines, max_signature_size = 10):
     r'''
+    Strip signatures from a mail. Used to filter mails before
+    classifying mails.
+
+    :param lines: a mail split at newlines
+    :type  lines: :class:`list` of :class:`str`
+    :param max_signature_size: consider message parts up to this size as signatures
+    :type  max_signature_size: int
+    :returns: the mail with signatures stripped off
+    :rtype:   :class:`list` of :class:`str`
+
     >>> strip_signatures([
     ...     'Huhu',
     ...     '--',
