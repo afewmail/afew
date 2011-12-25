@@ -37,5 +37,6 @@ Configuration management
 Miscellanious utility functions
 -------------------------------
 
+.. currentmodule:: afew.utils
 .. automodule:: afew.utils
    :members:
