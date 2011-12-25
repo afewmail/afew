@@ -60,6 +60,15 @@ def strip_signatures(lines, max_signature_size = 10):
     return lines
 
 def extract_mail_body(message):
+    r'''
+    Extract the plain text body of the message with signatures
+    stripped off.
+
+    :param message: the message to extract the body from
+    :type  message: :class:`notmuch.Message`
+    :returns: the extracted text body
+    :rtype:   :class:`list` of :class:`str`
+    '''
     if hasattr(email, 'message_from_binary_file'):
         mail = email.message_from_binary_file(open(message.get_filename(), 'br'))
     else:
