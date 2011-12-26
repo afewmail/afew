@@ -25,10 +25,25 @@ from .NotmuchSettings import notmuch_settings
 from .utils import extract_mail_body
 
 class Database(object):
+    '''
+    Convenience wrapper around `notmuch`.
+    '''
+
     def __init__(self):
         self.db_path = notmuch_settings.get('database', 'path')
 
     def do_query(self, query):
+        '''
+        Executes a notmuch query.
+
+        If the current object has an `query` field, the intersection
+        of both queries is returned.
+
+        :param query: the query to execute
+        :type  query: str
+        :returns: the query result
+        :rtype:   :class:`notmuch.Query`
+        '''
         if hasattr(self, 'query'):
             if query:
                 query = '(%s) AND (%s)' % (query, self.query)
@@ -40,6 +55,15 @@ class Database(object):
         return notmuch.Query(db, query)
 
     def get_messages(self, query, full_thread = False):
+        '''
+        Get all messages mathing the given query.
+
+        :param query: the query to execute using :func:`Database.do_query`
+        :type  query: str
+        :param full_thread: return all messages from mathing threads
+        :type  full_thread: bool
+        :returns: an iterator over :class:`notmuch.Message` objects
+        '''
         if not full_thread:
             for message in self.do_query(query).search_messages():
                 yield message
@@ -50,11 +74,28 @@ class Database(object):
 
 
     def mail_bodies_matching(self, *args, **kwargs):
+        '''
+        Filters each message yielded from
+        :func:`Database.get_messages` through
+        :func:`afew.utils.extract_mail_body`.
+
+        This functions accepts the same arguments as
+        :func:`Database.get_messages`.
+
+        :returns: an iterator over :class:`list` of :class:`str`
+        '''
         query = self.get_messages(*args, **kwargs)
         for message in query:
             yield extract_mail_body(message)
 
     def walk_replies(self, message):
+        '''
+        Returns all replies to the given message.
+
+        :param message: the message to start from
+        :type  message: :class:`notmuch.Message`
+        :returns: an iterator over :class:`notmuch.Message` objects
+        '''
         yield message
 
         # TODO: bindings are *very* unpythonic here... iterator *or* None
@@ -67,6 +108,13 @@ class Database(object):
                     yield message
 
     def walk_thread(self, thread):
+        '''
+        Returns all messages in the given thread.
+
+        :param message: the tread you are interested in
+        :type  message: :class:`notmuch.Thread`
+        :returns: an iterator over :class:`notmuch.Message` objects
+        '''
         for message in thread.get_toplevel_messages():
             # TODO: yield from
             for message in self.walk_replies(message):
