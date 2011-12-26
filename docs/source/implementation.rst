@@ -4,6 +4,9 @@ Implementation
 Database Manager
 ----------------
 
+The design of the database manager was inspired by alots database
+manager :class:`alot.db.DBManager`.
+
 .. module:: afew.Database
 .. autoclass:: Database
    :members:
