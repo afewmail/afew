@@ -34,7 +34,9 @@ def read_notmuch_settings(path = None):
     notmuch_settings.readfp(open(path))
 
 def get_notmuch_new_tags():
-    return notmuch_settings.get('new', 'tags').split(';')
+    return filter(None,
+                  (tag.strip()
+                   for tag in notmuch_settings.get('new', 'tags').split(';')))
 
 def get_notmuch_new_query():
     return '(%s)' % ' AND '.join('tag:%s' % tag for tag in get_notmuch_new_tags())
