@@ -85,6 +85,9 @@ class DBACL(Classifier):
             raise BackendError('dbacl learning failed:\n%s' % process.stderr.read())
 
     def classify(self, text):
+        if not self.categories:
+            raise ClassificationError('No categories defined')
+
         categories = functools.reduce(list.__add__, [
             ['-c', self.get_category_path(category)]
             for category in self.categories
