@@ -85,6 +85,9 @@ class Filter(Database):
         dirty_messages.update(self._add_tags.keys())
         dirty_messages.update(self._remove_tags.keys())
 
+        if not dirty_messages:
+            return
+
         if dry_run:
             logging.info('I would commit changes to %i messages' % len(dirty_messages))
         else:
