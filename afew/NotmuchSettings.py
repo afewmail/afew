@@ -19,13 +19,9 @@ from __future__ import print_function, absolute_import, unicode_literals
 
 import os
 
-try:
-    # py3k
-    import configparser
-except ImportError:
-    import ConfigParser as configparser
+from .configparser import RawConfigParser
 
-notmuch_settings = configparser.RawConfigParser()
+notmuch_settings = RawConfigParser()
 
 def read_notmuch_settings(path = None):
     if path == None:
@@ -34,9 +30,7 @@ def read_notmuch_settings(path = None):
     notmuch_settings.readfp(open(path))
 
 def get_notmuch_new_tags():
-    return filter(None,
-                  (tag.strip()
-                   for tag in notmuch_settings.get('new', 'tags').split(';')))
+    return notmuch_settings.get_list('new', 'tags')
 
 def get_notmuch_new_query():
     return '(%s)' % ' AND '.join('tag:%s' % tag for tag in get_notmuch_new_tags())
