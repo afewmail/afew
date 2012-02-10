@@ -17,6 +17,7 @@ from __future__ import print_function, absolute_import, unicode_literals
 # OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 #
 
+import time
 import logging
 import collections
 
@@ -78,7 +79,7 @@ class Filter(Database):
         logging.debug('Removing all tags from %s' % message)
         self._flush_tags.append(message.get_message_id())
 
-    def commit(self, dry_run = True):
+    def commit(self, dry_run = True, retry_for = 180, retry_delay = 10):
         dirty_messages = set()
         dirty_messages.update(self._flush_tags)
         dirty_messages.update(self._add_tags.keys())
@@ -88,7 +89,20 @@ class Filter(Database):
             logging.info('I would commit changes to %i messages' % len(dirty_messages))
         else:
             logging.info('Committing changes to %i messages' % len(dirty_messages))
-            db = notmuch.Database(self.db_path, mode = notmuch.Database.MODE.READ_WRITE)
+            start_time = time.time()
+            while True:
+                try:
+                    db = notmuch.Database(self.db_path,
+                                          mode = notmuch.Database.MODE.READ_WRITE)
+                    break
+                except notmuch.NotmuchError as e:
+                    time_left = int(retry_for - (time.time() - start_time))
+
+                    if time_left <= 0:
+                        raise
+
+                    logging.info('Opening the database failed. Will keep trying for another {} seconds'.format(time_left))
+                    time.sleep(retry_delay)
 
             for message_id in dirty_messages:
                 messages = notmuch.Query(db, 'id:"%s"' % message_id).search_messages()
