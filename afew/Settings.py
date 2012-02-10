@@ -21,15 +21,10 @@ import os
 import re
 import functools
 
-try:
-    # py3k
-    import configparser
-except ImportError:
-    import ConfigParser as configparser
-
+from .configparser import SafeConfigParser
 from .Filter import all_filters, register_filter
 
-settings = configparser.SafeConfigParser()
+settings = SafeConfigParser()
 settings.readfp(open(os.path.join(os.path.dirname(__file__), 'defaults', 'afew.config')))
 settings.read(os.path.join(os.environ.get('XDG_CONFIG_HOME',
                                           os.path.expanduser('~/.config')),
