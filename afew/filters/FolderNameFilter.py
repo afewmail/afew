@@ -40,8 +40,8 @@ class FolderNameFilter(Filter):
         maildirs = re.match(self.__filename_pattern, message.get_filename())
         if maildirs:
             folders = set(maildirs.group('maildirs').split(self.__maildir_separator))
-            logging.debug('found folders {0} for message \'{1}\''.format(
-                folders, message.get_header('subject').encode('utf8')))
+            logging.debug('found folders {} for message {!r}'.format(
+                folders, message.get_header('subject')))
 
             # remove blacklisted folders
             clean_folders = folders - self.__folder_blacklist
@@ -50,7 +50,7 @@ class FolderNameFilter(Filter):
 
             self.add_tags(message, *transformed_folders)
         else:
-            logging.error('Could not extract folder names from message \'{0}\''.format(message))
+            logging.error('Could not extract folder names from message {!r}'.format(message))
 
 
     def __transform_folders(self, folders):
