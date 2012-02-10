@@ -20,6 +20,15 @@ fyi: afew plays nicely with alot, a GUI for notmuch mail ;)
 * https://github.com/pazz/alot
 
 
+Current NEWS
+============
+
+afew is quite young, so expect a few user visible API or configuration
+format changes, though I'll try to minimize such disruptive events.
+
+Please keep an eye on NEWS.md for important news.
+
+
 Features
 ========
 
