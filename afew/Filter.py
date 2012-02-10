@@ -47,7 +47,7 @@ class Filter(Database):
 
         self._tags_to_add = list()
         self._tags_to_remove = list()
-        for tag_action in self.tags.split():
+        for tag_action in self.tags:
             if tag_action[0] not in '+-':
                 raise ValueError('Each tag must be preceded by either + or -')
 

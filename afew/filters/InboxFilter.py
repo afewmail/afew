@@ -23,7 +23,7 @@ from ..NotmuchSettings import get_notmuch_new_tags, get_notmuch_new_query
 @register_filter
 class InboxFilter(Filter):
     message = 'Retags all messages not tagged as junk or killed as inbox'
-    tags = '+inbox'
+    tags = ['+inbox']
     tag_blacklist = 'killed spam'
 
     @property

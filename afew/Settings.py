@@ -30,6 +30,9 @@ settings.read(os.path.join(os.environ.get('XDG_CONFIG_HOME',
                                           os.path.expanduser('~/.config')),
                            'afew', 'config'))
 
+'All the values for keys listed here are interpreted as ';'-delimited lists'
+value_is_a_list = ['tags']
+
 section_re = re.compile(r'''^(?P<name>[a-z_][a-z0-9_]*)(\((?P<parent_class>[a-z_][a-z0-9_]*)\)|\.(?P<index>\d+))?$''', re.I)
 def get_filter_chain():
     filter_chain = []
@@ -42,13 +45,20 @@ def get_filter_chain():
         if not match:
             raise SyntaxError('Malformed section title %r.' % section)
 
+        kwargs = dict(
+            (key, settings.get(section, key))
+            if key not in value_is_a_list else
+            (key, settings.get_list(section, key))
+            for key in settings.options(section)
+        )
+
         if match.group('parent_class'):
             try:
                 parent_class = all_filters[match.group('parent_class')]
             except KeyError as e:
                 raise NameError('Parent class %r not found in filter type definition %r.' % (match.group('parent_class'), section))
 
-            new_type = type(match.group('name'), (parent_class, ), dict(settings.items(section)))
+            new_type = type(match.group('name'), (parent_class, ), kwargs)
             register_filter(new_type)
         else:
             try:
@@ -56,6 +66,6 @@ def get_filter_chain():
             except KeyError as e:
                 raise NameError('Filter type %r not found.' % match.group('name'))
 
-            filter_chain.append(klass(**dict(settings.items(section))))
+            filter_chain.append(klass(**kwargs))
 
     return filter_chain
