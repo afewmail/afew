@@ -17,7 +17,9 @@ from __future__ import print_function, absolute_import, unicode_literals
 # OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 #
 
-from ..DBACL import DBACL as Classifier
+import logging
+
+from ..DBACL import DBACL as Classifier, ClassificationError
 from ..Filter import Filter, register_filter
 from ..utils import extract_mail_body
 
@@ -30,7 +32,12 @@ class ClassifyingFilter(Filter):
         self.classifier = Classifier()
 
     def handle_message(self, message):
-        scores = self.classifier.classify(extract_mail_body(message))
+        try:
+            scores = self.classifier.classify(extract_mail_body(message))
+        except ClassificationError as e:
+            logging.warning('Classification failed: {}'.format(e))
+            return
+
         category = scores[0][0]
 
         if category != self.classifier.reference_category:
