@@ -43,9 +43,6 @@ class Classifier(object):
 
 class DBACL(Classifier):
     def __init__(self, database_directory = default_db_path):
-        if not os.path.isdir(database_directory):
-            raise BackendError('%s is no directory' % database_directory)
-
         categories = glob.glob1(database_directory, '*')
         super(DBACL, self).__init__(categories, database_directory)
 
