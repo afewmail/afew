@@ -25,7 +25,8 @@ except ImportError:
 
 class GetListMixIn(object):
     def get_list(self, section, key, delimiter = ';',
-                 filter_ = str.strip, include_falsish = False):
+                 filter_ = lambda value: value.strip(),
+                 include_falsish = False):
         result = (filter_(value)
                   for value in self.get(section, key).split(delimiter))
 
