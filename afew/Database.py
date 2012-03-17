@@ -44,9 +44,7 @@ class Database(object):
         '''
         Implements the context manager protocol.
         '''
-        if self.handle:
-            self.handle.close()
-            self.handle = None
+        self.close()
 
     def open(self, rw=False, retry_for=180, retry_delay=10):
         if rw:
@@ -72,6 +70,14 @@ class Database(object):
                 self.handle = notmuch.Database(self.db_path)
 
         return self.handle
+
+    def close(self):
+        '''
+        Closes the notmuch database if it has been opened.
+        '''
+        if self.handle:
+            self.handle.close()
+            self.handle = None
 
     def do_query(self, query):
         '''
