@@ -17,6 +17,7 @@ from __future__ import print_function, absolute_import, unicode_literals
 # OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 #
 
+import time
 import logging
 
 import notmuch
@@ -31,6 +32,27 @@ class Database(object):
 
     def __init__(self):
         self.db_path = notmuch_settings.get('database', 'path')
+
+    def open(self, rw=False, retry_for=180, retry_delay=10):
+        if rw:
+            start_time = time.time()
+            while True:
+                try:
+                    db = notmuch.Database(self.db_path,
+                                          mode = notmuch.Database.MODE.READ_WRITE)
+                    break
+                except notmuch.NotmuchError:
+                    time_left = int(retry_for - (time.time() - start_time))
+
+                    if time_left <= 0:
+                        raise
+
+                    logging.info('Opening the database failed. Will keep trying for another {} seconds'.format(time_left))
+                    time.sleep(retry_delay)
+        else:
+            db = notmuch.Database(self.db_path)
+
+        return db
 
     def do_query(self, query):
         '''
@@ -51,8 +73,7 @@ class Database(object):
                 query = self.query
 
         logging.debug('Executing query %r' % query)
-        db = notmuch.Database(self.db_path)
-        return notmuch.Query(db, query)
+        return notmuch.Query(self.open(), query)
 
     def get_messages(self, query, full_thread = False):
         '''
