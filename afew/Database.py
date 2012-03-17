@@ -46,7 +46,7 @@ class Database(object):
         '''
         self.close()
 
-    def open(self, rw=False, retry_for=180, retry_delay=10):
+    def open(self, rw=False, retry_for=180, retry_delay=1):
         if rw:
             if self.handle and self.handle.mode == notmuch.Database.MODE.READ_WRITE:
                 return self.handle
@@ -63,7 +63,9 @@ class Database(object):
                     if time_left <= 0:
                         raise
 
-                    logging.info('Opening the database failed. Will keep trying for another {} seconds'.format(time_left))
+                    if time_left % 15 == 0:
+                        logging.debug('Opening the database failed. Will keep trying for another {} seconds'.format(time_left))
+
                     time.sleep(retry_delay)
         else:
             if not self.handle:
