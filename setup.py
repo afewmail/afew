@@ -20,7 +20,7 @@
 import distutils.core
 
 distutils.core.setup(
-    name = 'halot',
+    name = 'afew',
     packages = [
         'afew',
         'afew.filters',
