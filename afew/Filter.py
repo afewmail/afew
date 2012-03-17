@@ -41,10 +41,7 @@ class Filter(object):
         for key, value in kwargs.items():
             setattr(self, key, value)
 
-        self._add_tags = collections.defaultdict(lambda: set())
-        self._remove_tags = collections.defaultdict(lambda: set())
-        self._flush_tags = list()
-
+        self.flush_changes()
         self._tags_to_add = list()
         self._tags_to_remove = list()
         for tag_action in self.tags:
@@ -54,6 +51,15 @@ class Filter(object):
             (self._tags_to_add if tag_action[0] == '+' else self._tags_to_remove).append(tag_action[1:])
 
         self._tag_blacklist = set(self.tag_blacklist.split())
+
+    def flush_changes(self):
+        '''
+        (Re)Initializes the data structures that hold the enqueued
+        changes to the notmuch database.
+        '''
+        self._add_tags = collections.defaultdict(lambda: set())
+        self._remove_tags = collections.defaultdict(lambda: set())
+        self._flush_tags = list()
 
     def run(self, query):
         logging.info(self.message)
@@ -113,3 +119,5 @@ class Filter(object):
 
                     for tag in self._remove_tags.get(message_id, []):
                         message.remove_tag(tag)
+
+        self.flush_changes()
