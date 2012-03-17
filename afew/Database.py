@@ -22,7 +22,7 @@ import logging
 
 import notmuch
 
-from .NotmuchSettings import notmuch_settings
+from .NotmuchSettings import notmuch_settings, get_notmuch_new_tags
 from .utils import extract_mail_body
 
 class Database(object):
@@ -156,3 +156,42 @@ class Database(object):
             # TODO: yield from
             for message in self.walk_replies(message):
                 yield message
+
+    def add_message(self, path, sync_maildir_flags=False, new_mail_handler=None):
+        '''
+        Adds the given message to the notmuch index.
+
+        :param path: path to the message
+        :type  path: str
+        :param sync_maildir_flags: if `True` notmuch converts the
+                                   standard maildir flags to tags
+        :type  sync_maildir_flags: bool
+        :param new_mail_handler: callback for new messages
+        :type  new_mail_handler: a function that is called with a
+                                 :class:`notmuch.Message` object as
+                                 its only argument
+        :raises: :class:`notmuch.NotmuchError` if adding the message fails
+        :returns: a :class:`notmuch.Message` object
+        '''
+        # TODO: it would be nice to update notmuchs directory index here
+        message, status = self.open(rw=True).add_message(path, sync_maildir_flags=sync_maildir_flags)
+
+        if status != notmuch.STATUS.DUPLICATE_MESSAGE_ID:
+            logging.info('Found new mail in {}'.format(path))
+
+            for tag in get_notmuch_new_tags():
+                message.add_tag(tag)
+
+            if new_mail_handler:
+                new_mail_handler(message)
+
+        return message
+
+    def remove_message(self, path):
+        '''
+        Remove the given message from the notmuch index.
+
+        :param path: path to the message
+        :type  path: str
+        '''
+        self.open(rw=True).remove_message(path)
