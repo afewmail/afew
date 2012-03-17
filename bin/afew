@@ -25,6 +25,7 @@ import time
 import logging
 import optparse
 
+from afew.Database import Database
 from afew.main import main
 from afew.utils import filter_compat
 from afew.Filter import all_filters
@@ -155,30 +156,6 @@ elif options.update or options.update_reference:
 else:
     sys.exit('Weird... please file a bug containing your command line.')
 
-sys.path.insert(0, user_config_dir)
-# py2.7 compat hack
-glob_pattern = b'*.py' if sys.version_info[0] == 2 else '*.py'
-for file_name in glob.glob1(user_config_dir,  glob_pattern):
-    print('Importing user filter %r' % (file_name, ))
-    __import__(file_name[:-3], level=0)
-
-configured_filter_chain = get_filter_chain()
-if options.enable_filters:
-    options.enable_filters = options.enable_filters.split(',')
-
-    all_filters_set = set(all_filters.keys())
-    enabled_filters_set = set(options.enable_filters)
-    if not all_filters_set.issuperset(enabled_filters_set):
-        sys.exit('Unknown filter(s) selected: %s' % (' '.join(enabled_filters_set.difference(all_filters_set))))
-
-    options.enable_filters = [all_filters[filter_name]() for filter_name in options.enable_filters]
-else:
-    options.enable_filters = configured_filter_chain
-
-if options.move_mails:
-    options.mail_move_rules = get_mail_move_rules()
-    options.mail_move_age = get_mail_move_age()
-
 loglevel = {
     0: logging.WARNING,
     1: logging.INFO,
@@ -186,4 +163,29 @@ loglevel = {
 }[min(2, options.verbosity)]
 logging.basicConfig(level = loglevel)
 
-main(options, query_string)
+sys.path.insert(0, user_config_dir)
+# py2.7 compat hack
+glob_pattern = b'*.py' if sys.version_info[0] == 2 else '*.py'
+for file_name in glob.glob1(user_config_dir,  glob_pattern):
+    print('Importing user filter %r' % (file_name, ))
+    __import__(file_name[:-3], level=0)
+
+if options.move_mails:
+    options.mail_move_rules = get_mail_move_rules()
+    options.mail_move_age = get_mail_move_age()
+
+with Database() as database:
+    configured_filter_chain = get_filter_chain(database)
+    if options.enable_filters:
+        options.enable_filters = options.enable_filters.split(',')
+
+        all_filters_set = set(all_filters.keys())
+        enabled_filters_set = set(options.enable_filters)
+        if not all_filters_set.issuperset(enabled_filters_set):
+            sys.exit('Unknown filter(s) selected: %s' % (' '.join(enabled_filters_set.difference(all_filters_set))))
+
+        options.enable_filters = [all_filters[filter_name]() for filter_name in options.enable_filters]
+    else:
+        options.enable_filters = configured_filter_chain
+
+    main(options, database, query_string)

@@ -40,7 +40,7 @@ value_is_a_list = ['tags']
 mail_mover_section = 'MailMover'
 
 section_re = re.compile(r'^(?P<name>[a-z_][a-z0-9_]*)(\((?P<parent_class>[a-z_][a-z0-9_]*)\)|\.(?P<index>\d+))?$', re.I)
-def get_filter_chain():
+def get_filter_chain(database):
     filter_chain = []
 
     for section in settings.sections():
@@ -72,7 +72,7 @@ def get_filter_chain():
             except KeyError:
                 raise NameError('Filter type %r not found.' % match.group('name'))
 
-            filter_chain.append(klass(**kwargs))
+            filter_chain.append(klass(database, **kwargs))
 
     return filter_chain
 

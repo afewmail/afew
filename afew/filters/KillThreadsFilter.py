@@ -18,7 +18,6 @@ from __future__ import print_function, absolute_import, unicode_literals
 #
 
 from ..Filter import Filter, register_filter
-from ..Database import Database
 
 @register_filter
 class KillThreadsFilter(Filter):
@@ -26,8 +25,7 @@ class KillThreadsFilter(Filter):
     query = 'NOT tag:killed'
 
     def handle_message(self, message):
-        db = Database()
-        query = db.get_messages('thread:"%s" AND tag:killed' % message.get_thread_id())
+        query = self.database.get_messages('thread:"%s" AND tag:killed' % message.get_thread_id())
 
         if len(list(query)):
             self.add_tags(message, 'killed')

@@ -25,9 +25,7 @@ from .DBACL import DBACL as Classifier
 from .MailMover import MailMover
 from .utils import extract_mail_body
 
-def main(options, query_string):
-    database = Database()
-
+def main(options, database, query_string):
     if options.tag:
         for filter_ in options.enable_filters:
             filter_.run(query_string)

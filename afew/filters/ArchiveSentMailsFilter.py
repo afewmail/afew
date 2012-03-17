@@ -25,8 +25,8 @@ from ..NotmuchSettings import notmuch_settings, get_notmuch_new_tags
 class ArchiveSentMailsFilter(Filter):
     message = 'Archiving all mails sent by myself to others'
 
-    def __init__(self, sent_tag=''):
-        super(ArchiveSentMailsFilter, self).__init__()
+    def __init__(self, database, sent_tag=''):
+        super(ArchiveSentMailsFilter, self).__init__(database)
 
         my_addresses = set()
         my_addresses.add(notmuch_settings.get('user', 'primary_email'))

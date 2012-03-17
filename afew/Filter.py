@@ -22,21 +22,20 @@ import collections
 
 import notmuch
 
-from .Database import Database
-
 all_filters = dict()
 def register_filter(klass):
     all_filters[klass.__name__] = klass
     return klass
 
 @register_filter
-class Filter(Database):
+class Filter(object):
     message = 'No message specified for filter'
     tags = []
     tag_blacklist = ''
 
-    def __init__(self, **kwargs):
+    def __init__(self, database, **kwargs):
         super(Filter, self).__init__()
+        self.database = database
         if 'tags' not in kwargs:
             kwargs['tags'] = self.tags
         for key, value in kwargs.items():
@@ -58,7 +57,14 @@ class Filter(Database):
 
     def run(self, query):
         logging.info(self.message)
-        for message in self.get_messages(query):
+
+        if hasattr(self, 'query'):
+            if query:
+                query = '(%s) AND (%s)' % (query, self.query)
+            else:
+                query = self.query
+
+        for message in self.database.get_messages(query):
             self.handle_message(message)
 
     def handle_message(self, message):
@@ -93,7 +99,7 @@ class Filter(Database):
             logging.info('I would commit changes to %i messages' % len(dirty_messages))
         else:
             logging.info('Committing changes to %i messages' % len(dirty_messages))
-            db = self.open(rw=True)
+            db = self.database.open(rw=True)
 
             for message_id in dirty_messages:
                 messages = notmuch.Query(db, 'id:"%s"' % message_id).search_messages()

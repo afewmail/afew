@@ -32,14 +32,32 @@ class Database(object):
 
     def __init__(self):
         self.db_path = notmuch_settings.get('database', 'path')
+        self.handle = None
+
+    def __enter__(self):
+        '''
+        Implements the context manager protocol.
+        '''
+        return self
+
+    def __exit__(self, exc_type, exc_value, traceback):
+        '''
+        Implements the context manager protocol.
+        '''
+        if self.handle:
+            self.handle.close()
+            self.handle = None
 
     def open(self, rw=False, retry_for=180, retry_delay=10):
         if rw:
+            if self.handle and self.handle.mode == notmuch.Database.MODE.READ_WRITE:
+                return self.handle
+
             start_time = time.time()
             while True:
                 try:
-                    db = notmuch.Database(self.db_path,
-                                          mode = notmuch.Database.MODE.READ_WRITE)
+                    self.handle = notmuch.Database(self.db_path,
+                                                   mode = notmuch.Database.MODE.READ_WRITE)
                     break
                 except notmuch.NotmuchError:
                     time_left = int(retry_for - (time.time() - start_time))
@@ -50,28 +68,20 @@ class Database(object):
                     logging.info('Opening the database failed. Will keep trying for another {} seconds'.format(time_left))
                     time.sleep(retry_delay)
         else:
-            db = notmuch.Database(self.db_path)
+            if not self.handle:
+                self.handle = notmuch.Database(self.db_path)
 
-        return db
+        return self.handle
 
     def do_query(self, query):
         '''
         Executes a notmuch query.
-
-        If the current object has an `query` field, the intersection
-        of both queries is returned.
 
         :param query: the query to execute
         :type  query: str
         :returns: the query result
         :rtype:   :class:`notmuch.Query`
         '''
-        if hasattr(self, 'query'):
-            if query:
-                query = '(%s) AND (%s)' % (query, self.query)
-            else:
-                query = self.query
-
         logging.debug('Executing query %r' % query)
         return notmuch.Query(self.open(), query)
 

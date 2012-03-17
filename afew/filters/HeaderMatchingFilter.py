@@ -11,8 +11,8 @@ class HeaderMatchingFilter(Filter):
     header = None
     pattern = None
 
-    def __init__(self, **kwargs):
-        super(HeaderMatchingFilter, self).__init__(**kwargs)
+    def __init__(self, database, **kwargs):
+        super(HeaderMatchingFilter, self).__init__(database, **kwargs)
         if self.pattern is not None:
             self.pattern = re.compile(self.pattern, re.I)
 

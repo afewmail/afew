@@ -26,9 +26,9 @@ import logging
 class FolderNameFilter(Filter):
     message = 'Tags all new messages with their folder'
 
-    def __init__(self, folder_blacklist='', folder_transforms='',
+    def __init__(self, database, folder_blacklist='', folder_transforms='',
             maildir_separator='.', folder_explicit_list=''):
-        super(FolderNameFilter, self).__init__()
+        super(FolderNameFilter, self).__init__(database)
 
         self.__filename_pattern = '{mail_root}/(?P<maildirs>.*)/(cur|new)/[^/]+'.format(
             mail_root=notmuch_settings.get('database', 'path').rstrip('/'))

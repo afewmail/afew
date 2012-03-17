@@ -26,8 +26,8 @@ from ..utils import extract_mail_body
 @register_filter
 class ClassifyingFilter(Filter):
     message = 'Tagging via classification'
-    def __init__(self, *args, **kwargs):
-        super(ClassifyingFilter, self).__init__(*args, **kwargs)
+    def __init__(self, database, *args, **kwargs):
+        super(ClassifyingFilter, self).__init__(database, *args, **kwargs)
 
         self.classifier = Classifier()
 
