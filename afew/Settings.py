@@ -101,3 +101,4 @@ def get_mail_move_age():
     if settings.has_option(mail_mover_section, 'max_age'):
         max_age = settings.get(mail_mover_section, 'max_age')
     return max_age
+
