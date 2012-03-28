@@ -52,12 +52,25 @@ def strip_signatures(lines, max_signature_size = 10):
     ... ], 5)
     ['Huhu']
     '''
+
+    siglines = 0
+    sigline_count = 0
+
     for n, line in enumerate(reversed(lines)):
         if signature_line_re.match(line):
-            return strip_signatures(lines[:-n - 1], max_signature_size)
-        if n >= max_signature_size:
+            # set the last line to include
+            siglines = n + 1
+
+            # reset the line code
+            sigline_count = 0
+
+        if sigline_count >= max_signature_size:
             break
-    return lines
+
+        sigline_count += 1
+
+    return lines[:-siglines]
+
 
 def extract_mail_body(message):
     r'''
