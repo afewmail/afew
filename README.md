@@ -87,15 +87,16 @@ Put a list of filters into `~/.config/afew/config`:
 ```
 
 And configure rules to sort mails on your disk, if you want:
-~~~ snip ~~~
+
+```
 [MailMover]
 folders = INBOX Junk
 max_age = 15
 
-#rules
+# rules
 INBOX = 'tag:spam':Junk 'NOT tag:inbox':Archive
 Junk = 'NOT tag:spam AND tag:inbox':INBOX 'NOT tag:spam':Archive
-~~~ snip ~~~
+```
 
 
 Commandline help
@@ -153,14 +154,9 @@ Boring stuff
 
 Simulation
 ----------
-<<<<<<< HEAD:README.md
 Adding `--dry-run` to any `--tag` or `--sync-tags` action prevents
 modification of the notmuch db. Add some `-vv` goodness to see some
 action.
-=======
-Adding --dry-run to any --tag or --move-mails action prevents modification of the
-notmuch db. Add some -vv goodness to see some action.
->>>>>>> Update documentation:README
 
 
 Initial tagging
