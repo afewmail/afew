@@ -20,16 +20,27 @@ from __future__ import print_function, absolute_import, unicode_literals
 import sys
 import random
 
-from .Database import Database
 from .DBACL import DBACL as Classifier
 from .MailMover import MailMover
 from .utils import extract_mail_body
+
+try:
+    from .files import watch_for_new_files, quick_find_dirs_hack
+except ImportError:
+    watch_available = False
+else:
+    watch_available = True
 
 def main(options, database, query_string):
     if options.tag:
         for filter_ in options.enable_filters:
             filter_.run(query_string)
             filter_.commit(options.dry_run)
+    elif options.watch:
+        if not watch_available:
+            sys.exit('Sorry, this feature requires Linux and pyinotify')
+        watch_for_new_files(options, database,
+                            quick_find_dirs_hack(database.db_path))
     elif options.learn != False:
         classifier = Classifier()
         classifier.learn(

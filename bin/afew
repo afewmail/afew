@@ -48,6 +48,10 @@ action_group.add_option(
     help = 'run the tag filters'
 )
 action_group.add_option(
+    '-w', '--watch', default = False, action = 'store_true',
+    help = 'continuously monitor the mailbox for new files'
+)
+action_group.add_option(
     '-l', '--learn', default = False,
     help = 'train the category with the messages matching the given query'
 )
@@ -125,6 +129,7 @@ options, args = option_parser.parse_args()
 
 no_actions = len(filter_compat(None, (
     options.tag,
+    options.watch,
     options.update or options.update_reference,
     options.learn,
     options.classify,
@@ -137,7 +142,7 @@ elif no_actions > 1:
 
 no_query_modifiers = len(filter_compat(None, (options.all, options.new, args)))
 if no_query_modifiers == 0 and not \
-   (options.update or options.update_reference) and not \
+   (options.update or options.update_reference or options.watch) and not \
    options.move_mails:
     sys.exit('You need to specify one of --new, --all or a query string')
 elif no_query_modifiers > 1:
