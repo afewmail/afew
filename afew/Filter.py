@@ -98,7 +98,7 @@ class Filter(Database):
                     db = notmuch.Database(self.db_path,
                                           mode = notmuch.Database.MODE.READ_WRITE)
                     break
-                except notmuch.NotmuchError as e:
+                except notmuch.NotmuchError:
                     time_left = int(retry_for - (time.time() - start_time))
 
                     if time_left <= 0:

@@ -23,7 +23,6 @@ import random
 from .Database import Database
 from .DBACL import DBACL as Classifier
 from .MailMover import MailMover
-from .NotmuchSettings import notmuch_settings
 from .utils import extract_mail_body
 
 def main(options, query_string):
