@@ -35,13 +35,14 @@ settings.read(os.path.join(os.environ.get('XDG_CONFIG_HOME',
 
 'All the values for keys listed here are interpreted as ';'-delimited lists'
 value_is_a_list = ['tags']
+mail_mover_section = 'MailMover'
 
 section_re = re.compile(r'^(?P<name>[a-z_][a-z0-9_]*)(\((?P<parent_class>[a-z_][a-z0-9_]*)\)|\.(?P<index>\d+))?$', re.I)
 def get_filter_chain():
     filter_chain = []
 
     for section in settings.sections():
-        if section == 'global' or section == mail_mover:
+        if section == 'global' or section == mail_mover_section:
             continue
 
         match = section_re.match(section)
@@ -73,7 +74,6 @@ def get_filter_chain():
 
     return filter_chain
 
-mail_mover_section = 'MailMover'
 def get_mail_move_rules():
     rule_pattern = re.compile(r"'(.+?)':(\S+)")
     if settings.has_option(mail_mover_section, 'folders'):
