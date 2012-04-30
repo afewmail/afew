@@ -24,14 +24,16 @@ import collections
 from .configparser import SafeConfigParser
 from .Filter import all_filters, register_filter
 
+user_config_dir = os.path.join(os.environ.get('XDG_CONFIG_HOME',
+                                              os.path.expanduser('~/.config')),
+                               'afew')
+
 settings = SafeConfigParser()
 # preserve the capitalization of the keys.
 settings.optionxform = str
 
 settings.readfp(open(os.path.join(os.path.dirname(__file__), 'defaults', 'afew.config')))
-settings.read(os.path.join(os.environ.get('XDG_CONFIG_HOME',
-                                          os.path.expanduser('~/.config')),
-                           'afew', 'config'))
+settings.read(os.path.join(user_config_dir, 'config'))
 
 'All the values for keys listed here are interpreted as ';'-delimited lists'
 value_is_a_list = ['tags']

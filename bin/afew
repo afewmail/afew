@@ -18,6 +18,7 @@ from __future__ import print_function, absolute_import, unicode_literals
 # OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 #
 
+import glob
 import sys
 import os
 import time
@@ -27,7 +28,8 @@ import optparse
 from afew.main import main
 from afew.utils import filter_compat
 from afew.Filter import all_filters
-from afew.Settings import get_filter_chain, get_mail_move_rules, get_mail_move_age
+from afew.Settings import user_config_dir, get_filter_chain
+from afew.Settings import get_mail_move_rules, get_mail_move_age
 from afew.NotmuchSettings import read_notmuch_settings, get_notmuch_new_query
 
 option_parser = optparse.OptionParser(
@@ -152,6 +154,13 @@ elif options.update or options.update_reference:
     query_string = '%i..%i' % (time.time() - options.reference_set_timeframe * 24 * 60 * 60, time.time())
 else:
     sys.exit('Weird... please file a bug containing your command line.')
+
+sys.path.insert(0, user_config_dir)
+# py2.7 compat hack
+glob_pattern = b'*.py' if sys.version_info[0] == 2 else '*.py'
+for file_name in glob.glob1(user_config_dir,  glob_pattern):
+    print('Importing user filter %r' % (file_name, ))
+    __import__(file_name[:-3], 0)
 
 configured_filter_chain = get_filter_chain()
 if options.enable_filters:
