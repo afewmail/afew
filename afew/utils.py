@@ -17,7 +17,9 @@ from __future__ import print_function, absolute_import, unicode_literals
 # OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 #
 
+import codecs
 import re
+import sys
 import email
 from datetime import datetime
 
@@ -95,11 +97,11 @@ def extract_mail_body(message):
             encoding = part.get_content_charset()
             if encoding:
                 try:
-                    raw_payload = raw_payload.decode(encoding, errors = 'replace')
+                    raw_payload = raw_payload.decode(encoding, 'replace')
                 except LookupError:
-                    raw_payload = raw_payload.decode(errors = 'replace')
+                    raw_payload = raw_payload.decode(sys.getdefaultencoding(), 'replace')
             else:
-                raw_payload = raw_payload.decode(errors = 'replace')
+                raw_payload = raw_payload.decode(sys.getdefaultencoding(), 'replace')
 
             lines = raw_payload.split('\n')
             lines = strip_signatures(lines)
