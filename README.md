@@ -47,7 +47,7 @@ Features
 * can move mails based on arbitrary notmuch queries, so your sorting
   may show on your traditional mail client (well, almost ;))
 * has a `--dry-run` mode for safe testing
-* works with both python2.7 and python3.2
+* works with python 2.7, 3.1 and 3.2
 
 
 Installation
