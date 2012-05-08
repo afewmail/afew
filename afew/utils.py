@@ -88,7 +88,10 @@ def extract_mail_body(message):
     if hasattr(email, 'message_from_binary_file'):
         mail = email.message_from_binary_file(open(message.get_filename(), 'br'))
     else:
-        fp = codecs.open(message.get_filename(), 'r', 'utf-8', errors='replace')
+        if (3, 1) <= sys.version_info < (3, 2):
+            fp = codecs.open(message.get_filename(), 'r', 'utf-8', errors='replace')
+        else:
+            fp = open(message.get_filename())
         mail = email.message_from_file(fp)
 
     content = []
