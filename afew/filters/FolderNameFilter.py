@@ -50,7 +50,7 @@ class FolderNameFilter(Filter):
 
             self.add_tags(message, *transformed_folders)
         else:
-            logging.error('Could not extract folder names from message {!r}'.format(message))
+            logging.debug('Could not extract folder names from message {!r}'.format(message))
 
 
     def __transform_folders(self, folders):
