@@ -26,11 +26,13 @@ import logging
 class FolderNameFilter(Filter):
     message = 'Tags all new messages with their folder'
 
-    def __init__(self, folder_blacklist='', folder_transforms='', maildir_separator='.'):
+    def __init__(self, folder_blacklist='', folder_transforms='',
+            maildir_separator='.', folder_explicit_list=''):
         super(FolderNameFilter, self).__init__()
 
         self.__filename_pattern = '{mail_root}/(?P<maildirs>.*)/(cur|new)/[^/]+'.format(
             mail_root=notmuch_settings.get('database', 'path').rstrip('/'))
+        self.__folder_explicit_list = set(folder_explicit_list.split())
         self.__folder_blacklist = set(folder_blacklist.split())
         self.__folder_transforms = self.__parse_transforms(folder_transforms)
         self.__maildir_separator = maildir_separator
@@ -45,12 +47,13 @@ class FolderNameFilter(Filter):
 
             # remove blacklisted folders
             clean_folders = folders - self.__folder_blacklist
+            if self.__folder_explicit_list:
+                # only explicitly listed folders
+                clean_folders &= self.__folder_explicit_list
             # apply transformations
             transformed_folders = self.__transform_folders(clean_folders)
 
             self.add_tags(message, *transformed_folders)
-        else:
-            logging.debug('Could not extract folder names from message {!r}'.format(message))
 
 
     def __transform_folders(self, folders):
