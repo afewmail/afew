@@ -75,6 +75,14 @@ ArchiveSentMailFilter
 FolderNameFilter
 ^^^^^^^^^^^^^^^^
 
+* folder_explicit_list = <folder list>
+
+ * Tag mails with tag in <folder list> only. <folder list> is a space separated
+   list, not enclosed in quotes or any other way.
+ * Empty list means all folders (of course blacklist still applies).
+ * The default is empty list.
+ * You may use it e.g. to set tags only for specific folders like 'Sent'.
+
 * folder_blacklist = <folder list>
 
  * Never tag mails with tag in <folder list>. <folder list> is a space separated
