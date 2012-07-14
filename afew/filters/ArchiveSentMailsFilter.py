@@ -23,7 +23,7 @@ from ..NotmuchSettings import notmuch_settings, get_notmuch_new_tags
 
 @register_filter
 class ArchiveSentMailsFilter(Filter):
-    message = 'Archiving all mails sent by myself'
+    message = 'Archiving all mails sent by myself to others'
 
     def __init__(self, sent_tag=''):
         super(ArchiveSentMailsFilter, self).__init__()
@@ -33,7 +33,13 @@ class ArchiveSentMailsFilter(Filter):
         if notmuch_settings.has_option('user', 'other_email'):
             my_addresses.update(filter_compat(None, notmuch_settings.get('user', 'other_email').split(';')))
 
-        self.query = ' OR '.join('from:"%s"' % address for address in my_addresses)
+        self.query = (
+            '(' + 
+            ' OR '.join('from:"%s"' % address for address in my_addresses)
+            + ') AND NOT (' +
+            ' OR '.join('to:"%s"'   % address for address in my_addresses)
+            + ')'
+        )
         self.sent_tag = sent_tag
 
 
