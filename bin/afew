@@ -160,7 +160,7 @@ sys.path.insert(0, user_config_dir)
 glob_pattern = b'*.py' if sys.version_info[0] == 2 else '*.py'
 for file_name in glob.glob1(user_config_dir,  glob_pattern):
     print('Importing user filter %r' % (file_name, ))
-    __import__(file_name[:-3], 0)
+    __import__(file_name[:-3], level=0)
 
 configured_filter_chain = get_filter_chain()
 if options.enable_filters:
