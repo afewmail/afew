@@ -60,8 +60,8 @@ SpamFilter
    Note that only a single tag is supported here.
 
 
-ArchiveSentMailFilter
-^^^^^^^^^^^^^^^^^^^^^
+ArchiveSentMailsFilter
+^^^^^^^^^^^^^^^^^^^^^^
 
 * sent_tag = <tag>
 
