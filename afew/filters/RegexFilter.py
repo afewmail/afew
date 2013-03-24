@@ -29,7 +29,8 @@ class RegexFilter(Filter):
     regex_group = None
     generic_tag = None
 
-    def __init__(self):
+    def __init__(self, **kwargs):
+        super(RegexFilter, self).__init__(**kwargs)
         self.regex = re.compile(self.regex_string, re.IGNORECASE)
 
     def handle_message(self, message):
