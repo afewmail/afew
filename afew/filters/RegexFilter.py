@@ -30,7 +30,7 @@ class RegexFilter(Filter):
     generic_tag = None
 
     def __init__(self):
-        self.regex = re.compile(self.regex_string, re.IGNORE_CASE)
+        self.regex = re.compile(self.regex_string, re.IGNORECASE)
 
     def handle_message(self, message):
         if self.header_field.lower() == 'to':
