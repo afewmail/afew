@@ -17,19 +17,14 @@ from __future__ import print_function, absolute_import, unicode_literals
 # OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 #
 
-import re
+from ..Filter import register_filter
+from .HeaderMatchingFilter import HeaderMatchingFilter
 
-from ..Filter import Filter, register_filter
 
 @register_filter
-class ListMailsFilter(Filter):
+class ListMailsFilter(HeaderMatchingFilter):
     message = 'Tagging mailing list posts'
     query = 'NOT tag:lists'
-
-    list_id_re = re.compile(r"<(?P<list_id>[a-z0-9!#$%&'*+/=?^_`{|}~-]+)\.", re.I)
-    def handle_message(self, message):
-        list_id_header = message.get_header('List-Id')
-        match = self.list_id_re.search(list_id_header)
-
-        if match:
-            self.add_tags(message, 'lists', match.group('list_id'))
+    pattern = r"<(?P<list_id>[a-z0-9!#$%&'*+/=?^_`{|}~-]+)\."
+    header = 'List-Id'
+    tags = ['+{list_id}']
