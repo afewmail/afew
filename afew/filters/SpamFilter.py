@@ -17,18 +17,18 @@ from __future__ import print_function, absolute_import, unicode_literals
 # OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 #
 
-from ..Filter import Filter, register_filter
+from ..Filter import register_filter
+from .HeaderMatchingFilter import HeaderMatchingFilter
+
 
 @register_filter
-class SpamFilter(Filter):
+class SpamFilter(HeaderMatchingFilter):
     message = 'Tagging spam messages'
+    header = 'X-Spam-Flag'
+    pattern = 'YES'
 
-    def __init__(self, spam_tag='spam'):
-        super(SpamFilter, self).__init__()
-        self.spam_tag = spam_tag
-
-
-    def handle_message(self, message):
-        if message.get_header('X-Spam-Flag') == 'YES':
-            self.flush_tags(message)
-            self.add_tags(message, self.spam_tag)
+    def __init__(self, tags='+spam', spam_tag=None, **kwargs):
+        if spam_tag is not None:
+            # this is for backward-compatibility
+            kwargs['tags'] = '+' + spam_tag
+        super(SpamFilter, self).__init__(**kwargs)
