@@ -30,5 +30,6 @@ class SpamFilter(HeaderMatchingFilter):
     def __init__(self, tags='+spam', spam_tag=None, **kwargs):
         if spam_tag is not None:
             # this is for backward-compatibility
-            kwargs['tags'] = '+' + spam_tag
+            tags = '+' + spam_tag
+        kwargs['tags'] = tags
         super(SpamFilter, self).__init__(**kwargs)
