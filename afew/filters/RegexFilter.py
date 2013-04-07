@@ -40,7 +40,7 @@ class RegexFilter(Filter):
             header_field_list = [self.header_field]
 
         for header in header_field_list:
-            header_line = message.get_header(self.header_field)
+            header_line = message.get_header(header)
             match = self.regex.search(header_line)
 
             if match:
