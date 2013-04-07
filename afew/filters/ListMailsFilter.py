@@ -19,17 +19,14 @@ from __future__ import print_function, absolute_import, unicode_literals
 
 import re
 
-from ..Filter import Filter, register_filter
+from ..Filter import register_filter
+from .RegexFilter import RegexFilter
 
 @register_filter
-class ListMailsFilter(Filter):
+class ListMailsFilter(RegexFilter):
     message = 'Tagging mailing list posts'
     query = 'NOT tag:lists'
-
-    list_id_re = re.compile(r"<(?P<list_id>[a-z0-9!#$%&'*+/=?^_`{|}~-]+)\.", re.I)
-    def handle_message(self, message):
-        list_id_header = message.get_header('List-Id')
-        match = self.list_id_re.search(list_id_header)
-
-        if match:
-            self.add_tags(message, 'lists', match.group('list_id'))
+    header_field = 'List-Id'
+    regex_string = r"<(?P<list_id>[a-z0-9!#$%&'*+/=?^_`{|}~-]+)\."
+    regex_group = 'list_id'
+    generic_tag = 'lists'
