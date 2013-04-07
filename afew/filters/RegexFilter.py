@@ -47,5 +47,5 @@ class RegexFilter(Filter):
                 if self.generic_tag:
                     self.add_tags(message, self.generic_tag,
                         match.group(self.regex_group))
-                else:
+                elif self.regex_group:
                     self.add_tags(message, match.group(self.regex_group))

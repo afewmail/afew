@@ -22,13 +22,8 @@ from ..Filter import Filter, register_filter
 @register_filter
 class SpamFilter(Filter):
     message = 'Tagging spam messages'
-
-    def __init__(self, spam_tag='spam'):
-        super(SpamFilter, self).__init__()
-        self.spam_tag = spam_tag
-
-
-    def handle_message(self, message):
-        if message.get_header('X-Spam-Flag') == 'YES':
-            self.flush_tags(message)
-            self.add_tags(message, self.spam_tag)
+    query = 'NOT tag:spam'
+    header_field = 'X-Spam-Flag'
+    regex_string = r"YES"
+    regex_group = 'not_applicable'
+    generic_tag = 'spam'
