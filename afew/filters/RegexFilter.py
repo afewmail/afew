@@ -23,7 +23,7 @@ from ..Filter import Filter, register_filter
 @register_filter
 class RegexFilter(Filter):
     message = 'your regex'
-    query = ''
+    query = 'NOT tag:thistagwillneverexist'
     header_field = 'To'
     regex_string = r''
     regex_group = None
