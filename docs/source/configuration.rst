@@ -19,8 +19,8 @@ make sure that `~/.notmuch-config` contains:
     [new]
     tags=new
 
-Configuring Filters
--------------------
+Filter Configuration
+--------------------
 
 You can modify filters, and define your own versions of the base Filter that
 allow you to tag messages in a similar way to the `notmuch tag` command, using
@@ -35,14 +35,57 @@ the config file.  The default config file is:
     [ArchiveSentMailsFilter]
     [InboxFilter]
 
-See the :doc:`filters` page for the details of those filters.
+See the :doc:`filters` page for the details of those filters and the custom
+arguments they accept.
 
-But you can customise the filters.
+You can add filters based on the base filter as well.  These can be customised
+by specifying settings beneath them.  The standard settings, which apply to all
+filters, are:
+
+message
+  text that will be displayed while running this filter if the verbosity is high
+  enough.
+
+query
+  the query to use against the messages, specified in standard notmuch format.
+  Note that you don't need to specify the **new** tag - afew will add that when
+  run with the `--new` flag.
+
+tags
+  the tags to add or remove for messages that match the query. Tags to add are
+  preceded by a **+** and tags to remove are preceded by a **-**.  Multiple tags
+  are separated by semicolons.
+
+tag_blacklist
+  if the message has one of these tags, don't add `tags` to it. Tags are
+  separated by spaces.
+
+So to add the **deer** tag to any message to or from `antelope@deer.com` you
+could do:
+
+.. code-block:: ini
+
+    [Filter.1]
+    query = 'antelope@deer.com'
+    tags = +deer
+    message = Wild animals ahoy
+
+You can also (in combination with the `InboxFilter`_) have email skip the Inbox
+by removing the new tag before you get to the InboxFilter:
+
+.. code-block:: ini
+
+    [Filter.2]
+    query = from'pointyheaded@boss.com'
+    tags = -new;boss
+    message = Message from above
 
 Configuring Moving of Mail
 --------------------------
 
 You can configure rules to sort mails on your disk, if you want:
+
+.. TODO: explain these options in more detail.
 
 .. code-block:: ini
 
@@ -130,5 +173,5 @@ Here are a few more example filters from github dotfiles:
     # skip inbox
     [Filter.6]
     query = 'to:notmuch@notmuchmail.org AND (subject:emacs OR subject:elisp OR "(defun" OR "(setq" OR PATCH)'
-    tags = -inbox;-new
+    tags = -new
     message = notmuch emacs stuff
