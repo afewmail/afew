@@ -8,7 +8,7 @@ Welcome to afew's documentation!
 
 Its basic task is to provide automatic tagging each time new mail is registered
 with notmuch. In a classic setup, you might call it after `notmuch new` in an
-offlineimap post sync hook.
+offlineimap post sync hook or in the notmuch `post-new` hook.
 
 In addition to more elementary features such as adding tags based on email
 headers or maildir folders, handling killed threads and spam, it can do some
@@ -24,7 +24,11 @@ Contents:
 .. toctree::
    :maxdepth: 2
 
-   manual
+   installation
+   configuration
+   filters
+   commandline
+   classification
    implementation
 
 Indices and tables
