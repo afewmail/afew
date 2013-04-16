@@ -77,7 +77,7 @@ by removing the new tag before you get to the InboxFilter:
 
     [Filter.2]
     query = from'pointyheaded@boss.com'
-    tags = -new;boss
+    tags = -new;+boss
     message = Message from above
 
 Configuring Moving of Mail
@@ -128,12 +128,12 @@ The (roughly) equivalent set up in afew would be:
     [Filter.spamcom]
     message = Delete all messages from spammer
     query = from:spam@spam.com
-    tags = deleted;-new
+    tags = +deleted;-new
 
     [Filter.notmuch]
     message = Tag all messages from the notmuch mailing list
     query = to:notmuch@notmuchmail.org
-    tags = notmuch
+    tags = +notmuch
 
     [InboxFilter]
 
