@@ -12,7 +12,7 @@ The default filter set (if you don't specify anything in the config) is:
     [ArchiveSentMailsFilter]
     [InboxFilter]
 
-The standard :doc:`filter configuration` can be applied to these filters as
+The standard filter :doc:`configuration` can be applied to these filters as
 well. Though note that most of the filters below set their own value for
 message, query and/or tags, and some ignore some of the standard settings.
 

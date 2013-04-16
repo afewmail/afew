@@ -70,7 +70,7 @@ could do:
     tags = +deer
     message = Wild animals ahoy
 
-You can also (in combination with the `InboxFilter`_) have email skip the Inbox
+You can also (in combination with the InboxFilter) have email skip the Inbox
 by removing the new tag before you get to the InboxFilter:
 
 .. code-block:: ini
