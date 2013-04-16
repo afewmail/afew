@@ -34,6 +34,30 @@ To do this automatically you can add the following hook into your
 
     postsynchook = ionice -c 3 chrt --idle 0 /bin/sh -c "notmuch new && afew --tag --new"
 
+Move Mode
+---------
+
+To invoke afew in move mode, provide the `--move-mails` option on the
+command line.  Move mode will respect `--dry-run`, so throw in
+`--verbose` and watch what effects a real run would have.
+
+In move mode, afew will check all mails (or only recent ones) in the
+configured maildir folders, deciding whether they should be moved to
+another folder.
+
+The decision is based on rules defined in your config file. A rule is
+bound to a source folder and specifies a target folder into which a
+mail will be moved that is matched by an associated query.
+
+This way you will be able to transfer your sorting principles roughly
+to the classic folder based maildir structure understood by your
+traditional mail server. Tag your mails with notmuch, call afew
+`--move-mails` in an offlineimap presynchook and enjoy a clean inbox
+in your webinterface/GUI-client at work.
+
+For information on how to configure rules for move mode, what you can
+do with it and what you can't, please refer to `docs/move_mode`.
+
 Simulation
 ----------
 
