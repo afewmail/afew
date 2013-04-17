@@ -5,18 +5,26 @@ Ultimately afew is a command line tool.  You have to specify an action, and
 whether to act on all messages, or only on new messages.  The actions you can
 choose from are:
 
-.. code-block:: sh
+tag
+  run the tag filters.  See :ref:`Initial tagging`.
 
-    --tag           run the tag filters
-    --learn=LEARN   train the category with the messages matching the
-                    given query
-    --update        update the categories [requires no query]
-    --update-reference
-                    update the reference category (takes quite some time)
-                    [requires no query]
-    --classify      classify each message matching the given query (to
-                    test the trained categories)
-    --move-mails    move mail files between maildir folders
+move-mails
+  move mail files between maildir folders
+
+learn=LEARN
+  train the category with the messages matching the
+  given query
+
+update
+  update the categories [requires no query]
+
+update-reference
+  update the reference category (takes quite some time)
+  [requires no query]
+
+classify
+  classify each message matching the given query (to
+  test the trained categories)
 
 Initial tagging
 ---------------
@@ -26,6 +34,8 @@ Basic tagging stuff requires no configuration, just run
 .. code-block:: sh
 
     $ afew --tag --new
+    # or to tag *all* messages
+    $ afew --tag --all
 
 To do this automatically you can add the following hook into your
 `~/.offlineimaprc`:
@@ -33,6 +43,16 @@ To do this automatically you can add the following hook into your
 .. code-block:: ini
 
     postsynchook = ionice -c 3 chrt --idle 0 /bin/sh -c "notmuch new && afew --tag --new"
+
+There is a lot more to say about general filter :doc:`configuration`
+and the different :doc:`filters` provided by afew.
+
+Simulation
+^^^^^^^^^^
+
+Adding `--dry-run` to any `--tag` or `--sync-tags` action prevents
+modification of the notmuch db. Add some `-vv` goodness to see some
+action.
 
 Move Mode
 ---------
@@ -56,14 +76,14 @@ traditional mail server. Tag your mails with notmuch, call afew
 in your webinterface/GUI-client at work.
 
 For information on how to configure rules for move mode, what you can
-do with it and what you can't, please refer to `docs/move_mode`.
+do with it and what you can't, please refer to :doc:`move_mode`.
 
-Simulation
-----------
+Classify
+--------
 
-Adding `--dry-run` to any `--tag` or `--sync-tags` action prevents
-modification of the notmuch db. Add some `-vv` goodness to see some
-action.
+The `--learn`, `--update`, `--update-references` and `--classify` actions
+all relate to learning how to filter your email.  See the
+:doc:`classification` page for details.
 
 Commandline help
 ----------------
