@@ -25,9 +25,10 @@ Contents:
    :maxdepth: 2
 
    installation
+   commandline
    configuration
    filters
-   commandline
+   move_mode
    classification
    implementation
 

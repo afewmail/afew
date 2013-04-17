@@ -80,23 +80,6 @@ by removing the new tag before you get to the InboxFilter:
     tags = -new;+boss
     message = Message from above
 
-Configuring Moving of Mail
---------------------------
-
-You can configure rules to sort mails on your disk, if you want:
-
-.. TODO: explain these options in more detail.
-
-.. code-block:: ini
-
-    [MailMover]
-    folders = INBOX Junk
-    max_age = 15
-
-    # rules
-    INBOX = 'tag:spam':Junk 'NOT tag:inbox':Archive
-    Junk = 'NOT tag:spam AND tag:inbox':INBOX 'NOT tag:spam':Archive
-
 Full Sample Config
 ------------------
 
