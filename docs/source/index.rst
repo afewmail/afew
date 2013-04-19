@@ -31,6 +31,7 @@ Contents:
    filters
    move_mode
    classification
+   extending
    implementation
 
 Indices and tables
