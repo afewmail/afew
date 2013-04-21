@@ -24,12 +24,21 @@ from ..Filter import Filter, register_filter
 @register_filter
 class ListMailsFilter(Filter):
     message = 'Tagging mailing list posts'
-    query = 'NOT tag:lists'
+    list_tag = 'lists'
+    query = 'NOT tag:%s' % list_tag
+
+    def __init__(self, whitelist=''):
+        super(ListMailsFilter, self).__init__()
+        self.whitelist = set(whitelist.split())
 
     list_id_re = re.compile(r"<(?P<list_id>[a-z0-9!#$%&'*+/=?^_`{|}~-]+)\.", re.I)
     def handle_message(self, message):
         list_id_header = message.get_header('List-Id')
         match = self.list_id_re.search(list_id_header)
 
-        if match:
-            self.add_tags(message, 'lists', match.group('list_id'))
+        if not match:
+            return
+
+        list_id = match.group('list_id')
+        self.add_tags(message, *([self.list_tag] + ([list_id] if
+            list_id in self.whitelist or not self.whitelist else [])))
