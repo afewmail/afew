@@ -63,7 +63,6 @@ class MailMover(Database):
                     move(message.get_filename(), destination)
                 else:
                     self.__log_move_action(message, maildir, rules[query], self.dry_run)
-                break
 
         # update notmuch database
         logging.info("updating database")
