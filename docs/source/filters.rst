@@ -49,23 +49,29 @@ ListMailsFilter
 This filter looks for the `List-Id` header, and if it finds it, adds the list
 name as a tag, together with the tag **lists**.
 
-ArchiveSentMailsFilter
-----------------------
+SentMailsFilter
+---------------
 
 The settings you can use are:
 
 * sent_tag = <tag>
 
  * Add <tag> to all mails sent from one of your configured mail addresses.
- * The default is to add no tag.
- * Emails filtered by this filter have the **new** tag removed, so will not have
-   the **inbox** tag added by the InboxFilter.
+ * The default is to add no tag, so you need to specify something.
  * You may e.g. use it to tag all mails sent by you as 'sent'. This may make
    special sense in conjunction with a mail client that is able to not only search
    for threads but individual mails as well.
 
 More accurately, it looks for emails that are from one of your addresses
 *and not* to any of your addresses.
+
+ArchiveSentMailsFilter
+----------------------
+
+It extends `SentMailsFilter` with the following feature:
+
+ * Emails filtered by this filter have the **new** tag removed, so will not have
+   the **inbox** tag added by the InboxFilter.
 
 InboxFilter
 -----------
