@@ -17,6 +17,8 @@ from __future__ import print_function, absolute_import, unicode_literals
 # OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 #
 
+import re
+
 from ..utils import filter_compat
 from ..Filter import Filter, register_filter
 from ..NotmuchSettings import notmuch_settings
@@ -24,6 +26,7 @@ from ..NotmuchSettings import notmuch_settings
 @register_filter
 class SentMailsFilter(Filter):
     message = 'Tagging all mails sent by myself to others'
+    _bare_email_re = re.compile(r"[^<]*<(?P<email>[^@<>]+@[^@<>]+)>")
 
     def __init__(self, sent_tag='', to_transforms=''):
         super(SentMailsFilter, self).__init__()
@@ -42,8 +45,52 @@ class SentMailsFilter(Filter):
         )
 
         self.sent_tag = sent_tag
+        self.to_transforms = to_transforms
+        if to_transforms:
+            self.__email_to_tag = self.__build_email_to_tag(to_transforms)
 
 
     def handle_message(self, message):
         if self.sent_tag:
             self.add_tags(message, self.sent_tag)
+        if self.to_transforms:
+            for header in ('To', 'Cc', 'Bcc'):
+                email = self.__get_bare_email(message.get_header(header))
+                tag = self.__pick_tag(email)
+                if tag:
+                    self.add_tags(message, tag)
+                    break
+
+
+    def __build_email_to_tag(self, to_transforms):
+        email_to_tag = dict()
+
+        for rule in to_transforms.split():
+            if ':' in rule:
+                email, tag = rule.split(':')
+                email_to_tag[email] = tag
+            else:
+                email = rule
+                email_to_tag[email] = ''
+
+        return email_to_tag
+
+
+    def __get_bare_email(self, email):
+        if not '<' in email:
+            return email
+        else:
+            match = self._bare_email_re.search(email)
+            return match.group('email')
+
+
+    def __pick_tag(self, email):
+        if email in self.__email_to_tag:
+            tag = self.__email_to_tag[email]
+            if tag:
+                return tag
+            else:
+                user_part, domain_part = email.split('@')
+                return user_part
+
+        return ''
