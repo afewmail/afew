@@ -47,7 +47,7 @@ class SentMailsFilter(Filter):
         self.sent_tag = sent_tag
         self.to_transforms = to_transforms
         if to_transforms:
-            self.__email_to_tag = self.__build_email_to_tag(to_transforms)
+            self.__email_to_tags = self.__build_email_to_tags(to_transforms)
 
 
     def handle_message(self, message):
@@ -56,24 +56,24 @@ class SentMailsFilter(Filter):
         if self.to_transforms:
             for header in ('To', 'Cc', 'Bcc'):
                 email = self.__get_bare_email(message.get_header(header))
-                tag = self.__pick_tag(email)
-                if tag:
+                for tag in self.__pick_tags(email):
                     self.add_tags(message, tag)
+                else:
                     break
 
 
-    def __build_email_to_tag(self, to_transforms):
-        email_to_tag = dict()
+    def __build_email_to_tags(self, to_transforms):
+        email_to_tags = dict()
 
         for rule in to_transforms.split():
             if ':' in rule:
-                email, tag = rule.split(':')
-                email_to_tag[email] = tag
+                email, tags = rule.split(':')
+                email_to_tags[email] = tuple(tags.split(';'))
             else:
                 email = rule
-                email_to_tag[email] = ''
+                email_to_tags[email] = tuple()
 
-        return email_to_tag
+        return email_to_tags
 
 
     def __get_bare_email(self, email):
@@ -84,13 +84,13 @@ class SentMailsFilter(Filter):
             return match.group('email')
 
 
-    def __pick_tag(self, email):
-        if email in self.__email_to_tag:
-            tag = self.__email_to_tag[email]
-            if tag:
-                return tag
+    def __pick_tags(self, email):
+        if email in self.__email_to_tags:
+            tags = self.__email_to_tags[email]
+            if tags:
+                return tags
             else:
                 user_part, domain_part = email.split('@')
-                return user_part
+                return (user_part, )
 
-        return ''
+        return tuple()

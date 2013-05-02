@@ -69,9 +69,10 @@ The settings you can use are:
 
  * Transform `To`/`Cc`/`Bcc` e-mail addresses to tags according to the
    specified rules. <transformation rules> is a space separated list consisting
-   of 'user_part@domain_part:tag' style pairs. The colon separates the e-mail
-   address to be transformed from the tag it is to be transformed into. ':tag'
-   is optional and if empty, 'user_part' is used as tag.
+   of 'user_part@domain_part:tags' style pairs. The colon separates the e-mail
+   address to be transformed from tags it is to be transformed into. ':tags'
+   is optional and if empty, 'user_part' is used as tag.  'tags' can be
+   a single tag or semi-colon separated list of tags.
 
  * It can be used for example to easily tag posts sent to mailing lists which
    at this stage don't have `List-Id` field.
