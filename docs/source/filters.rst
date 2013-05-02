@@ -49,23 +49,41 @@ ListMailsFilter
 This filter looks for the `List-Id` header, and if it finds it, adds the list
 name as a tag, together with the tag **lists**.
 
-ArchiveSentMailsFilter
-----------------------
+SentMailsFilter
+---------------
 
 The settings you can use are:
 
 * sent_tag = <tag>
 
  * Add <tag> to all mails sent from one of your configured mail addresses.
- * The default is to add no tag.
- * Emails filtered by this filter have the **new** tag removed, so will not have
-   the **inbox** tag added by the InboxFilter.
+ * The default is to add no tag, so you need to specify something.
  * You may e.g. use it to tag all mails sent by you as 'sent'. This may make
    special sense in conjunction with a mail client that is able to not only search
    for threads but individual mails as well.
 
-More accurately, it looks for emails that are from one of your addresses
-*and not* to any of your addresses.
+   More accurately, it looks for emails that are from one of your addresses
+   *and not* to any of your addresses.
+
+* to_transforms = <transformation rules>
+
+ * Transform `To`/`Cc`/`Bcc` e-mail addresses to tags according to the
+   specified rules. <transformation rules> is a space separated list consisting
+   of 'user_part@domain_part:tags' style pairs. The colon separates the e-mail
+   address to be transformed from tags it is to be transformed into. ':tags'
+   is optional and if empty, 'user_part' is used as tag.  'tags' can be
+   a single tag or semi-colon separated list of tags.
+
+ * It can be used for example to easily tag posts sent to mailing lists which
+   at this stage don't have `List-Id` field.
+ 
+ArchiveSentMailsFilter
+----------------------
+
+It extends `SentMailsFilter` with the following feature:
+
+ * Emails filtered by this filter have the **new** tag removed, so will not have
+   the **inbox** tag added by the InboxFilter.
 
 InboxFilter
 -----------
