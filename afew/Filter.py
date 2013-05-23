@@ -33,11 +33,13 @@ def register_filter(klass):
 @register_filter
 class Filter(Database):
     message = 'No message specified for filter'
-    tags = ''
+    tags = []
     tag_blacklist = ''
 
     def __init__(self, **kwargs):
         super(Filter, self).__init__()
+        if 'tags' not in kwargs:
+            kwargs['tags'] = self.tags
         for key, value in kwargs.items():
             setattr(self, key, value)
 
