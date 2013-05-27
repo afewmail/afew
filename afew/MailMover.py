@@ -63,7 +63,6 @@ class MailMover(Database):
                     move(message.get_filename(), destination)
                 else:
                     self.__log_move_action(message, maildir, rules[query], self.dry_run)
-                break
 
         # update notmuch database
         logging.info("updating database")
@@ -100,7 +99,7 @@ class MailMover(Database):
             level = logging.INFO
             prefix = 'I would move mail'
         logging.log(level, prefix)
-        logging.log(level, "    {}".format(get_message_summary(message)))
+        logging.log(level, "    {}".format(get_message_summary(message).encode('utf8')))
         logging.log(level, "from '{}' to '{}'".format(source, destination))
         #logging.debug("rule: '{}' in [{}]".format(tag, message.get_tags()))
 
