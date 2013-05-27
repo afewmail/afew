@@ -17,33 +17,17 @@ from __future__ import print_function, absolute_import, unicode_literals
 # OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 #
 
-from ..utils import filter_compat
-from ..Filter import Filter, register_filter
-from ..NotmuchSettings import notmuch_settings, get_notmuch_new_tags
+from ..Filter import register_filter
+from ..filters.SentMailsFilter import SentMailsFilter
+from ..NotmuchSettings import get_notmuch_new_tags
 
 @register_filter
-class ArchiveSentMailsFilter(Filter):
+class ArchiveSentMailsFilter(SentMailsFilter):
     message = 'Archiving all mails sent by myself to others'
 
     def __init__(self, database, sent_tag=''):
-        super(ArchiveSentMailsFilter, self).__init__(database)
-
-        my_addresses = set()
-        my_addresses.add(notmuch_settings.get('user', 'primary_email'))
-        if notmuch_settings.has_option('user', 'other_email'):
-            my_addresses.update(filter_compat(None, notmuch_settings.get('user', 'other_email').split(';')))
-
-        self.query = (
-            '(' + 
-            ' OR '.join('from:"%s"' % address for address in my_addresses)
-            + ') AND NOT (' +
-            ' OR '.join('to:"%s"'   % address for address in my_addresses)
-            + ')'
-        )
-        self.sent_tag = sent_tag
-
+        super(ArchiveSentMailsFilter, self).__init__(database, sent_tag)
 
     def handle_message(self, message):
-        if self.sent_tag:
-            self.add_tags(message, self.sent_tag)
+        super(ArchiveSentMailsFilter, self).handle_message(message)
         self.remove_tags(message, *get_notmuch_new_tags())
