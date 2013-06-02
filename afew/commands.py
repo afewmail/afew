@@ -200,4 +200,4 @@ def main():
         else:
             options.enable_filters = configured_filter_chain
 
-        main(options, database, query_string)
+        inner_main(options, database, query_string)

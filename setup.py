@@ -31,7 +31,8 @@ setup(
     },
     install_requires=[
         'notmuch',
-        'subprocess32'
+        'subprocess32',
+        'chardet',
     ],
     provides='afew'
 )
