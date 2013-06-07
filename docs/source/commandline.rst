@@ -8,6 +8,9 @@ choose from are:
 tag
   run the tag filters.  See :ref:`Initial tagging`.
 
+watch
+  continuously monitor the mailbox for new files
+
 move-mails
   move mail files between maildir folders
 
@@ -103,6 +106,7 @@ The full set of options is:
         specified simultaniously).
 
         -t, --tag           run the tag filters
+        -w, --watch         continuously monitor the mailbox for new files
         -l LEARN, --learn=LEARN
                             train the category with the messages matching the
                             given query
