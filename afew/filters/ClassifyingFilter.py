@@ -20,10 +20,9 @@ from __future__ import print_function, absolute_import, unicode_literals
 import logging
 
 from ..DBACL import DBACL as Classifier, ClassificationError
-from ..Filter import Filter, register_filter
+from ..Filter import Filter
 from ..utils import extract_mail_body
 
-@register_filter
 class ClassifyingFilter(Filter):
     message = 'Tagging via classification'
     def __init__(self, database, *args, **kwargs):

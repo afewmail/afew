@@ -20,10 +20,10 @@ from __future__ import print_function, absolute_import, unicode_literals
 import re
 
 from ..utils import filter_compat
-from ..Filter import Filter, register_filter
+from ..Filter import Filter
 from ..NotmuchSettings import notmuch_settings
 
-@register_filter
+
 class SentMailsFilter(Filter):
     message = 'Tagging all mails sent by myself to others'
     _bare_email_re = re.compile(r"[^<]*<(?P<email>[^@<>]+@[^@<>]+)>")

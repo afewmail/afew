@@ -17,12 +17,12 @@ from __future__ import print_function, absolute_import, unicode_literals
 # OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 #
 
-from ..Filter import Filter, register_filter
+from ..Filter import Filter
 from ..NotmuchSettings import notmuch_settings
 import re
 import logging
 
-@register_filter
+
 class FolderNameFilter(Filter):
     message = 'Tags all new messages with their folder'
 

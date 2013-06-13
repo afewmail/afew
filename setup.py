@@ -22,12 +22,25 @@ from setuptools import setup, find_packages
 setup(
     name='afew',
     packages=find_packages(),
+    test_suite='afew.tests',
     package_data={
         'afew': ['defaults/afew.config']
     },
     entry_points={
         'console_scripts': [
-            'afew = afew.commands:main']
+            'afew = afew.commands:main'],
+        'afew.filter': [
+            'Filter = afew.Filter:Filter',
+            'ArchiveSentMailsFilter = afew.filters.ArchiveSentMailsFilter:ArchiveSentMailsFilter',
+            'ClassifyingFilter = afew.filters.ClassifyingFilter:ClassifyingFilter',
+            'FolderNameFilter = afew.filters.FolderNameFilter:FolderNameFilter',
+            'HeaderMatchingFilter = afew.filters.HeaderMatchingFilter:HeaderMatchingFilter',
+            'InboxFilter = afew.filters.InboxFilter:InboxFilter',
+            'KillThreadsFilter = afew.filters.KillThreadsFilter:KillThreadsFilter',
+            'ListMailsFilter = afew.filters.ListMailsFilter:ListMailsFilter',
+            'SentMailsFilter = afew.filters.SentMailsFilter:SentMailsFilter',
+            'SpamFilter = afew.filters.SpamFilter:SpamFilter',
+        ],
     },
     install_requires=[
         'notmuch',
