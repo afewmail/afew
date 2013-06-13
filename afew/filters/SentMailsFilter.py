@@ -20,7 +20,7 @@ from __future__ import print_function, absolute_import, unicode_literals
 import re
 
 from ..utils import filter_compat
-from ..Filter import Filter
+from .BaseFilter import Filter
 from ..NotmuchSettings import notmuch_settings
 
 

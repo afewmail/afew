@@ -27,7 +27,7 @@ import optparse
 from afew.Database import Database
 from afew.main import main as inner_main
 from afew.utils import filter_compat
-from afew.Filter import all_filters
+from afew.FilterRegistry import all_filters
 from afew.Settings import user_config_dir, get_filter_chain
 from afew.Settings import get_mail_move_rules, get_mail_move_age
 from afew.NotmuchSettings import read_notmuch_settings, get_notmuch_new_query

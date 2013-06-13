@@ -17,7 +17,7 @@ from __future__ import print_function, absolute_import, unicode_literals
 # OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 #
 
-from ..Filter import Filter
+from .BaseFilter import Filter
 
 
 class KillThreadsFilter(Filter):

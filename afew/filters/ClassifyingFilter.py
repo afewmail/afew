@@ -20,7 +20,7 @@ from __future__ import print_function, absolute_import, unicode_literals
 import logging
 
 from ..DBACL import DBACL as Classifier, ClassificationError
-from ..Filter import Filter
+from .BaseFilter import Filter
 from ..utils import extract_mail_body
 
 class ClassifyingFilter(Filter):

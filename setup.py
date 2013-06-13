@@ -30,7 +30,7 @@ setup(
         'console_scripts': [
             'afew = afew.commands:main'],
         'afew.filter': [
-            'Filter = afew.Filter:Filter',
+            'Filter = afew.filters.BaseFilter:Filter',
             'ArchiveSentMailsFilter = afew.filters.ArchiveSentMailsFilter:ArchiveSentMailsFilter',
             'ClassifyingFilter = afew.filters.ClassifyingFilter:ClassifyingFilter',
             'FolderNameFilter = afew.filters.FolderNameFilter:FolderNameFilter',
