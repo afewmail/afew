@@ -57,7 +57,7 @@ class DBACL(Classifier):
     }
 
     def _call_dbacl(self, args, **kwargs):
-        command_line = ['dbacl'] + args
+        command_line = ['dbacl', '-T', 'email'] + args
         logging.debug('executing %r' % command_line)
         return subprocess.Popen(
             command_line,
