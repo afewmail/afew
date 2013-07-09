@@ -76,7 +76,7 @@ The settings you can use are:
 
  * It can be used for example to easily tag posts sent to mailing lists which
    at this stage don't have `List-Id` field.
- 
+
 ArchiveSentMailsFilter
 ----------------------
 
@@ -179,7 +179,7 @@ Let's say you like the SpamFilter, but it is way too polite
     [SpamFilter.0] # note the index
     message = meh
 
-The index is required iff you want to create a new SpamFilter *in
+The index is required if you want to create a new SpamFilter *in
 addition to* the default one. If you need just one customized
 SpamFilter, you can drop the index and customize the default instance.
 
@@ -197,3 +197,8 @@ and create an object or two
     [ShitFilter.0]
     [ShitFilter.1]
     message = Me hatez it too.
+
+You can provide your own filter implementations too. You have to register
+your filters via entry points. See the afew setup.py for examples on how
+to register your filters. To add your filters, you just need to install your
+package in the context of the afew application.

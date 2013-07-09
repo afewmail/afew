@@ -17,17 +17,12 @@ from __future__ import print_function, absolute_import, unicode_literals
 # OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 #
 
-import logging
 import collections
+import logging
 
 import notmuch
 
-all_filters = dict()
-def register_filter(klass):
-    all_filters[klass.__name__] = klass
-    return klass
 
-@register_filter
 class Filter(object):
     message = 'No message specified for filter'
     tags = []

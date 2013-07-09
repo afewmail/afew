@@ -17,10 +17,10 @@ from __future__ import print_function, absolute_import, unicode_literals
 # OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 #
 
-from ..Filter import Filter, register_filter
+from .BaseFilter import Filter
 from ..NotmuchSettings import get_notmuch_new_tags, get_notmuch_new_query
 
-@register_filter
+
 class InboxFilter(Filter):
     message = 'Retags all messages not tagged as junk or killed as inbox'
     tags = ['+inbox']

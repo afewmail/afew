@@ -17,11 +17,9 @@ from __future__ import print_function, absolute_import, unicode_literals
 # OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 #
 
-from ..Filter import register_filter
 from ..filters.SentMailsFilter import SentMailsFilter
 from ..NotmuchSettings import get_notmuch_new_tags
 
-@register_filter
 class ArchiveSentMailsFilter(SentMailsFilter):
     message = 'Archiving all mails sent by myself to others'
 

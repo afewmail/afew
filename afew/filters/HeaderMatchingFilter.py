@@ -1,11 +1,10 @@
 # coding=utf-8
 from __future__ import print_function, absolute_import, unicode_literals
-from ..Filter import Filter, register_filter
+from .BaseFilter import Filter
 
 import re
 
 
-@register_filter
 class HeaderMatchingFilter(Filter):
     message = 'Tagging based on specific header values matching a given RE'
     header = None

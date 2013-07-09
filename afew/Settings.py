@@ -22,7 +22,7 @@ import re
 import collections
 
 from .configparser import SafeConfigParser
-from .Filter import all_filters, register_filter
+from afew.FilterRegistry import all_filters
 
 user_config_dir = os.path.join(os.environ.get('XDG_CONFIG_HOME',
                                               os.path.expanduser('~/.config')),
@@ -65,13 +65,12 @@ def get_filter_chain(database):
                 raise NameError('Parent class %r not found in filter type definition %r.' % (match.group('parent_class'), section))
 
             new_type = type(match.group('name'), (parent_class, ), kwargs)
-            register_filter(new_type)
+            all_filters[math.group('name')] = new_type
         else:
             try:
                 klass = all_filters[match.group('name')]
             except KeyError:
                 raise NameError('Filter type %r not found.' % match.group('name'))
-
             filter_chain.append(klass(database, **kwargs))
 
     return filter_chain
