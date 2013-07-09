@@ -17,11 +17,9 @@ from __future__ import print_function, absolute_import, unicode_literals
 # OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 #
 
-from ..Filter import register_filter
 from .HeaderMatchingFilter import HeaderMatchingFilter
 
 
-@register_filter
 class ListMailsFilter(HeaderMatchingFilter):
     message = 'Tagging mailing list posts'
     query = 'NOT tag:lists'

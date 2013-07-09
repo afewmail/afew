@@ -17,9 +17,9 @@ from __future__ import print_function, absolute_import, unicode_literals
 # OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 #
 
-from ..Filter import Filter, register_filter
+from .BaseFilter import Filter
 
-@register_filter
+
 class KillThreadsFilter(Filter):
     message = 'Looking for messages in killed threads that are not yet killed'
     query = 'NOT tag:killed'

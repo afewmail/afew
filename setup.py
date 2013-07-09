@@ -17,21 +17,35 @@
 # OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 #
 
-import distutils.core
+from setuptools import setup, find_packages
 
-distutils.core.setup(
-    name = 'afew',
-    packages = [
-        'afew',
-        'afew.filters',
-    ],
-    package_data = {
+setup(
+    name='afew',
+    packages=find_packages(),
+    test_suite='afew.tests',
+    package_data={
         'afew': ['defaults/afew.config']
     },
-    scripts = ['bin/afew'],
-    requires = [
+    entry_points={
+        'console_scripts': [
+            'afew = afew.commands:main'],
+        'afew.filter': [
+            'Filter = afew.filters.BaseFilter:Filter',
+            'ArchiveSentMailsFilter = afew.filters.ArchiveSentMailsFilter:ArchiveSentMailsFilter',
+            'ClassifyingFilter = afew.filters.ClassifyingFilter:ClassifyingFilter',
+            'FolderNameFilter = afew.filters.FolderNameFilter:FolderNameFilter',
+            'HeaderMatchingFilter = afew.filters.HeaderMatchingFilter:HeaderMatchingFilter',
+            'InboxFilter = afew.filters.InboxFilter:InboxFilter',
+            'KillThreadsFilter = afew.filters.KillThreadsFilter:KillThreadsFilter',
+            'ListMailsFilter = afew.filters.ListMailsFilter:ListMailsFilter',
+            'SentMailsFilter = afew.filters.SentMailsFilter:SentMailsFilter',
+            'SpamFilter = afew.filters.SpamFilter:SpamFilter',
+        ],
+    },
+    install_requires=[
         'notmuch',
-        'subprocess (>= 2.7)'
+        'subprocess32',
+        'chardet',
     ],
-    provides = 'afew'
+    provides='afew'
 )
