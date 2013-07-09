@@ -17,8 +17,8 @@ from __future__ import print_function, absolute_import, unicode_literals
 # OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 #
 
-import sys
 import random
+import sys
 
 from .DBACL import DBACL as Classifier
 from .MailMover import MailMover
@@ -31,6 +31,7 @@ except ImportError:
 else:
     watch_available = True
 
+
 def main(options, database, query_string):
     if options.tag:
         for filter_ in options.enable_filters:
@@ -41,7 +42,7 @@ def main(options, database, query_string):
             sys.exit('Sorry, this feature requires Linux and pyinotify')
         watch_for_new_files(options, database,
                             quick_find_dirs_hack(database.db_path))
-    elif options.learn != False:
+    elif options.learn is not False:
         classifier = Classifier()
         classifier.learn(
             options.learn,

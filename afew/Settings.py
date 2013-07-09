@@ -71,7 +71,6 @@ def get_filter_chain(database):
                 klass = all_filters[match.group('name')]
             except KeyError:
                 raise NameError('Filter type %r not found.' % match.group('name'))
-
             filter_chain.append(klass(database, **kwargs))
 
     return filter_chain

@@ -17,21 +17,22 @@
 # OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 #
 
-import distutils.core
+from setuptools import setup, find_packages
 
-distutils.core.setup(
-    name = 'afew',
-    packages = [
-        'afew',
-        'afew.filters',
-    ],
-    package_data = {
+setup(
+    name='afew',
+    packages=find_packages(),
+    package_data={
         'afew': ['defaults/afew.config']
     },
-    scripts = ['bin/afew'],
-    requires = [
+    entry_points={
+        'console_scripts': [
+            'afew = afew.commands:main']
+    },
+    install_requires=[
         'notmuch',
-        'subprocess (>= 2.7)'
+        'subprocess32',
+        'chardet',
     ],
-    provides = 'afew'
+    provides='afew'
 )

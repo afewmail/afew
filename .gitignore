@@ -1,3 +1,6 @@
 *.py[co]
 /dist
 /build
+bin/
+include/
+lib/
