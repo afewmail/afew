@@ -108,19 +108,19 @@ Some examples are:
 
 .. code-block:: ini
 
-    [HeaderMatchingFilter.spam]
+    [HeaderMatchingFilter.1]
     header = X-Spam-Flag
     pattern = YES
     tags = +spam
 
-    [HeaderMatchingFilter.lists]
+    [HeaderMatchingFilter.2]
     header = List-Id
     pattern = <(?P<list_id>.*)>
     tags = +lists +{list_id}
 
-    [HeaderMatchingFilter.redmine]
+    [HeaderMatchingFilter.3]
     header = X-Redmine-Project
-    pattern = <(?P<project>.*)>
+    pattern = (?P<project>.*)
     tags = +redmine +{project}
 
 SpamFilter and ListMailsFilter are implemented using HeaderMatchingFilter, and are
