@@ -92,6 +92,40 @@ This removes the **new** tag, and adds the **inbox** tag, to any message that is
 killed or spam.  (The new tags are set in your notmuch config, and default to
 just **new**.)
 
+HeaderMatchingFilter
+--------------------
+
+This filter adds tags to a message if the named header matches the regular expression
+given.  The tags can be set, or based on the match.  The settings you can use are:
+
+* header = <header_name>
+* pattern = <regex_pattern>
+* tags = <tag_list>
+
+If you surround a tag with `{}` then it will be replaced with the named match.
+
+Some examples are:
+
+.. code-block:: ini
+
+    [HeaderMatchingFilter.1]
+    header = X-Spam-Flag
+    pattern = YES
+    tags = +spam
+
+    [HeaderMatchingFilter.2]
+    header = List-Id
+    pattern = <(?P<list_id>.*)>
+    tags = +lists +{list_id}
+
+    [HeaderMatchingFilter.3]
+    header = X-Redmine-Project
+    pattern = (?P<project>.*)
+    tags = +redmine +{project}
+
+SpamFilter and ListMailsFilter are implemented using HeaderMatchingFilter, and are
+only slightly more complicated than the above examples.
+
 FolderNameFilter
 ----------------
 
