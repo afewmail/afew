@@ -11,7 +11,7 @@ classification.  On Debian/Ubuntu systems you can install these by doing:
 
 .. code-block:: sh
 
-    $ sudo aptitude install notmuch python-notmuch dbacl
+    $ sudo aptitude install notmuch python-notmuch dbacl python-dev python-setuptools
 
 Unprivileged Install
 --------------------
