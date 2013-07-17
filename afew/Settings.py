@@ -65,7 +65,7 @@ def get_filter_chain(database):
                 raise NameError('Parent class %r not found in filter type definition %r.' % (match.group('parent_class'), section))
 
             new_type = type(match.group('name'), (parent_class, ), kwargs)
-            all_filters[math.group('name')] = new_type
+            all_filters[match.group('name')] = new_type
         else:
             try:
                 klass = all_filters[match.group('name')]
