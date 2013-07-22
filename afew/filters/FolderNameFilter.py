@@ -21,6 +21,7 @@ from .BaseFilter import Filter
 from ..NotmuchSettings import notmuch_settings
 import re
 import logging
+import shlex
 
 
 class FolderNameFilter(Filter):
@@ -74,7 +75,7 @@ class FolderNameFilter(Filter):
         Parses the transformation rules specified in the config file.
         '''
         transformations = dict()
-        for rule in transformation_description.split():
+        for rule in shlex.split(transformation_description):
             folder, tag = rule.split(':')
             transformations[folder] = tag
         return transformations
