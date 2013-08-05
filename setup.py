@@ -18,6 +18,13 @@
 #
 
 from setuptools import setup, find_packages
+from sys import version_info
+
+def get_requires():
+    if version_info >= (3, 0):
+        return ['notmuch', 'chardet']
+    else:
+        return ['notmuch', 'subprocess32', 'chardet']
 
 setup(
     name='afew',
@@ -42,10 +49,6 @@ setup(
             'SpamFilter = afew.filters.SpamFilter:SpamFilter',
         ],
     },
-    install_requires=[
-        'notmuch',
-        'subprocess32',
-        'chardet',
-    ],
+    install_requires=get_requires(),
     provides='afew'
 )
