@@ -50,5 +50,5 @@ setup(
         ],
     },
     install_requires=get_requires(),
-    provides='afew'
+    provides=['afew']
 )
