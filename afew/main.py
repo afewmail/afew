@@ -78,8 +78,9 @@ def main(options, database, query_string):
 
             print('%s --> %s' % (message, category))
     elif options.move_mails:
-        mover = MailMover(options.mail_move_age, options.dry_run)
         for maildir, rules in options.mail_move_rules.items():
+            mover = MailMover(options.mail_move_age, options.dry_run)
             mover.move(maildir, rules)
+            mover.close()
     else:
         sys.exit('Weird... please file a bug containing your command line.')
