@@ -19,7 +19,7 @@
 
 import notmuch
 import logging
-from shutil import move
+import os, shutil
 from subprocess import check_call, CalledProcessError
 
 from .Database import Database
@@ -60,7 +60,17 @@ class MailMover(Database):
             for message in messages:
                 if not self.dry_run:
                     self.__log_move_action(message, maildir, rules[query], self.dry_run)
-                    move(message.get_filename(), destination)
+                    try:
+                        shutil.move(message.get_filename(), destination)
+                    except shutil.Error as e:
+                        # this is ugly, but shutil does not provide more finely individuated errors
+                        # TODO: switch to os.replace or similar?
+                        if str(e).endswith("already exists"):
+                            # cleanup: remove a message from source location if it
+                            # already existed at its destination
+                            os.remove(message.get_filename())
+                        else:
+                            raise
                 else:
                     self.__log_move_action(message, maildir, rules[query], self.dry_run)
 
