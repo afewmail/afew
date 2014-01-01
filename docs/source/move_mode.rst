@@ -35,7 +35,8 @@ Then you have to specify rules that define move actions of the form
     <src> = ['<qry>':<dst>]+
 
 Every mail in the `<src>` folder that matches a `<qry>` will be moved into the
-assigned `<dst>` folder.
+`<dst>` folder associated with that query.  A message that matches
+multiple queries will be copied to multiple destinations.
 
 You can bind as many rules to a maildir folder as you deem necessary. Just add
 them as elements of a (whitespace separated) list.
@@ -63,11 +64,6 @@ for combinations of attributes:
 The above rules will move all mails in `Junk` that don't have the **spam** tag
 but do have an **inbox** tag into the directory `INBOX`. All other mails not
 tagged with **spam** will be moved into `Archive`.
-
-Note how this example binds two rules to the source folder and how the sequence
-in which the rules have been specified matters: If you were to specify the
-second rule first, it would match *all* mails not tagged as 'spam' and then the
-second rule would never be triggered. More on that under 'Limitations'.
 
 Max Age
 -------
@@ -100,12 +96,8 @@ Then again, if you remove the **spam** tag and do not set an **inbox** tag, how
 would you come to expect the mail would end up in your INBOX folder after
 moving it? ;)
 
-**(2)** There is no 1:1 mapping between folders and tags. And that's a feature. If
-you tag a mail with two tags and there is a rule for each of them, the rule you
-specified first will apply.
+**(2)** There is no 1:1 mapping between folders and tags. And that's a
+feature. If you tag a mail with two tags and there is a rule for each
+of them, both rules will apply.  Your mail will be copied into two
+destination folders, then removed from its original location.
 
-**(3)** The same principle applies if you bind two rules to a source of which one is
-a prefix to the other. If rule A is more generic than rule B (as in 'easier to
-satisfy', less specific), you want to give it *after* rule B, or else it will
-consume all mails that would trigger rule B before that more specific rule may
-apply.
