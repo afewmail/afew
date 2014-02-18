@@ -59,7 +59,7 @@ class Filter(object):
     def run(self, query):
         logging.info(self.message)
 
-        if hasattr(self, 'query'):
+        if getattr(self, 'query', None):
             if query:
                 query = '(%s) AND (%s)' % (query, self.query)
             else:
