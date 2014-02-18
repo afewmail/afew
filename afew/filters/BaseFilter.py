@@ -75,16 +75,19 @@ class Filter(object):
 
     def add_tags(self, message, *tags):
         if tags:
-            logging.debug('Adding tags %s to %s' % (', '.join(tags), message))
+            logging.debug('Adding tags %s to id:%s' % (', '.join(tags),
+                                                       message.get_message_id()))
             self._add_tags[message.get_message_id()].update(tags)
 
     def remove_tags(self, message, *tags):
         if tags:
-            logging.debug('Removing tags %s from %s' % (', '.join(tags), message))
+            logging.debug('Removing tags %s from id:%s' % (', '.join(tags),
+                                                           message.get_message_id()))
             self._remove_tags[message.get_message_id()].update(tags)
 
     def flush_tags(self, message):
-        logging.debug('Removing all tags from %s' % message)
+        logging.debug('Removing all tags from id:%s' %
+                      message.get_message_id())
         self._flush_tags.append(message.get_message_id())
 
     def commit(self, dry_run=True):
