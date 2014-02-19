@@ -21,6 +21,7 @@ class HeaderMatchingFilter(Filter):
                 value = message.get_header(self.header)
                 match = self.pattern.search(value)
                 if match:
-                    sub = lambda tag: tag.format(**match.groupdict())
+                    sub = (lambda tag:
+                        tag.format(**match.groupdict()).lower())
                     self.remove_tags(message, *map(sub, self._tags_to_remove))
                     self.add_tags(message, *map(sub, self._tags_to_add))
