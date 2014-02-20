@@ -163,6 +163,10 @@ for you, this might be useful.
 
     folder transforms = Junk:spam Drafts:draft Sent:sent
 
+* folder_lowercases = true
+
+  * Use lowercase tags for all folder names
+  
 * maildir_separator = <sep>
 
  * Use <sep> to split your maildir hierarchy into individual tags.
