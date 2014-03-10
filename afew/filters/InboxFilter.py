@@ -24,7 +24,7 @@ from ..NotmuchSettings import get_notmuch_new_tags, get_notmuch_new_query
 class InboxFilter(Filter):
     message = 'Retags all messages not tagged as junk or killed as inbox'
     tags = ['+inbox']
-    tag_blacklist = 'killed spam'
+    tags_blacklist = [ 'killed', 'spam' ]
 
     @property
     def query(self):

@@ -26,10 +26,11 @@ import notmuch
 class Filter(object):
     message = 'No message specified for filter'
     tags = []
-    tag_blacklist = ''
+    tags_blacklist = []
 
     def __init__(self, database, **kwargs):
         super(Filter, self).__init__()
+
         self.database = database
         if 'tags' not in kwargs:
             kwargs['tags'] = self.tags
@@ -37,15 +38,15 @@ class Filter(object):
             setattr(self, key, value)
 
         self.flush_changes()
-        self._tags_to_add = list()
-        self._tags_to_remove = list()
+        self._tags_to_add = []
+        self._tags_to_remove = []
         for tag_action in self.tags:
             if tag_action[0] not in '+-':
                 raise ValueError('Each tag must be preceded by either + or -')
 
             (self._tags_to_add if tag_action[0] == '+' else self._tags_to_remove).append(tag_action[1:])
 
-        self._tag_blacklist = set(self.tag_blacklist.split())
+        self._tag_blacklist = set(self.tags_blacklist)
 
     def flush_changes(self):
         '''
@@ -54,7 +55,7 @@ class Filter(object):
         '''
         self._add_tags = collections.defaultdict(lambda: set())
         self._remove_tags = collections.defaultdict(lambda: set())
-        self._flush_tags = list()
+        self._flush_tags = []
 
     def run(self, query):
         logging.info(self.message)
