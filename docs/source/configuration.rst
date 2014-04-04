@@ -56,9 +56,9 @@ tags
   preceded by a **+** and tags to remove are preceded by a **-**.  Multiple tags
   are separated by semicolons.
 
-tag_blacklist
+tags_blacklist
   if the message has one of these tags, don't add `tags` to it. Tags are
-  separated by spaces.
+  separated by semicolons.
 
 So to add the **deer** tag to any message to or from `antelope@deer.com` you
 could do:

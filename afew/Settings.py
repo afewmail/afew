@@ -35,8 +35,8 @@ settings.optionxform = str
 settings.readfp(open(os.path.join(os.path.dirname(__file__), 'defaults', 'afew.config')))
 settings.read(os.path.join(user_config_dir, 'config'))
 
-'All the values for keys listed here are interpreted as ';'-delimited lists'
-value_is_a_list = ['tags']
+# All the values for keys listed here are interpreted as ;-delimited lists
+value_is_a_list = ['tags', 'tags_blacklist']
 mail_mover_section = 'MailMover'
 
 section_re = re.compile(r'^(?P<name>[a-z_][a-z0-9_]*)(\((?P<parent_class>[a-z_][a-z0-9_]*)\)|\.(?P<index>\d+))?$', re.I)
