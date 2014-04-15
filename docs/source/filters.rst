@@ -46,8 +46,8 @@ all replies to a particular thread.
 ListMailsFilter
 ---------------
 
-This filter looks for the `List-Id` header, and if it finds it, adds the list
-name as a tag, together with the tag **lists**.
+This filter looks for the `List-Id` header, and if it finds it, adds a tag
+**lists** and a tag named **lists/<list-id>**.
 
 SentMailsFilter
 ---------------
