@@ -5,7 +5,7 @@ Filter behaviour change
 
   As of commit d98a0cd0d1f37ee64d03be75e75556cff9f32c29, the ListMailsFilter
   does not add a tag named `list-id `anymore, but a new one called
-  `lists/list-id`.
+  `lists/<list-id>`.
 
 afew 0.1pre (2012-02-10)
 ========================
