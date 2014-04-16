@@ -109,12 +109,12 @@ options_group.add_option(
     help="don't change the db [default: %default]"
 )
 options_group.add_option(
-    '-R', '--reference-set-size', default=1000,
+    '-R', '--reference-set-size', type='int', default=1000,
     help='size of the reference set [default: %default]'
 )
 
 options_group.add_option(
-    '-T', '--reference-set-timeframe', default=30, metavar='DAYS',
+    '-T', '--reference-set-timeframe', type='int', default=30, metavar='DAYS',
     help='do not use mails older than DAYS days [default: %default]'
 )
 
