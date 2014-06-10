@@ -31,6 +31,9 @@ class Filter(object):
     def __init__(self, database, **kwargs):
         super(Filter, self).__init__()
 
+        self.log = logging.getLogger('{}.{}'.format(
+            self.__module__, self.__class__.__name__))
+
         self.database = database
         if 'tags' not in kwargs:
             kwargs['tags'] = self.tags
@@ -58,7 +61,7 @@ class Filter(object):
         self._flush_tags = []
 
     def run(self, query):
-        logging.info(self.message)
+        self.log.info(self.message)
 
         if getattr(self, 'query', None):
             if query:
@@ -76,18 +79,18 @@ class Filter(object):
 
     def add_tags(self, message, *tags):
         if tags:
-            logging.debug('Adding tags %s to id:%s' % (', '.join(tags),
+            self.log.debug('Adding tags %s to id:%s' % (', '.join(tags),
                                                        message.get_message_id()))
             self._add_tags[message.get_message_id()].update(tags)
 
     def remove_tags(self, message, *tags):
         if tags:
-            logging.debug('Removing tags %s from id:%s' % (', '.join(tags),
+            self.log.debug('Removing tags %s from id:%s' % (', '.join(tags),
                                                            message.get_message_id()))
             self._remove_tags[message.get_message_id()].update(tags)
 
     def flush_tags(self, message):
-        logging.debug('Removing all tags from id:%s' %
+        self.log.debug('Removing all tags from id:%s' %
                       message.get_message_id())
         self._flush_tags.append(message.get_message_id())
 
@@ -101,9 +104,9 @@ class Filter(object):
             return
 
         if dry_run:
-            logging.info('I would commit changes to %i messages' % len(dirty_messages))
+            self.log.info('I would commit changes to %i messages' % len(dirty_messages))
         else:
-            logging.info('Committing changes to %i messages' % len(dirty_messages))
+            self.log.info('Committing changes to %i messages' % len(dirty_messages))
             db = self.database.open(rw=True)
 
             for message_id in dirty_messages:
@@ -120,3 +123,4 @@ class Filter(object):
                         message.remove_tag(tag)
 
         self.flush_changes()
+

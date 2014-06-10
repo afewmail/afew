@@ -20,7 +20,6 @@ from __future__ import print_function, absolute_import, unicode_literals
 from .BaseFilter import Filter
 from ..NotmuchSettings import notmuch_settings
 import re
-import logging
 import shlex
 
 
@@ -43,7 +42,7 @@ class FolderNameFilter(Filter):
         maildirs = re.match(self.__filename_pattern, message.get_filename())
         if maildirs:
             folders = set(maildirs.group('maildirs').split(self.__maildir_separator))
-            logging.debug('found folders {} for message {!r}'.format(
+            self.log.debug('found folders {} for message {!r}'.format(
                 folders, message.get_header('subject')))
 
             # remove blacklisted folders
