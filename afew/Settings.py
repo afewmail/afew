@@ -86,12 +86,12 @@ def get_mail_move_rules():
             all_folder_regex.append((re.compile(regex), raw_rules))
 
         for folder in settings.get(mail_mover_section, 'folders').split():
+            rules = collections.OrderedDict()
             for (regex,raw_rules) in all_folder_regex:
                 if regex.match(folder):
-                    rules = collections.OrderedDict()
                     for rule in raw_rules:
-                        rules[rule[0]] = rule[1]
-                    all_rules[folder] = rules
+                        rules[rule[0].replace('{folder}',folder)] = rule[1].replace('{folder}',folder)
+            all_rules[folder] = rules
             if folder not in all_rules.keys():
                 raise NameError("No rules specified for maildir '{}'.".format(folder))
 
