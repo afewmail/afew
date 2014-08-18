@@ -36,7 +36,7 @@ class MailMover(Database):
     def __init__(self, max_age=0, dry_run=False):
         super(MailMover, self).__init__()
         self.db = notmuch.Database(self.db_path)
-        self.query = 'folder:{folder} AND {subquery}'
+        self.query = '{subquery}'
         if max_age:
             days = timedelta(int(max_age))
             start = date.today() - days
@@ -46,27 +46,25 @@ class MailMover(Database):
         self.dry_run = dry_run
 
 
-    def move(self, maildir, rules):
+    def move(self, rule_id, rules):
         '''
         Move mails in folder maildir according to the given rules.
         '''
         # identify and move messages
-        logging.info("checking mails in '{}'".format(maildir))
+        logging.info("Processing rule '{}'".format(rule_id))
         to_delete_fnames = []
         for query in rules.keys():
             destination = '{}/{}/cur/'.format(self.db_path, rules[query])
-            main_query = self.query.format(folder=maildir, subquery=query)
+            main_query = self.query.format(subquery=query)
             logging.debug("query: {}".format(main_query))
             messages = notmuch.Query(self.db, main_query).search_messages()
             for message in messages:
                 # a single message (identified by Message-ID) can be in several
-                # places; only touch the one(s) that exists in this maildir 
-                all_message_fnames = message.get_filenames()
-                to_move_fnames = [name for name in all_message_fnames
-                                  if maildir in name]
+                # places; only touch the one(s) that exists in this maildir
+                to_move_fnames = [name for name in message.get_filenames()]
                 if not to_move_fnames:
                     continue
-                self.__log_move_action(message, maildir, rules[query],
+                self.__log_move_action(message, rule_id, rules[query],
                                        self.dry_run)
                 for fname in to_move_fnames:
                     if self.dry_run:
@@ -110,7 +108,7 @@ class MailMover(Database):
             raise SystemExit
 
 
-    def __log_move_action(self, message, source, destination, dry_run):
+    def __log_move_action(self, message, rule_id, destination, dry_run):
         '''
         Report which mails have been identified for moving.
         '''
@@ -122,6 +120,6 @@ class MailMover(Database):
             prefix = 'I would move mail'
         logging.log(level, prefix)
         logging.log(level, "    {}".format(get_message_summary(message).encode('utf8')))
-        logging.log(level, "from '{}' to '{}'".format(source, destination))
+        logging.log(level, "according to rule '{}' to '{}'".format(rule_id, destination))
         #logging.debug("rule: '{}' in [{}]".format(tag, message.get_tags()))
 
