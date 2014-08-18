@@ -87,7 +87,7 @@ class MailMover(Database):
         # update notmuch database
         logging.info("updating database")
         if not self.dry_run:
-            self.__update_db(maildir)
+            self.__update_db(rule_id)
         else:
             logging.info("Would update database")
 
@@ -96,7 +96,7 @@ class MailMover(Database):
     # private:
     #
 
-    def __update_db(self, maildir):
+    def __update_db(self, rule_id):
         '''
         Update the database after mail files have been moved in the filesystem.
         '''
@@ -104,7 +104,7 @@ class MailMover(Database):
             check_call(['notmuch', 'new'])
         except CalledProcessError as err:
             logging.error("Could not update notmuch database " \
-                          "after syncing maildir '{}': {}".format(maildir, err))
+                          "after syncing moving rule '{}': {}".format(rule_id, err))
             raise SystemExit
 
 
