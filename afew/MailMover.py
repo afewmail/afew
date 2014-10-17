@@ -34,7 +34,7 @@ class MailMover(Database):
     '''
 
 
-    def __init__(self, max_age=0, dry_run=False):
+    def __init__(self, max_age=0, rename = False, dry_run=False):
         super(MailMover, self).__init__()
         self.db = notmuch.Database(self.db_path)
         self.query = 'folder:{folder} AND {subquery}'
@@ -45,7 +45,18 @@ class MailMover(Database):
             self.query += ' AND {start}..{now}'.format(start=start.strftime('%s'),
                                                        now=now.strftime('%s'))
         self.dry_run = dry_run
+        self.rename = rename
 
+    def get_new_name(self, fname, destination):
+        if self.rename:
+            return os.path.join(
+                            destination,
+                            # construct a new filename, composed of a made-up ID and the flags part
+                            # of the original filename.
+                            str(uuid.uuid1()) + ':' + os.path.basename(fname).split(':')[-1]
+                        )
+        else:
+            return destination
 
     def move(self, maildir, rules):
         '''
@@ -73,14 +84,7 @@ class MailMover(Database):
                     if self.dry_run:
                         continue
                     try:
-                        shutil.copy2(fname, 
-                            os.path.join(
-                                destination,
-                                # construct a new filename, composed of a made-up ID and the flags part
-                                # of the original filename.
-                                str(uuid.uuid1()) + ':' + os.path.basename(fname).split(':')[-1]
-                            )
-                        )
+                        shutil.copy2(fname, self.get_new_name(fname, destination))
                         to_delete_fnames.append(fname)
                     except shutil.Error as e:
                         # this is ugly, but shutil does not provide more
