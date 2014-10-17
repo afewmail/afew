@@ -25,6 +25,7 @@ from subprocess import check_call, CalledProcessError
 from .Database import Database
 from .utils import get_message_summary
 from datetime import date, datetime, timedelta
+import uuid
 
 
 class MailMover(Database):
@@ -72,7 +73,14 @@ class MailMover(Database):
                     if self.dry_run:
                         continue
                     try:
-                        shutil.copy2(fname, destination)
+                        shutil.copy2(fname, 
+                            os.path.join(
+                                destination,
+                                # construct a new filename, composed of a made-up ID and the flags part
+                                # of the original filename.
+                                str(uuid.uuid1()) + ':' + os.path.basename(fname).split(':')[-1]
+                            )
+                        )
                         to_delete_fnames.append(fname)
                     except shutil.Error as e:
                         # this is ugly, but shutil does not provide more
