@@ -27,6 +27,7 @@ from afew.FilterRegistry import all_filters
 user_config_dir = os.path.join(os.environ.get('XDG_CONFIG_HOME',
                                               os.path.expanduser('~/.config')),
                                'afew')
+user_config_dir=os.path.expandvars(user_config_dir)
 
 settings = SafeConfigParser()
 # preserve the capitalization of the keys.
