@@ -29,7 +29,7 @@ from afew.main import main as inner_main
 from afew.utils import filter_compat
 from afew.FilterRegistry import all_filters
 from afew.Settings import user_config_dir, get_filter_chain
-from afew.Settings import get_mail_move_rules, get_mail_move_age
+from afew.Settings import get_mail_move_rules, get_mail_move_age, get_mail_move_rename
 from afew.NotmuchSettings import read_notmuch_settings, get_notmuch_new_query
 
 option_parser = optparse.OptionParser(
@@ -183,6 +183,7 @@ def main():
     if options.move_mails:
         options.mail_move_rules = get_mail_move_rules()
         options.mail_move_age = get_mail_move_age()
+        options.mail_move_rename = get_mail_move_rename()
 
     with Database() as database:
         configured_filter_chain = get_filter_chain(database)
