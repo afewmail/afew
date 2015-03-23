@@ -196,8 +196,9 @@ def main():
                 sys.exit('Unknown filter(s) selected: %s' % (' '.join(
                     enabled_filters_set.difference(all_filters_set))))
 
-            options.enable_filters = [all_filters[
-                filter_name]() for filter_name in options.enable_filters]
+            options.enable_filters = [all_filters[filter_name](database)
+                                      for filter_name
+                                      in options.enable_filters]
         else:
             options.enable_filters = configured_filter_chain
 
