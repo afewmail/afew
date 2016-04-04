@@ -33,6 +33,7 @@ from afew.Settings import get_mail_move_rules, get_mail_move_age, get_mail_move_
 from afew.NotmuchSettings import read_notmuch_settings, get_notmuch_new_query
 
 parser = argparse.ArgumentParser()
+#parser.add_argument('-V', '--version', action='version', version='TODO')
 
 # the actions
 action_group = parser.add_argument_group(
