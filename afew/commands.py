@@ -28,8 +28,8 @@ from afew.Database import Database
 from afew.main import main as inner_main
 from afew.utils import filter_compat
 from afew.FilterRegistry import all_filters
-from afew.Settings import user_config_dir, get_filter_chain
-from afew.Settings import get_mail_move_rules, get_mail_move_age, get_mail_move_rename
+from afew.Settings import user_config_dir, get_filter_chain, \
+        get_mail_move_rules, get_mail_move_age, get_mail_move_rename
 from afew.NotmuchSettings import read_notmuch_settings, get_notmuch_new_query
 
 parser = argparse.ArgumentParser()
@@ -59,11 +59,13 @@ action_group.add_argument(
 )
 action_group.add_argument(
     '-U', '--update-reference', action='store_true',
-    help='update the reference category (takes quite some time) [requires no query]'
+    help='update the reference category (takes quite some time) [requires no'
+    ' query]'
 )
 action_group.add_argument(
     '-c', '--classify', action='store_true',
-    help='classify each message matching the given query (to test the trained categories)'
+    help='classify each message matching the given query (to test the trained'
+    ' categories)'
 )
 action_group.add_argument(
     '-m', '--move-mails', action='store_true',
@@ -94,11 +96,13 @@ options_group = parser.add_argument_group('General options')
 # TODO: get config via notmuch api
 options_group.add_argument(
     '-C', '--notmuch-config', default=None,
-    help='path to the notmuch configuration file [default: $NOTMUCH_CONFIG or ~/.notmuch-config]'
+    help='path to the notmuch configuration file [default: $NOTMUCH_CONFIG or'
+    ' ~/.notmuch-config]'
 )
 options_group.add_argument(
     '-e', '--enable-filters',
-    help="filter classes to use, separated by ',' [default: filters specified in afew's config]"
+    help="filter classes to use, separated by ',' [default: filters specified"
+    " in afew's config]"
 )
 options_group.add_argument(
     '-d', '--dry-run', default=False, action='store_true',
@@ -135,7 +139,8 @@ def main():
         sys.exit('You need to specify an action')
     elif no_actions > 1:
         sys.exit(
-            'Please specify exactly one action (both update actions can be given at once)')
+            'Please specify exactly one action (both update actions can be'
+            ' given at once)')
 
     no_query_modifiers = len(filter_compat(None, (args.all,
                                                   args.new, args.query)))
@@ -192,8 +197,8 @@ def main():
                     enabled_filters_set.difference(all_filters_set))))
 
             args.enable_filters = [all_filters[filter_name](database)
-                                      for filter_name
-                                      in args.enable_filters]
+                                   for filter_name
+                                   in args.enable_filters]
         else:
             args.enable_filters = configured_filter_chain
 
