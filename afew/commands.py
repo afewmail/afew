@@ -29,7 +29,8 @@ from afew.main import main as inner_main
 from afew.utils import filter_compat
 from afew.FilterRegistry import all_filters
 from afew.Settings import user_config_dir, get_filter_chain
-from afew.Settings import get_mail_move_rules, get_mail_move_age, get_mail_move_rename
+from afew.Settings import get_mail_section_rules, get_mail_section_age, get_mail_section_rename
+from afew.Settings import mail_mover_section, mail_archiver_section
 from afew.NotmuchSettings import read_notmuch_settings, get_notmuch_new_query
 
 option_parser = optparse.OptionParser(
@@ -69,6 +70,10 @@ action_group.add_option(
 action_group.add_option(
     '-m', '--move-mails', default=False, action='store_true',
     help='move mail files between maildir folders'
+)
+action_group.add_option(
+    '-A', '--archive-mails', default=False, action='store_true',
+    help='archive mail files into maildir folders'
 )
 option_parser.add_option_group(action_group)
 
@@ -134,7 +139,8 @@ def main():
         options.update or options.update_reference,
         options.learn,
         options.classify,
-        options.move_mails
+        options.move_mails,
+        options.archive_mails
     )))
     if no_actions == 0:
         sys.exit('You need to specify an action')
@@ -146,7 +152,7 @@ def main():
                                                   options.new, args)))
     if no_query_modifiers == 0 and not \
        (options.update or options.update_reference or options.watch) and not \
-       options.move_mails:
+       (options.move_mails or options.archive_mails):
         sys.exit('You need to specify one of --new, --all or a query string')
     elif no_query_modifiers > 1:
         sys.exit('Please specify either --all, --new or a query string')
@@ -181,9 +187,13 @@ def main():
         __import__(file_name[:-3], level=0)
 
     if options.move_mails:
-        options.mail_move_rules = get_mail_move_rules()
-        options.mail_move_age = get_mail_move_age()
-        options.mail_move_rename = get_mail_move_rename()
+        options.mail_move_rules = get_mail_section_rules(mail_mover_section)
+        options.mail_move_age = get_mail_section_age(mail_mover_section)
+        options.mail_move_rename = get_mail_section_rename(mail_mover_section)
+    elif options.archive_mails:
+        options.mail_archive_rules = get_mail_section_rules(mail_archiver_section)
+        options.mail_archive_age = get_mail_section_age(mail_archiver_section)
+        options.mail_archive_rename = get_mail_section_rename(mail_archiver_section)
 
     with Database() as database:
         configured_filter_chain = get_filter_chain(database)

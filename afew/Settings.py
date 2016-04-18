@@ -39,13 +39,14 @@ settings.read(os.path.join(user_config_dir, 'config'))
 # All the values for keys listed here are interpreted as ;-delimited lists
 value_is_a_list = ['tags', 'tags_blacklist']
 mail_mover_section = 'MailMover'
+mail_archiver_section = "MailArchiver"
 
 section_re = re.compile(r'^(?P<name>[a-z_][a-z0-9_]*)(\((?P<parent_class>[a-z_][a-z0-9_]*)\)|\.(?P<index>\d+))?$', re.I)
 def get_filter_chain(database):
     filter_chain = []
 
     for section in settings.sections():
-        if section == 'global' or section == mail_mover_section:
+        if section == 'global' or section in (mail_mover_section, mail_archiver_section):
             continue
 
         match = section_re.match(section)
@@ -76,16 +77,15 @@ def get_filter_chain(database):
 
     return filter_chain
 
-def get_mail_move_rules():
+def get_mail_section_rules(section):
     rule_pattern = re.compile(r"'(.+?)':(\S+)")
-    if settings.has_option(mail_mover_section, 'folders'):
+    if settings.has_option(section, 'folders'):
         all_rules = collections.OrderedDict()
 
-        for folder in settings.get(mail_mover_section, 'folders').split():
-            if settings.has_option(mail_mover_section, folder):
+        for folder in settings.get(section, 'folders').split():
+            if settings.has_option(section, folder):
                 rules = collections.OrderedDict()
-                raw_rules = re.findall(rule_pattern,
-                                       settings.get(mail_mover_section, folder))
+                raw_rules = re.findall(rule_pattern, settings.get(section, folder))
                 for rule in raw_rules:
                     rules[rule[0]] = rule[1]
                 all_rules[folder] = rules
@@ -96,14 +96,14 @@ def get_mail_move_rules():
     else:
         raise NameError("No folders defined to move mails from.")
 
-def get_mail_move_age():
+def get_mail_section_age(section):
     max_age = 0
-    if settings.has_option(mail_mover_section, 'max_age'):
-        max_age = settings.get(mail_mover_section, 'max_age')
+    if settings.has_option(section, 'max_age'):
+        max_age = settings.get(section, 'max_age')
     return max_age
 
-def get_mail_move_rename():
+def get_mail_section_rename(section):
     rename = False
-    if settings.has_option(mail_mover_section, 'rename'):
-        rename = settings.get(mail_mover_section, 'rename').lower() == 'true'
+    if settings.has_option(section, 'rename'):
+        rename = settings.get(section, 'rename').lower() == 'true'
     return rename

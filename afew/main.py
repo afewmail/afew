@@ -22,6 +22,7 @@ import sys
 
 from .DBACL import DBACL as Classifier
 from .MailMover import MailMover
+from .MailArchiver import MailArchiver
 from .utils import extract_mail_body
 
 try:
@@ -82,5 +83,10 @@ def main(options, database, query_string):
             mover = MailMover(options.mail_move_age, options.mail_move_rename, options.dry_run)
             mover.move(maildir, rules)
             mover.close()
+    elif options.archive_mails:
+        for maildir, rules in options.mail_archive_rules.items():
+            archiver = MailArchiver(options.mail_archive_age, options.mail_archive_rename, options.dry_run)
+            archiver.move(maildir, rules)
+            archiver.close()
     else:
         sys.exit('Weird... please file a bug containing your command line.')
