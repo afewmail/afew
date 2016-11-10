@@ -116,12 +116,12 @@ Some examples are:
     [HeaderMatchingFilter.2]
     header = List-Id
     pattern = <(?P<list_id>.*)>
-    tags = +lists +{list_id}
+    tags = +lists;+{list_id}
 
     [HeaderMatchingFilter.3]
     header = X-Redmine-Project
     pattern = (?P<project>.*)
-    tags = +redmine +{project}
+    tags = +redmine;+{project}
 
 SpamFilter and ListMailsFilter are implemented using HeaderMatchingFilter, and are
 only slightly more complicated than the above examples.
