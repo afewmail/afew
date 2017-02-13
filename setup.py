@@ -28,6 +28,7 @@ def get_requires():
 
 setup(
     name='afew',
+    version='1.0.0',
     packages=find_packages(),
     test_suite='afew.tests',
     package_data={
