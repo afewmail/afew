@@ -51,5 +51,15 @@ setup(
         ],
     },
     install_requires=get_requires(),
-    provides=['afew']
+    provides=['afew'],
+    classifiers=[
+        'Development Status :: 4 - Beta',
+        'Environment :: Console',
+        'Intended Audience :: End Users/Desktop',
+        'Programming Language :: Python',
+        'Topic :: Communications :: Email',
+        'Topic :: Communications :: Email :: Filters',
+        'Topic :: Utilities',
+        'Topic :: Database',
+        ],
 )
