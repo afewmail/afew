@@ -33,11 +33,11 @@ class TestFilterRegistry(unittest.TestCase):
                 return 'class'
         registry = FilterRegistry.FilterRegistry([FakeRegistry()])
 
-        self.assertEquals('class', registry['test'])
+        self.assertEqual('class', registry['test'])
 
     def test_all_builtin_FilterRegistrys_exist(self):
         from afew import FilterRegistry
-        self.assertEquals(['FolderNameFilter',
+        self.assertEqual(sorted(['FolderNameFilter',
                            'ArchiveSentMailsFilter',
                            'ClassifyingFilter',
                            'InboxFilter',
@@ -46,13 +46,13 @@ class TestFilterRegistry(unittest.TestCase):
                            'KillThreadsFilter',
                            'SentMailsFilter',
                            'HeaderMatchingFilter',
-                           'ListMailsFilter'],
-                          FilterRegistry.all_filters.keys())
+                           'ListMailsFilter']),
+                          sorted(list(FilterRegistry.all_filters.keys())))
 
     def test_add_FilterRegistry(self):
         from afew import FilterRegistry
         try:
             FilterRegistry.all_filters['test'] = 'class'
-            self.assertEquals('class', FilterRegistry.all_filters['test'])
+            self.assertEqual('class', FilterRegistry.all_filters['test'])
         finally:
             del FilterRegistry.all_filters['test']
