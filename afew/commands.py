@@ -50,7 +50,7 @@ action_group.add_argument(
     help='continuously monitor the mailbox for new files'
 )
 action_group.add_argument(
-    '-l', '--learn', action='store_true',
+    '-l', '--learn', action='store',
     help='train the category with the messages matching the given query'
 )
 action_group.add_argument(
