@@ -20,6 +20,7 @@ from __future__ import print_function, absolute_import, unicode_literals
 import os
 import re
 import collections
+import shlex
 
 from .configparser import SafeConfigParser
 from afew.FilterRegistry import all_filters
@@ -77,16 +78,16 @@ def get_filter_chain(database):
     return filter_chain
 
 def get_mail_move_rules():
-    rule_pattern = re.compile(r"'(.+?)':(\S+)")
+    rule_pattern = re.compile(r"(.+):([\/\w\s]+?)$")
     if settings.has_option(mail_mover_section, 'folders'):
         all_rules = collections.OrderedDict()
 
-        for folder in settings.get(mail_mover_section, 'folders').split():
+        for folder in shlex.split(settings.get(mail_mover_section, 'folders')):
             if settings.has_option(mail_mover_section, folder):
                 rules = collections.OrderedDict()
-                raw_rules = re.findall(rule_pattern,
-                                       settings.get(mail_mover_section, folder))
-                for rule in raw_rules:
+                folder_rules = settings.get(mail_mover_section, folder)
+                for raw_rule in shlex.split(folder_rules):
+                    rule = re.search(rule_pattern, raw_rule).groups()
                     rules[rule[0]] = rule[1]
                 all_rules[folder] = rules
             else:
