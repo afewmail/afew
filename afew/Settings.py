@@ -77,7 +77,7 @@ def get_filter_chain(database):
     return filter_chain
 
 def get_mail_move_rules():
-    rule_pattern = re.compile(r"'(.+?)':(\S+)")
+    rule_pattern = re.compile(r"'(.+?)':((?P<quote>['\"])(.*?)(?P=quote)|\S+)")
     if settings.has_option(mail_mover_section, 'folders'):
         all_rules = collections.OrderedDict()
 
@@ -87,7 +87,9 @@ def get_mail_move_rules():
                 raw_rules = re.findall(rule_pattern,
                                        settings.get(mail_mover_section, folder))
                 for rule in raw_rules:
-                    rules[rule[0]] = rule[1]
+                    query = rule[0]
+                    destination = rule[3] or rule[1]
+                    rules[query] = destination
                 all_rules[folder] = rules
             else:
                 raise NameError("No rules specified for maildir '{}'.".format(folder))
