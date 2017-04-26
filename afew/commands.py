@@ -177,7 +177,7 @@ def main():
     # py2.7 compat hack
     glob_pattern = b'*.py' if sys.version_info[0] == 2 else '*.py'
     for file_name in glob.glob1(user_config_dir,  glob_pattern):
-        print('Importing user filter %r' % (file_name, ))
+        logging.info('Importing user filter %r' % (file_name, ))
         __import__(file_name[:-3], level=0)
 
     if args.move_mails:
