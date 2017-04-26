@@ -42,7 +42,7 @@ def main(options, database, query_string):
             sys.exit('Sorry, this feature requires Linux and pyinotify')
         watch_for_new_files(options, database,
                             quick_find_dirs_hack(database.db_path))
-    elif options.learn is not False:
+    elif options.learn:
         classifier = Classifier()
         classifier.learn(
             options.learn,
