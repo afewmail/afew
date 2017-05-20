@@ -31,9 +31,10 @@ from afew.FilterRegistry import all_filters
 from afew.Settings import user_config_dir, get_filter_chain, \
         get_mail_move_rules, get_mail_move_age, get_mail_move_rename
 from afew.NotmuchSettings import read_notmuch_settings, get_notmuch_new_query
+from afew.version import version
 
 parser = argparse.ArgumentParser()
-#parser.add_argument('-V', '--version', action='version', version='TODO')
+parser.add_argument('-V', '--version', action='version', version=version)
 
 # the actions
 action_group = parser.add_argument_group(

@@ -28,7 +28,8 @@ def get_requires():
 
 setup(
     name='afew',
-    version='1.0.0',
+    use_scm_version={'write_to': 'afew/version.py'},
+    setup_requires=['setuptools_scm'],
     packages=find_packages(),
     test_suite='afew.tests',
     package_data={
