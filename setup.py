@@ -17,14 +17,16 @@
 # OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 #
 
+import os
 from setuptools import setup, find_packages
 from sys import version_info
 
 def get_requires():
-    if version_info >= (3, 0):
-        return ['notmuch', 'chardet']
-    else:
-        return ['notmuch', 'subprocess32', 'chardet']
+    if os.environ.get('TRAVIS') != 'true':
+        yield 'notmuch'
+    yield 'chardet'
+    if version_info < (3, 0):
+        yield 'subprocess32'
 
 setup(
     name='afew',
@@ -51,7 +53,7 @@ setup(
             'SpamFilter = afew.filters.SpamFilter:SpamFilter',
         ],
     },
-    install_requires=get_requires(),
+    install_requires=list(get_requires()),
     provides=['afew'],
     classifiers=[
         'Development Status :: 4 - Beta',
