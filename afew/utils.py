@@ -132,7 +132,7 @@ def get_message_summary(message):
 
 def get_sender(message):
     sender = message.get_header('From')
-    name_match = re.search('(.+) <.+@.+\..+>', sender)
+    name_match = re.search(r'(.+) <.+@.+\..+>', sender)
     if name_match:
         sender = name_match.group(1)
     return sender
