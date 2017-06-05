@@ -21,6 +21,7 @@ import codecs
 import re
 import sys
 import email
+import base64
 from datetime import datetime
 
 signature_line_re = re.compile(r'^((--)|(__)|(==)|(\*\*)|(##))')
@@ -75,6 +76,7 @@ def strip_signatures(lines, max_signature_size = 10):
     return lines[:-siglines]
 
 
+base64_re = re.compile(r'^([a-zA-Z0-9+/=\n\r]*)')
 def extract_mail_body(message):
     r'''
     Extract the plain text body of the message with signatures
@@ -97,7 +99,17 @@ def extract_mail_body(message):
     content = []
     for part in mail.walk():
         if part.get_content_type() == 'text/plain':
-            raw_payload = part.get_payload(decode=True)
+            try:
+                raw_payload = part.get_payload(decode=True)
+            except AssertionError as e:
+                if str(e) != 'unexpected binascii.Error':
+                    raise
+
+                if mail.get('Content-Transfer-Encoding') == 'base64':
+                    raw_payload = part.get_payload(decode=False)
+                    (b64,) = base64_re.match(raw_payload, re.MULTILINE).groups()
+                    raw_payload = base64.b64decode(b64)
+
             encoding = part.get_content_charset()
             if encoding:
                 try:
