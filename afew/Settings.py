@@ -38,14 +38,14 @@ settings.read(os.path.join(user_config_dir, 'config'))
 
 # All the values for keys listed here are interpreted as ;-delimited lists
 value_is_a_list = ['tags', 'tags_blacklist']
-mail_mover_section = 'MailMover'
+folder_mail_mover_section = 'MailMover'
 
 section_re = re.compile(r'^(?P<name>[a-z_][a-z0-9_]*)(\((?P<parent_class>[a-z_][a-z0-9_]*)\)|\.(?P<index>\d+))?$', re.I)
 def get_filter_chain(database):
     filter_chain = []
 
     for section in settings.sections():
-        if section == 'global' or section == mail_mover_section:
+        if section in ['global', folder_mail_mover_section]:
             continue
 
         match = section_re.match(section)
@@ -76,7 +76,16 @@ def get_filter_chain(database):
 
     return filter_chain
 
-def get_mail_move_rules():
+def mail_mover_section_by_kind(kind):
+    return folder_mail_mover_section
+
+def get_mail_move_kind():
+    if settings.has_option('global', 'mail_mover_kind'):
+        return settings.get('global', 'mail_mover_kind')
+    return 'folder'
+
+def get_mail_move_rules(kind):
+    mail_mover_section = mail_mover_section_by_kind(kind)
     rule_pattern = re.compile(r"'(.+?)':((?P<quote>['\"])(.*?)(?P=quote)|\S+)")
     if settings.has_option(mail_mover_section, 'folders'):
         all_rules = collections.OrderedDict()
@@ -96,15 +105,17 @@ def get_mail_move_rules():
 
         return all_rules
     else:
-        raise NameError("No folders defined to move mails from.")
+        raise NameError("No rules defined to move mails according to.")
 
-def get_mail_move_age():
+def get_mail_move_age(kind):
+    mail_mover_section = mail_mover_section_by_kind(kind)
     max_age = 0
     if settings.has_option(mail_mover_section, 'max_age'):
         max_age = settings.get(mail_mover_section, 'max_age')
     return max_age
 
-def get_mail_move_rename():
+def get_mail_move_rename(kind):
+    mail_mover_section = mail_mover_section_by_kind(kind)
     rename = False
     if settings.has_option(mail_mover_section, 'rename'):
         rename = settings.get(mail_mover_section, 'rename').lower() == 'true'
