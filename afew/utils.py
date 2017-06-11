@@ -72,7 +72,11 @@ def strip_signatures(lines, max_signature_size = 10):
 
         sigline_count += 1
 
-    return lines[:-siglines]
+    # a signature was found, strip it
+    if siglines:
+        return lines[:-siglines]
+    # otherwise, just return original content
+    return lines
 
 
 def extract_mail_body(message):
