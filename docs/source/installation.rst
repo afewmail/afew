@@ -4,14 +4,12 @@ Installation
 Requirements
 ------------
 
-afew works with python 2.7, 3.1 and 3.2
-
-As well as notmuch and it's python bindings, you'll need dbacl for the text
-classification.  On Debian/Ubuntu systems you can install these by doing:
+afew works with python 2.7, 3.1 and 3.2, and requires notmuch and its python bindings.
+On Debian/Ubuntu systems you can install these by doing:
 
 .. code-block:: sh
 
-    $ sudo aptitude install notmuch python-notmuch dbacl python-dev python-setuptools
+    $ sudo aptitude install notmuch python-notmuch python-dev python-setuptools
 
 Unprivileged Install
 --------------------
@@ -21,7 +19,7 @@ And I'd like to suggest to install afew as your unprivileged user.
 .. code-block:: sh
 
     $ python setup.py install --prefix=~/.local
-    $ mkdir -p ~/.config/afew ~/.local/share/afew/categories
+    $ mkdir -p ~/.config/afew
 
 If you do, make sure `~/.local/bin` is in your path, say by putting the
 following in your `~/.bashrc`:

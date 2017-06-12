@@ -6,7 +6,6 @@ The default filter set (if you don't specify anything in the config) is:
 .. code-block:: ini
 
     [SpamFilter]
-    [ClassifyingFilter]
     [KillThreadsFilter]
     [ListMailsFilter]
     [ArchiveSentMailsFilter]
@@ -29,12 +28,6 @@ The settings you can use are:
    Note that only a single tag is supported here.
 
 Email will be considered spam if the header `X-Spam-Flag` is present.
-
-ClassifyingFilter
------------------
-
-This filter will tag messages based on what it has learnt from seeing how you've
-tagged messages in the past.  See :doc:`classification` for more details.
 
 KillThreadsFilter
 -----------------

@@ -23,7 +23,6 @@ import logging
 import notmuch
 
 from .NotmuchSettings import notmuch_settings, get_notmuch_new_tags
-from .utils import extract_mail_body
 
 class Database(object):
     '''
@@ -110,22 +109,6 @@ class Database(object):
             for thread in self.do_query(query).search_threads():
                 for message in self.walk_thread(thread):
                     yield message
-
-
-    def mail_bodies_matching(self, *args, **kwargs):
-        '''
-        Filters each message yielded from
-        :func:`Database.get_messages` through
-        :func:`afew.utils.extract_mail_body`.
-
-        This functions accepts the same arguments as
-        :func:`Database.get_messages`.
-
-        :returns: an iterator over :class:`list` of :class:`str`
-        '''
-        query = self.get_messages(*args, **kwargs)
-        for message in query:
-            yield extract_mail_body(message)
 
     def walk_replies(self, message):
         '''

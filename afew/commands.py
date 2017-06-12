@@ -39,8 +39,7 @@ parser.add_argument('-V', '--version', action='version', version=version)
 # the actions
 action_group = parser.add_argument_group(
     'Actions',
-    'Please specify exactly one action (both update actions can be specified '
-    'simultaneously).'
+    'Please specify exactly one action.'
 )
 action_group.add_argument(
     '-t', '--tag', action='store_true',
@@ -51,24 +50,6 @@ action_group.add_argument(
     help='continuously monitor the mailbox for new files'
 )
 action_group.add_argument(
-    '-l', '--learn', action='store',
-    help='train the category with the messages matching the given query'
-)
-action_group.add_argument(
-    '-u', '--update', action='store_true',
-    help='update the categories [requires no query]'
-)
-action_group.add_argument(
-    '-U', '--update-reference', action='store_true',
-    help='update the reference category (takes quite some time) [requires no'
-    ' query]'
-)
-action_group.add_argument(
-    '-c', '--classify', action='store_true',
-    help='classify each message matching the given query (to test the trained'
-    ' categories)'
-)
-action_group.add_argument(
     '-m', '--move-mails', action='store_true',
     help='move mail files between maildir folders'
 )
@@ -77,8 +58,6 @@ action_group.add_argument(
 query_modifier_group = parser.add_argument_group(
     'Query modifiers',
     'Please specify either --all or --new or a query string.'
-    ' The default query for the update actions is a random selection of'
-    ' REFERENCE_SET_SIZE mails from the last REFERENCE_SET_TIMEFRAME days.'
 )
 query_modifier_group.add_argument(
     '-a', '--all', action='store_true',
@@ -131,23 +110,17 @@ def main():
     no_actions = len(filter_compat(None, (
         args.tag,
         args.watch,
-        args.update or args.update_reference,
-        args.learn,
-        args.classify,
         args.move_mails
     )))
     if no_actions == 0:
         sys.exit('You need to specify an action')
     elif no_actions > 1:
-        sys.exit(
-            'Please specify exactly one action (both update actions can be'
-            ' given at once)')
+        sys.exit('Please specify exactly one action')
 
     no_query_modifiers = len(filter_compat(None, (args.all,
                                                   args.new, args.query)))
-    if no_query_modifiers == 0 and not \
-       (args.update or args.update_reference or args.watch) and not \
-       args.move_mails:
+    if no_query_modifiers == 0 and not args.watch \
+        and not args.move_mails:
         sys.exit('You need to specify one of --new, --all or a query string')
     elif no_query_modifiers > 1:
         sys.exit('Please specify either --all, --new or a query string')
@@ -158,14 +131,8 @@ def main():
         query_string = get_notmuch_new_query()
     elif args.all:
         query_string = ''
-    elif not (args.update or args.update_reference):
-        query_string = ' '.join(args.query)
-    elif args.update or args.update_reference:
-        query_string = '%i..%i' % (
-            time.time() - args.reference_set_timeframe * 24 * 60 * 60,
-            time.time())
     else:
-        sys.exit('Weird... please file a bug containing your command line.')
+        query_string = ' '.join(args.query)
 
     loglevel = {
         0: logging.WARNING,
