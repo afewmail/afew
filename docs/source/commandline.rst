@@ -14,21 +14,6 @@ watch
 move-mails
   move mail files between maildir folders
 
-learn=LEARN
-  train the category with the messages matching the
-  given query
-
-update
-  update the categories [requires no query]
-
-update-reference
-  update the reference category (takes quite some time)
-  [requires no query]
-
-classify
-  classify each message matching the given query (to
-  test the trained categories)
-
 Initial tagging
 ---------------
 
@@ -81,13 +66,6 @@ in your webinterface/GUI-client at work.
 For information on how to configure rules for move mode, what you can
 do with it and what you can't, please refer to :doc:`move_mode`.
 
-Classify
---------
-
-The `--learn`, `--update`, `--update-references` and `--classify` actions
-all relate to learning how to filter your email.  See the
-:doc:`classification` page for details.
-
 Commandline help
 ----------------
 
@@ -102,26 +80,14 @@ The full set of options is:
       -h, --help            show this help message and exit
 
       Actions:
-        Please specify exactly one action (both update actions can be
-        specified simultaniously).
+        Please specify exactly one action.
 
         -t, --tag           run the tag filters
         -w, --watch         continuously monitor the mailbox for new files
-        -l LEARN, --learn=LEARN
-                            train the category with the messages matching the
-                            given query
-        -u, --update        update the categories [requires no query]
-        -U, --update-reference
-                            update the reference category (takes quite some time)
-                            [requires no query]
-        -c, --classify      classify each message matching the given query (to
-                            test the trained categories)
         -m, --move-mails    move mail files between maildir folders
 
       Query modifiers:
-        Please specify either --all or --new or a query string. The default
-        query for the update actions is a random selection of
-        REFERENCE_SET_SIZE mails from the last REFERENCE_SET_TIMEFRAME days.
+        Please specify either --all or --new or a query string.
 
         -a, --all           operate on all messages
         -n, --new           operate on all new messages

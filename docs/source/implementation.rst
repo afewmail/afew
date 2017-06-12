@@ -18,16 +18,6 @@ Filter
 .. autoclass:: Filter
    :members:
 
-Mail classification
--------------------
-
-.. module:: afew.DBACL
-.. autoclass:: Classifier
-   :members:
-
-.. autoclass:: DBACL
-   :members:
-
 Configuration management
 ------------------------
 

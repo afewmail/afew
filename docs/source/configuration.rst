@@ -29,7 +29,6 @@ the config file.  The default config file is:
 .. code-block:: ini
 
     [SpamFilter]
-    [ClassifyingFilter]
     [KillThreadsFilter]
     [ListMailsFilter]
     [ArchiveSentMailsFilter]

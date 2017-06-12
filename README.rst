@@ -16,10 +16,8 @@ Its basic task is to provide automatic tagging each time new mail is registered
 with notmuch. In a classic setup, you might call it after 'notmuch new' in an
 offlineimap post sync hook.
 
-In addition to more elementary features such as adding tags based on email
-headers or maildir folders, handling killed threads and spam, it can do some
-heavy magic in order to *learn* how to initially tag your mails based on their
-content.
+It can do basic thing such as adding tags based on email headers or maildir
+folders, handling killed threads and spam.
 
 In move mode, afew will move mails between maildir folders according to
 configurable rules that can contain arbitrary notmuch queries to match against
@@ -44,7 +42,6 @@ Please keep an eye on NEWS.md for important news.
 Features
 --------
 
-* text classification, magic tags aka the mailing list without server
 * spam handling (flush all tags, add spam)
 * killed thread handling
 * tags posts to lists with ``lists``, ``$list-id``
@@ -61,12 +58,6 @@ Features
 
 Installation
 ------------
-
-You'll need dbacl for the text classification:
-
-.. code:: bash
-
-  $ aptitude install dbacl
 
 And I'd like to suggest to install afew as your unprivileged user.
 If you do, make sure ``~/.local/bin`` is in your path.
@@ -94,7 +85,6 @@ Put a list of filters into ``~/.config/afew/config``:
 
   # This is the default filter chain
   [SpamFilter]
-  [ClassifyingFilter]
   [KillThreadsFilter]
   [ListMailsFilter]
   [ArchiveSentMailsFilter]
@@ -126,25 +116,13 @@ Commandline help
     -h, --help            show this help message and exit
 
     Actions:
-      Please specify exactly one action (both update actions can be
-      specified simultaniously).
+      Please specify exactly one action.
 
       -t, --tag           run the tag filters
-      -l LEARN, --learn=LEARN
-                          train the category with the messages matching the
-                          given query
-      -u, --update        update the categories [requires no query]
-      -U, --update-reference
-                          update the reference category (takes quite some time)
-                          [requires no query]
-      -c, --classify      classify each message matching the given query (to
-                          test the trained categories)
       -m, --move-mails    move mail files between maildir folders
 
     Query modifiers:
-      Please specify either --all or --new or a query string. The default
-      query for the update actions is a random selection of
-      REFERENCE_SET_SIZE mails from the last REFERENCE_SET_TIMEFRAME days.
+      Please specify either --all or --new or a query string.
 
       -a, --all           operate on all messages
       -n, --new           operate on all new messages
@@ -230,64 +208,6 @@ in your webinterface/GUI-client at work.
 
 For information on how to configure rules for move mode, what you can
 do with it and what you can't, please refer to ``docs/move_mode``.
-
-
-
-The real deal
--------------
-
-Let's train on an existing tag ``spam``:
-
-.. code:: bash
-
-  $ afew --learn spam -- tag:spam
-
-Let's build the reference category. This is important to reduce the
-false positive rate. This may take a while...
-
-
-.. code:: bash
-
-  $ afew --update-reference
-
-And now let's create a new tag from an arbitrary query result:
-
-.. code:: bash
-
-  $ afew -vv --learn sourceforge -- sourceforge
-
-Let's see how good the classification is:
-
-.. code:: bash
-
-  $ afew --classify -- tag:inbox and not tag:killed
-  Sergio López <slpml@sinrega.org> (2011-10-08) (bug-hurd inbox lists unread) --> no match
-  Patrick Totzke <reply+i-1840934-9a702d09342dca2b120126b26b008d0deea1731e@reply.github.com> (2011-10-08) (alot inbox lists) --> alot
-  [...]
-
-As soon as you trained some categories, afew will automatically
-tag your new mails using the classifier. If you want to disable this
-feature, either use the ``--enable-filters`` option to override the default
-set of filters or remove the files in your afew state dir:
-
-.. code:: bash
-
-  $ ls ~/.local/share/afew/categories
-  alot juggling  reference_category  sourceforge  spam
-
-You need to update the category files periodically. I'd suggest to run
-
-.. code:: bash
-
-  $ afew --update
-
-on a weekly and
-
-.. code:: bash
-
-  $ afew --update-reference
-
-on a monthly basis.
 
 
 Have fun :)

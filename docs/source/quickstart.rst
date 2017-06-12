@@ -52,7 +52,6 @@ Put a list of filters into `~/.config/afew/config`:
 
     # This is the default filter chain
     [SpamFilter]
-    [ClassifyingFilter]
     [KillThreadsFilter]
     [ListMailsFilter]
     [ArchiveSentMailsFilter]
@@ -79,6 +78,5 @@ You can:
 
 * add extra :doc:`filters` for more custom filtering
 * make use of the :doc:`move_mode` to move your email between folders
-* start using afew's automatic :doc:`classification` system
 * run afew against all your old mail by running `afew --tag --all`
 * start :doc:`extending` afew

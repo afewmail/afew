@@ -43,7 +43,6 @@ setup(
         'afew.filter': [
             'Filter = afew.filters.BaseFilter:Filter',
             'ArchiveSentMailsFilter = afew.filters.ArchiveSentMailsFilter:ArchiveSentMailsFilter',
-            'ClassifyingFilter = afew.filters.ClassifyingFilter:ClassifyingFilter',
             'FolderNameFilter = afew.filters.FolderNameFilter:FolderNameFilter',
             'HeaderMatchingFilter = afew.filters.HeaderMatchingFilter:HeaderMatchingFilter',
             'InboxFilter = afew.filters.InboxFilter:InboxFilter',
