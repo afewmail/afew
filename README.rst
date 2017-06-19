@@ -37,6 +37,8 @@ format changes, though I'll try to minimize such disruptive events.
 
 Please keep an eye on NEWS.md for important news.
 
+Also, feel free to ask your questions and discuss usage in the [#afewmail IRC Channel](http://webchat.freenode.net/?channels=#afewmail) on freenode.
+
 
 
 Features
