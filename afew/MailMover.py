@@ -65,6 +65,7 @@ class MailMover(Database):
         # identify and move messages
         logging.info("checking mails in '{}'".format(maildir))
         to_delete_fnames = []
+        moved = False
         for query in rules.keys():
             destination = '{}/{}/cur/'.format(self.db_path, rules[query])
             main_query = self.query.format(folder=maildir, subquery=query)
@@ -78,6 +79,7 @@ class MailMover(Database):
                                   if maildir in name]
                 if not to_move_fnames:
                     continue
+                moved = True
                 self.__log_move_action(message, maildir, rules[query],
                                        self.dry_run)
                 for fname in to_move_fnames:
@@ -99,9 +101,10 @@ class MailMover(Database):
             os.remove(fname)
 
         # update notmuch database
-        logging.info("updating database")
         if not self.dry_run:
-            self.__update_db(maildir)
+            if moved:
+                logging.info("updating database")
+                self.__update_db(maildir)
         else:
             logging.info("Would update database")
 
