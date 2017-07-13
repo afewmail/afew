@@ -61,13 +61,31 @@ Features
 Installation
 ------------
 
-And I'd like to suggest to install afew as your unprivileged user.
-If you do, make sure ``~/.local/bin`` is in your path.
+Make sure you have already installed your distributions `notmuch`
+package, and the notmuch python bindings, which might come in separate
+`python-notmuch` and `python3-notmuch` packages.
+
+It is recommended to install `afew` itself inside a virtualenv as an unprivileged
+user, either via checking out the source code and installing via setup.py, or
+via pip.
 
 .. code:: bash
 
-  $ python setup.py install --prefix=~/.local
-  $ mkdir -p ~/.config/afew ~/.local/share/afew/categories
+  # create and activate virtualenv
+  $ python -m venv --system-site-packages .venv
+  $ source .venv/bin/activate
+
+  # install via pip from PyPI:
+  $ pip install afew
+
+  # or install from source:
+  $ python setup.py install
+
+You might want to symlink `.venv/bin/afew` somewhere inside your path
+(~/bin/ in this case):
+
+.. code:: bash
+  $ ln -snr .venv/bin/afew ~/.bin/afew
 
 
 
