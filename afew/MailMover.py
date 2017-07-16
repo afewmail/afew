@@ -25,19 +25,19 @@ from subprocess import check_call, CalledProcessError
 from .Database import Database
 from .utils import get_message_summary
 from datetime import date, datetime, timedelta
+from abc import ABCMeta, abstractmethod
 import uuid
 
 
 class MailMover(Database):
+    __metaclass__ = ABCMeta
     '''
     Move mail files matching a given notmuch query into a target maildir folder.
     '''
-
-
-    def __init__(self, max_age=0, rename = False, dry_run=False):
+    def __init__(self, max_age=0, rename=False, dry_run=False, query=None):
         super(MailMover, self).__init__()
         self.db = notmuch.Database(self.db_path)
-        self.query = 'folder:{folder} AND {subquery}'
+        self.query = query
         if max_age:
             days = timedelta(int(max_age))
             start = date.today() - days
@@ -47,7 +47,47 @@ class MailMover(Database):
         self.dry_run = dry_run
         self.rename = rename
 
-    def get_new_name(self, fname, destination):
+    @abstractmethod
+    def move(target, rules):
+        '''
+        Move mails in folder maildir according to the given rules.
+        '''
+        pass
+
+    #
+    # private:
+    #
+
+    def _update_db(self, rule_id):
+        '''
+        Update the database after mail files have been moved in the filesystem.
+        '''
+        try:
+            check_call(['notmuch', 'new'])
+        except CalledProcessError as err:
+            logging.error("Could not update notmuch database " \
+                          "after processing move rule '{}': {}".format(rule_id, err))
+            raise SystemExit
+
+    def _log_move_action(self, message, rule_id, destination, dry_run, folder=True):
+        '''
+        Report which mails have been identified for moving.
+        '''
+        if not dry_run:
+            level = logging.DEBUG
+            prefix = 'moving mail'
+        else:
+            level = logging.INFO
+            prefix = 'I would move mail'
+        logging.log(level, prefix)
+        logging.log(level, "    {}".format(get_message_summary(message).encode('utf8')))
+        if folder:
+            logging.log(level, "from '{}' to '{}'".format(rule_id, destination))
+        else:
+            logging.log(level, "to '{}' according to rule '{}'".format(destination, rule_id))
+        #logging.debug("rule: '{}' in [{}]".format(tag, message.get_tags()))
+
+    def _get_new_name(self, fname, destination):
         if self.rename:
             return os.path.join(
                             destination,
@@ -58,10 +98,13 @@ class MailMover(Database):
         else:
             return destination
 
+
+class FolderMailMover(MailMover):
+    def __init__(self, max_age=0, rename=False, dry_run=False):
+        query = 'folder:{folder} AND {subquery}'
+        super(FolderMailMover, self).__init__(max_age, rename, dry_run, query)
+
     def move(self, maildir, rules):
-        '''
-        Move mails in folder maildir according to the given rules.
-        '''
         # identify and move messages
         logging.info("checking mails in '{}'".format(maildir))
         to_delete_fnames = []
@@ -78,13 +121,13 @@ class MailMover(Database):
                                   if maildir in name]
                 if not to_move_fnames:
                     continue
-                self.__log_move_action(message, maildir, rules[query],
+                self._log_move_action(message, maildir, rules[query],
                                        self.dry_run)
                 for fname in to_move_fnames:
                     if self.dry_run:
                         continue
                     try:
-                        shutil.copy2(fname, self.get_new_name(fname, destination))
+                        shutil.copy2(fname, self._get_new_name(fname, destination))
                         to_delete_fnames.append(fname)
                     except shutil.Error as e:
                         # this is ugly, but shutil does not provide more
@@ -101,39 +144,6 @@ class MailMover(Database):
         # update notmuch database
         logging.info("updating database")
         if not self.dry_run:
-            self.__update_db(maildir)
+            self._update_db(maildir)
         else:
             logging.info("Would update database")
-
-
-    #
-    # private:
-    #
-
-    def __update_db(self, maildir):
-        '''
-        Update the database after mail files have been moved in the filesystem.
-        '''
-        try:
-            check_call(['notmuch', 'new'])
-        except CalledProcessError as err:
-            logging.error("Could not update notmuch database " \
-                          "after syncing maildir '{}': {}".format(maildir, err))
-            raise SystemExit
-
-
-    def __log_move_action(self, message, source, destination, dry_run):
-        '''
-        Report which mails have been identified for moving.
-        '''
-        if not dry_run:
-            level = logging.DEBUG
-            prefix = 'moving mail'
-        else:
-            level = logging.INFO
-            prefix = 'I would move mail'
-        logging.log(level, prefix)
-        logging.log(level, "    {}".format(get_message_summary(message).encode('utf8')))
-        logging.log(level, "from '{}' to '{}'".format(source, destination))
-        #logging.debug("rule: '{}' in [{}]".format(tag, message.get_tags()))
-
