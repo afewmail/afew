@@ -39,21 +39,22 @@ class FolderNameFilter(Filter):
 
 
     def handle_message(self, message):
-        maildirs = re.match(self.__filename_pattern, message.get_filename())
-        if maildirs:
-            folders = set(maildirs.group('maildirs').split(self.__maildir_separator))
-            self.log.debug('found folders {} for message {!r}'.format(
-                folders, message.get_header('subject')))
+        for fname in message.get_filenames():
+            maildirs = re.match(self.__filename_pattern, fname) 
+            if maildirs:
+                folders = set(maildirs.group('maildirs').split(self.__maildir_separator))
+                self.log.debug('found folders {} for message {!r}'.format(
+                    folders, message.get_header('subject')))
 
-            # remove blacklisted folders
-            clean_folders = folders - self.__folder_blacklist
-            if self.__folder_explicit_list:
-                # only explicitly listed folders
-                clean_folders &= self.__folder_explicit_list
-            # apply transformations
-            transformed_folders = self.__transform_folders(clean_folders)
+                # remove blacklisted folders
+                clean_folders = folders - self.__folder_blacklist
+                if self.__folder_explicit_list:
+                    # only explicitly listed folders
+                    clean_folders &= self.__folder_explicit_list
+                # apply transformations
+                transformed_folders = self.__transform_folders(clean_folders)
 
-            self.add_tags(message, *transformed_folders)
+                self.add_tags(message, *transformed_folders)
 
 
     def __transform_folders(self, folders):
