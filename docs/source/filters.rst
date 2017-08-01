@@ -122,9 +122,9 @@ only slightly more complicated than the above examples.
 FolderNameFilter
 ----------------
 
-This looks at which folder each email is in and uses that name as a tag for the
-email.  So if you have a procmail or sieve set up that puts emails in folders
-for you, this might be useful.
+For each email, it looks at all folders it is in, and uses the path and filename
+as a tag, for the email.  So if you have a procmail or sieve set up that puts emails
+in folders for you, this might be useful.
 
 * folder_explicit_list = <folder list>
 
