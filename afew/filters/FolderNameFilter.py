@@ -27,7 +27,7 @@ class FolderNameFilter(Filter):
     message = 'Tags all new messages with their folder'
 
     def __init__(self, database, folder_blacklist='', folder_transforms='',
-            maildir_separator='.', folder_explicit_list=''):
+            maildir_separator='.', folder_explicit_list='', folder_lowercases=''):
         super(FolderNameFilter, self).__init__(database)
 
         self.__filename_pattern = '{mail_root}/(?P<maildirs>.*)/(cur|new)/[^/]+'.format(
@@ -35,6 +35,7 @@ class FolderNameFilter(Filter):
         self.__folder_explicit_list = set(folder_explicit_list.split())
         self.__folder_blacklist = set(folder_blacklist.split())
         self.__folder_transforms = self.__parse_transforms(folder_transforms)
+        self.__folder_lowercases = folder_lowercases != ''
         self.__maildir_separator = maildir_separator
 
 
@@ -66,6 +67,11 @@ class FolderNameFilter(Filter):
                 transformations.add(self.__folder_transforms[folder])
             else:
                 transformations.add(folder)
+        if self.__folder_lowercases:
+            rtn = set()
+            for folder in transformations:
+                rtn.add(folder.lower())
+            return rtn
         return transformations
 
 
