@@ -61,9 +61,13 @@ Features
 Installation
 ------------
 
-Make sure you have already installed your distributions `notmuch`
+Make sure you have already installed your distribution's `notmuch`
 package, and the notmuch python bindings, which might come in separate
 `python-notmuch` and `python3-notmuch` packages.
+
+Note: if you are installing `notmuch` using Homebrew on macOS, make sure
+to run ``$ brew install --with-python3 notmuch``, because the brew formula
+doesn't install python3 notmuch bindings by default.
 
 It is recommended to install `afew` itself inside a virtualenv as an unprivileged
 user, either via checking out the source code and installing via setup.py, or
