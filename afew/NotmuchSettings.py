@@ -30,7 +30,7 @@ def read_notmuch_settings(path = None):
     notmuch_settings.readfp(open(path))
 
 def get_notmuch_new_tags():
-    tags = notmuch_settings.get_list('new', 'tags')
+    tags = list(notmuch_settings.get_list('new', 'tags'))
     try:
         tags.remove("unread")
     except ValueError:
