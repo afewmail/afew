@@ -30,12 +30,8 @@ def read_notmuch_settings(path = None):
     notmuch_settings.readfp(open(path))
 
 def get_notmuch_new_tags():
-    tags = notmuch_settings.get_list('new', 'tags')
-    try:
-        tags.remove("unread")
-    except ValueError:
-        pass
-    return tags
+    # see issue 158
+    return filter(lambda x: x != 'unread', notmuch_settings.get_list('new', 'tags'))
 
 def get_notmuch_new_query():
     return '(%s)' % ' AND '.join('tag:%s' % tag for tag in get_notmuch_new_tags())
