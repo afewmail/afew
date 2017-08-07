@@ -32,6 +32,7 @@ def read_notmuch_settings(path = None):
 def get_notmuch_new_tags():
     tags = notmuch_settings.get_list('new', 'tags')
     try:
+        tags = list(tags)
         tags.remove("unread")
     except ValueError:
         pass
