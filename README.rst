@@ -89,6 +89,7 @@ You might want to symlink `.venv/bin/afew` somewhere inside your path
 (~/bin/ in this case):
 
 .. code:: bash
+
   $ ln -snr .venv/bin/afew ~/.bin/afew
 
 
@@ -190,6 +191,7 @@ To do this automatically you can add the following hook into your
 ``~/.offlineimaprc``:
 
 .. code:: ini
+
   postsynchook = ionice -c 3 chrt --idle 0 /bin/sh -c "notmuch new && afew --tag --new"
 
 
