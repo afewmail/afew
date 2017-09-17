@@ -240,6 +240,6 @@ Have fun :)
 
 
 .. |GithubTag| image:: https://img.shields.io/github/tag/afewmail/afew.svg
-    :target: https://travis-ci.org/afewmail/afew
-.. |TravisStatus| image:: https://travis-ci.org/afewmail/afew.svg?branch=master
     :target: https://github.com/afewmail/afew/releases
+.. |TravisStatus| image:: https://travis-ci.org/afewmail/afew.svg?branch=master
+    :target: https://travis-ci.org/afewmail/afew
