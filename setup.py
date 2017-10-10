@@ -25,8 +25,6 @@ def get_requires():
     if os.environ.get('TRAVIS') != 'true':
         yield 'notmuch'
     yield 'chardet'
-    if version_info < (3, 0):
-        yield 'subprocess32'
 
 setup(
     name='afew',
