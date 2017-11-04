@@ -10,6 +10,7 @@ Here is a full sample configuration for move mode:
 
     [MailMover]
     folders = INBOX Junk
+    rename = False
     max_age = 15
 
     # rules
@@ -77,6 +78,18 @@ in the configuration section. By providing
 
 afew will only check mails at most 15 days old.
 
+Rename
+------
+
+When afew moves mail files, if the the `rename` option in the configuration is
+set afew will rename those files. You should probably do this if you're using
+the `mbsync` program to interact with your IMAP server.
+
+.. code-block:: ini
+
+    rename = True
+
+
 Limitations
 -----------
 
@@ -100,4 +113,3 @@ moving it? ;)
 feature. If you tag a mail with two tags and there is a rule for each
 of them, both rules will apply.  Your mail will be copied into two
 destination folders, then removed from its original location.
-
