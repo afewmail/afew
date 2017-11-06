@@ -81,9 +81,16 @@ afew will only check mails at most 15 days old.
 Rename
 ------
 
-When afew moves mail files, if the the `rename` option in the configuration is
-set afew will rename those files. You should probably do this if you're using
-the `mbsync` program to interact with your IMAP server.
+Set this option if you are using the `mbsync` IMAP syncing tool.
+`mbsync` adds a Unique IDentifier to files' names when it syncs them.
+If the `rename` option is not set, moving files can cause UID conflicts
+and prevent `mbsync` from syncing with error messages such as
+"Maildir error: duplicate UID 1234" or "UID 567 is beyond highest assigned UID 89".
+When the option is set, afew will rename files while moving them,
+removing the UID but preserving other `mbsync` information.
+This allows `mbsync` to assign a new UID to the file and avoid UID conflicts.
+
+If you are using `offlineimap`, you can safely ignore this option.
 
 .. code-block:: ini
 
