@@ -82,10 +82,11 @@ Rename
 ------
 
 Set this option if you are using the `mbsync` IMAP syncing tool.
-`mbsync` adds a Unique IDentifier to files' names when it syncs them.
+`mbsync` adds a unique identifier to files' names when it syncs them.
 If the `rename` option is not set, moving files can cause UID conflicts
 and prevent `mbsync` from syncing with error messages such as
 "Maildir error: duplicate UID 1234" or "UID 567 is beyond highest assigned UID 89".
+
 When the option is set, afew will rename files while moving them,
 removing the UID but preserving other `mbsync` information.
 This allows `mbsync` to assign a new UID to the file and avoid UID conflicts.
