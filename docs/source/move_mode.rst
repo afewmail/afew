@@ -10,6 +10,7 @@ Here is a full sample configuration for move mode:
 
     [MailMover]
     folders = INBOX Junk
+    rename = False
     max_age = 15
 
     # rules
@@ -77,6 +78,26 @@ in the configuration section. By providing
 
 afew will only check mails at most 15 days old.
 
+Rename
+------
+
+Set this option if you are using the `mbsync` IMAP syncing tool.
+`mbsync` adds a unique identifier to files' names when it syncs them.
+If the `rename` option is not set, moving files can cause UID conflicts
+and prevent `mbsync` from syncing with error messages such as
+"Maildir error: duplicate UID 1234" or "UID 567 is beyond highest assigned UID 89".
+
+When the option is set, afew will rename files while moving them,
+removing the UID but preserving other `mbsync` information.
+This allows `mbsync` to assign a new UID to the file and avoid UID conflicts.
+
+If you are using `offlineimap`, you can safely ignore this option.
+
+.. code-block:: ini
+
+    rename = True
+
+
 Limitations
 -----------
 
@@ -100,4 +121,3 @@ moving it? ;)
 feature. If you tag a mail with two tags and there is a rule for each
 of them, both rules will apply.  Your mail will be copied into two
 destination folders, then removed from its original location.
-
