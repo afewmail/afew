@@ -43,6 +43,7 @@ class TestFilterRegistry(unittest.TestCase):
                            'SpamFilter',
                            'Filter',
                            'KillThreadsFilter',
+                           'MeFilter',
                            'SentMailsFilter',
                            'HeaderMatchingFilter',
                            'ListMailsFilter']),
