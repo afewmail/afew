@@ -46,6 +46,7 @@ setup(
             'InboxFilter = afew.filters.InboxFilter:InboxFilter',
             'KillThreadsFilter = afew.filters.KillThreadsFilter:KillThreadsFilter',
             'ListMailsFilter = afew.filters.ListMailsFilter:ListMailsFilter',
+            'MeFilter = afew.filters.MeFilter:MeFilter',
             'SentMailsFilter = afew.filters.SentMailsFilter:SentMailsFilter',
             'SpamFilter = afew.filters.SpamFilter:SpamFilter',
         ],
