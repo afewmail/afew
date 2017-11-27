@@ -27,6 +27,7 @@ class TestFilterRegistry(unittest.TestCase):
         from afew import FilterRegistry
         self.assertEqual(sorted(['FolderNameFilter',
                            'ArchiveSentMailsFilter',
+                           'DKIMValidityFilter',
                            'DMARCReportInspectionFilter',
                            'InboxFilter',
                            'SpamFilter',
