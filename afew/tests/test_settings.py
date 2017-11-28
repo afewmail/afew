@@ -1,4 +1,4 @@
-#
+# -*- coding: utf-8 -*-
 # Copyright (c) 2013 Patrick Gerken <do3cc@patrick-gerken.de>
 #
 # Permission to use, copy, modify, and distribute this software for any

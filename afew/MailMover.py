@@ -1,4 +1,4 @@
-# coding=utf-8
+# -*- coding: utf-8 -*-
 
 #
 # Copyright (c) dtk <dtk@gmx.de>
