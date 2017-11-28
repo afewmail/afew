@@ -15,6 +15,9 @@ def get_requires():
 setup(
     name='afew',
     use_scm_version={'write_to': 'afew/version.py'},
+    description="An initial tagging script for notmuch mail",
+    url="https://github.com/afewmail/afew",
+    license="ISC",
     setup_requires=['setuptools_scm'],
     packages=find_packages(),
     test_suite='afew.tests',
@@ -40,6 +43,7 @@ setup(
     install_requires=list(get_requires()),
     provides=['afew'],
     classifiers=[
+        'License :: OSI Approved :: ISC License (ISCL)',
         'Development Status :: 4 - Beta',
         'Environment :: Console',
         'Intended Audience :: End Users/Desktop',
