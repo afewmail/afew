@@ -10,7 +10,6 @@ import xml.etree.ElementTree as ET
 import zipfile
 
 from .BaseFilter import Filter
-from ..NotmuchSettings import get_notmuch_new_tags
 
 
 class ReportFilesIterator(object):
@@ -95,7 +94,6 @@ class DMARCReportInspectionFilter(Filter):
     '''
     def __init__(self,                     # pylint: disable=too-many-arguments
                  database,
-                 archive_passed='on',
                  dkim_ok_tag='dmarc-dkim-ok',
                  dkim_fail_tag='dmarc-dkim-fail',
                  spf_ok_tag='dmarc-spf-ok',
@@ -105,8 +103,6 @@ class DMARCReportInspectionFilter(Filter):
         self.spf_tag = {True: spf_ok_tag, False: spf_fail_tag}
         self.dmarc_subject = re.compile(r'^report domain:',
                                         flags=re.IGNORECASE)
-        self.archive_passed = archive_passed.lower() in ['on', '1', 't',
-                                                         'true', 'yes']
 
     def handle_message(self, message):
         if not self.dmarc_subject.match(message.get_header('Subject')):
@@ -122,6 +118,3 @@ class DMARCReportInspectionFilter(Filter):
                       'dmarc',
                       self.dkim_tag[auth_results['dkim']],
                       self.spf_tag[auth_results['spf']])
-
-        if self.archive_passed and all(auth_results.values()):
-            self.remove_tags(message, *get_notmuch_new_tags())
