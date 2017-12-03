@@ -30,6 +30,7 @@ setup(
         'afew.filter': [
             'Filter = afew.filters.BaseFilter:Filter',
             'ArchiveSentMailsFilter = afew.filters.ArchiveSentMailsFilter:ArchiveSentMailsFilter',
+            'DMARCReportInspectionFilter = afew.filters.DMARCReportInspectionFilter:DMARCReportInspectionFilter',
             'FolderNameFilter = afew.filters.FolderNameFilter:FolderNameFilter',
             'HeaderMatchingFilter = afew.filters.HeaderMatchingFilter:HeaderMatchingFilter',
             'InboxFilter = afew.filters.InboxFilter:InboxFilter',
