@@ -94,10 +94,10 @@ class DMARCReportInspectionFilter(Filter):
     '''
     def __init__(self,                     # pylint: disable=too-many-arguments
                  database,
-                 dkim_ok_tag='dmarc-dkim-ok',
-                 dkim_fail_tag='dmarc-dkim-fail',
-                 spf_ok_tag='dmarc-spf-ok',
-                 spf_fail_tag='dmarc-spf-fail'):
+                 dkim_ok_tag='dmarc/dkim-ok',
+                 dkim_fail_tag='dmarc/dkim-fail',
+                 spf_ok_tag='dmarc/spf-ok',
+                 spf_fail_tag='dmarc/spf-fail'):
         super(DMARCReportInspectionFilter, self).__init__(database)
         self.dkim_tag = {True: dkim_ok_tag, False: dkim_fail_tag}
         self.spf_tag = {True: spf_ok_tag, False: spf_fail_tag}
