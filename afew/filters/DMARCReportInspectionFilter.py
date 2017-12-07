@@ -36,6 +36,13 @@ class ReportFilesIterator(object):
                 yield part.get_payload(decode=True)
 
 
+class ReportParseError(Exception):
+    '''
+    The report is malformed.
+    '''
+    pass
+
+
 def and_dict(dict1, dict2):
     '''
     Apply logical conjunction between values of dictionaries of the same keys.
@@ -53,19 +60,7 @@ def and_dict(dict1, dict2):
     return dict3
 
 
-def has_failed(node):
-    '''
-    Check whether status is "failed".
-
-    To avoid false positives check whether status is one of "pass" or "none".
-
-    :param node: XML node holding status as text.
-    :returns: Whether the status is reported as "failed".
-    '''
-    return (node.text.strip() not in ['pass', 'none'])
-
-
-def read_auth_results(document):
+def read_dmarc_results(document):
     '''
     Parse DMARC document.
 
@@ -77,13 +72,22 @@ def read_auth_results(document):
     values are boolean values.
     '''
     results = {'dkim': True, 'spf': True}
-    root = ET.fromstring(document)
-    for record in root.findall('record'):
-        auth_results = record.find('auth_results')
-        dkim = auth_results.find('dkim').find('result')
-        spf = auth_results.find('spf').find('result')
-        results['dkim'] &= not has_failed(dkim)
-        results['spf'] &= not has_failed(spf)
+
+    try:
+        root = ET.fromstring(document)
+    except ET.ParseError:
+        raise ReportParseError()
+
+    try:
+        for record in root.findall('record'):
+            policy_evaluated = record.find('row').find('policy_evaluated')
+            dkim = policy_evaluated.find('dkim')
+            spf = policy_evaluated.find('spf')
+
+            results['dkim'] &= dkim.text.strip() == 'pass'
+            results['spf'] &= spf.text.strip() == 'pass'
+    except AttributeError:
+        raise ReportParseError()
 
     return results
 
@@ -108,13 +112,17 @@ class DMARCReportInspectionFilter(Filter):
         if not self.dmarc_subject.match(message.get_header('Subject')):
             return
 
-        auth_results = {'dkim': True, 'spf': True}
+        dmarc_results = {'dkim': True, 'spf': True}
 
-        for file_content in ReportFilesIterator(message):
-            document = file_content.decode('UTF-8')
-            auth_results = and_dict(auth_results, read_auth_results(document))
+        try:
+            for file_content in ReportFilesIterator(message):
+                document = file_content.decode('UTF-8')
+                dmarc_results = and_dict(dmarc_results,
+                                         read_dmarc_results(document))
 
-        self.add_tags(message,
-                      'dmarc',
-                      self.dkim_tag[auth_results['dkim']],
-                      self.spf_tag[auth_results['spf']])
+            self.add_tags(message,
+                          'dmarc',
+                          self.dkim_tag[dmarc_results['dkim']],
+                          self.spf_tag[dmarc_results['spf']])
+        except ReportParseError:
+            self.add_tags(message, 'dmarc', 'dmarc/malformed')
