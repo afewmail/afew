@@ -11,6 +11,7 @@ def get_requires():
     if os.environ.get('TRAVIS') != 'true':
         yield 'notmuch'
     yield 'chardet'
+    yield 'dkimpy'
 
 setup(
     name='afew',
@@ -30,6 +31,7 @@ setup(
         'afew.filter': [
             'Filter = afew.filters.BaseFilter:Filter',
             'ArchiveSentMailsFilter = afew.filters.ArchiveSentMailsFilter:ArchiveSentMailsFilter',
+            'DKIMValidityFilter = afew.filters.DKIMValidityFilter:DKIMValidityFilter',
             'DMARCReportInspectionFilter = afew.filters.DMARCReportInspectionFilter:DMARCReportInspectionFilter',
             'FolderNameFilter = afew.filters.FolderNameFilter:FolderNameFilter',
             'HeaderMatchingFilter = afew.filters.HeaderMatchingFilter:HeaderMatchingFilter',
