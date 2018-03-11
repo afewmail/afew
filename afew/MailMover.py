@@ -19,7 +19,7 @@ class MailMover(Database):
     '''
 
 
-    def __init__(self, max_age=0, rename = False, dry_run=False):
+    def __init__(self, max_age=0, rename = False, dry_run=False, no_new=False):
         super(MailMover, self).__init__()
         self.db = notmuch.Database(self.db_path)
         self.query = 'folder:{folder} AND {subquery}'
@@ -31,6 +31,7 @@ class MailMover(Database):
                                                        now=now.strftime('%s'))
         self.dry_run = dry_run
         self.rename = rename
+        self.run_new = not no_new
 
     def get_new_name(self, fname, destination):
         if self.rename:
@@ -106,7 +107,8 @@ class MailMover(Database):
         Update the database after mail files have been moved in the filesystem.
         '''
         try:
-            check_call(['notmuch', 'new'])
+            if self.run_new:
+                check_call(['notmuch', 'new'])
         except CalledProcessError as err:
             logging.error("Could not update notmuch database " \
                           "after syncing maildir '{}': {}".format(maildir, err))
