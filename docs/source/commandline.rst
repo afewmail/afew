@@ -6,7 +6,7 @@ whether to act on all messages, or only on new messages.  The actions you can
 choose from are:
 
 tag
-  run the tag filters.  See :ref:`Initial tagging`.
+  run the tag filters.  See `Initial tagging`_.
 
 watch
   continuously monitor the mailbox for new files
