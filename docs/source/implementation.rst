@@ -14,7 +14,7 @@ manager :class:`alot.db.DBManager`.
 Filter
 ------
 
-.. module:: afew.Filter
+.. module:: afew.filters.BaseFilter
 .. autoclass:: Filter
    :members:
 
