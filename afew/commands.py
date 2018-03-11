@@ -75,6 +75,10 @@ options_group.add_argument(
     help="don't change the db [default: %(default)s]"
 )
 options_group.add_argument(
+    '-N', '--no-new', default=False, action='store_true',
+    help="do not run notmuch new after moving mails, you will have to run it manualy"
+)
+options_group.add_argument(
     '-R', '--reference-set-size', type=int, default=1000,
     help='size of the reference set [default: %(default)s]'
 )
