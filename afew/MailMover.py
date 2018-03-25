@@ -1,38 +1,42 @@
 # -*- coding: utf-8 -*-
 # SPDX-License-Identifier: ISC
 # Copyright (c) dtk <dtk@gmx.de>
+"""This module contain the MailMover class"""
 
-import notmuch
+import os
 import logging
-import os, shutil
+import shutil
+import sys
 from subprocess import check_call, CalledProcessError
-
-from .Database import Database
-from .utils import get_message_summary
 from datetime import date, datetime, timedelta
 import uuid
+import notmuch
+from .Database import Database
+from .utils import get_message_summary
 
 
 class MailMover(Database):
     '''
-    Move mail files matching a given notmuch query into a target maildir folder.
+    Move mail files matching a given notmuch query to a target maildir folder.
     '''
 
 
     def __init__(self, max_age=0, rename = False, dry_run=False, notmuch_args=''):
-        super().__init__()
+        super(MailMover, self).__init__()
         self.db = notmuch.Database(self.db_path)
         self.query = 'folder:"{folder}" AND {subquery}'
         if max_age:
             days = timedelta(int(max_age))
             start = date.today() - days
             now = datetime.now()
-            self.query += ' AND {start}..{now}'.format(start=start.strftime('%s'),
-                                                       now=now.strftime('%s'))
+            self.query += ' AND {start}..{now}'.format(
+                start=start.strftime('%s'),
+                now=now.strftime('%s'))
         self.dry_run = dry_run
         self.rename = rename
         self.notmuch_args = notmuch_args
 
+    """ return the new name """
     def get_new_name(self, fname, destination):
         basename = os.path.basename(fname)
         submaildir =  os.path.split(os.path.split(fname)[0])[1]
@@ -53,7 +57,10 @@ class MailMover(Database):
         '''
         # identify and move messages
         logging.info("checking mails in '{}'".format(maildir))
-        to_delete_fnames = []
+        # Open DB R/W if are not in dry-run
+        if not self.dry_run:
+            self.db = notmuch.Database(self.db_path,
+                                       mode=notmuch.Database.MODE.READ_WRITE)
         moved = False
         for query in rules.keys():
             destination = '{}/{}/'.format(self.db_path, rules[query])
@@ -63,7 +70,7 @@ class MailMover(Database):
             messages = notmuch.Query(self.db, main_query).search_messages()
             for message in messages:
                 # a single message (identified by Message-ID) can be in several
-                # places; only touch the one(s) that exists in this maildir 
+                # places; only touch the one(s) that exists in this maildir
                 all_message_fnames = message.get_filenames()
                 to_move_fnames = [name for name in all_message_fnames
                                   if maildir in name]
@@ -76,31 +83,45 @@ class MailMover(Database):
                     if self.dry_run:
                         continue
                     try:
-                        shutil.copy2(fname, self.get_new_name(fname, destination))
-                        to_delete_fnames.append(fname)
-                    except shutil.SameFileError:
-                        logging.warn("trying to move '{}' onto itself".format(fname))
-                        continue
+                        logging.info("Copy original mail: "+fname)
+                        logging.info("Path of mail: "+os.path.dirname(fname))
+                        logging.info("Copy to: "+destination)
+                        dbpath = self.db.get_path()
+                        logging.info("Path of DB: "+dbpath)
+                        relpath=os.path.relpath(os.path.dirname(destination), dbpath)
+                        filename = os.path.basename(fname)
+                        logging.info("filename: "+filename)
+                        logging.info("Relative path DB -> file: " + relpath)
+                        # 1 COPY
+                        shutil.copy2(fname,
+                                     self.get_new_name(fname,
+                                                       destination))
+                        dest_file_rel = dbpath+'/'+relpath+'/'+filename
+                        logging.info("Add new copy to the DB: "+dest_file_rel)
+                        # OPEN DB R/W
+                        logging.info("Open DB R/W")
+                        # print vars(self.db)
+                        # 2 Add NEW MESSAGE TO DB
+                        moved_message = notmuch.Database.add_message(self.db, dest_file_rel)
+                        logging.info("Delete original mail file: "+fname)
+                        os.remove(fname)
+                        # 3 REMOVE ORIGINAL
+                        logging.info("Delete the original mail in DB")
+                        # 4 REMOVE ORIGINAL FROM DB
+                        notmuch.Database.remove_message(self.db, fname)
+                    except IOError as e:
+                        logging.warn('Error IO: '+format(e))
                     except shutil.Error as e:
-                        # this is ugly, but shutil does not provide more
-                        # finely individuated errors
-                        if str(e).endswith("already exists"):
-                            continue
-                        else:
-                            raise
-
-        # remove mail from source locations only after all copies are finished
-        for fname in set(to_delete_fnames):
-            os.remove(fname)
-
-        # update notmuch database
-        if not self.dry_run:
-            if moved:
-                logging.info("updating database")
-                self.__update_db(maildir)
-        else:
-            logging.info("Would update database")
-
+                        logging.warn('Error shutil: '+format(e))
+                        continue
+                    except OSError as e:
+                        logging.warn('Error OS: '+format(e))
+                        continue
+                    except notmuch.NotmuchError as e:
+                        logging.warn('Error notmuch: '+format(e))
+                        continue
+        # Return the moved flag
+        return moved
 
     #
     # private:
@@ -117,7 +138,6 @@ class MailMover(Database):
                           "after syncing maildir '{}': {}".format(maildir, err))
             raise SystemExit
 
-
     def __log_move_action(self, message, source, destination, dry_run):
         '''
         Report which mails have been identified for moving.
@@ -132,4 +152,3 @@ class MailMover(Database):
         logging.log(level, "    {}".format(get_message_summary(message).encode('utf8')))
         logging.log(level, "from '{}' to '{}'".format(source, destination))
         #logging.debug("rule: '{}' in [{}]".format(tag, message.get_tags()))
-
