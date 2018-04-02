@@ -51,16 +51,13 @@ class MailMover(Database):
             basename = str(uuid.uuid1()) + flagpart
         return os.path.join(destination, submaildir, basename)
 
+    """ Move mails in folder maildir according to the given rules. """
     def move(self, maildir, rules):
         '''
         Move mails in folder maildir according to the given rules.
         '''
         # identify and move messages
         logging.info("checking mails in '{}'".format(maildir))
-        # Open DB R/W if are not in dry-run
-        if not self.dry_run:
-            self.db = notmuch.Database(self.db_path,
-                                       mode=notmuch.Database.MODE.READ_WRITE)
         moved = False
         for query in rules.keys():
             destination = '{}/{}/'.format(self.db_path, rules[query])
@@ -72,56 +69,76 @@ class MailMover(Database):
                 # a single message (identified by Message-ID) can be in several
                 # places; only touch the one(s) that exists in this maildir
                 all_message_fnames = message.get_filenames()
-                to_move_fnames = [name for name in all_message_fnames
-                                  if maildir in name]
+                to_move_fnames = [
+                    name for name in all_message_fnames
+                    if maildir in name]
                 if not to_move_fnames:
                     continue
-                moved = True
-                self.__log_move_action(message, maildir, rules[query],
-                                       self.dry_run)
                 for fname in to_move_fnames:
                     if self.dry_run:
                         continue
-                    try:
-                        logging.info("Copy original mail: "+fname)
-                        logging.info("Path of mail: "+os.path.dirname(fname))
-                        logging.info("Copy to: "+destination)
-                        dbpath = self.db.get_path()
-                        logging.info("Path of DB: "+dbpath)
-                        relpath=os.path.relpath(os.path.dirname(destination), dbpath)
-                        filename = os.path.basename(fname)
-                        logging.info("filename: "+filename)
-                        logging.info("Relative path DB -> file: " + relpath)
-                        # 1 COPY
-                        shutil.copy2(fname,
-                                     self.get_new_name(fname,
-                                                       destination))
-                        dest_file_rel = dbpath+'/'+relpath+'/'+filename
-                        logging.info("Add new copy to the DB: "+dest_file_rel)
-                        # OPEN DB R/W
-                        logging.info("Open DB R/W")
-                        # print vars(self.db)
-                        # 2 Add NEW MESSAGE TO DB
-                        moved_message = notmuch.Database.add_message(self.db, dest_file_rel)
-                        logging.info("Delete original mail file: "+fname)
-                        os.remove(fname)
-                        # 3 REMOVE ORIGINAL
-                        logging.info("Delete the original mail in DB")
-                        # 4 REMOVE ORIGINAL FROM DB
-                        notmuch.Database.remove_message(self.db, fname)
-                    except IOError as e:
-                        logging.warn('Error IO: '+format(e))
-                    except shutil.Error as e:
-                        logging.warn('Error shutil: '+format(e))
-                        continue
-                    except OSError as e:
-                        logging.warn('Error OS: '+format(e))
-                        continue
-                    except notmuch.NotmuchError as e:
-                        logging.warn('Error notmuch: '+format(e))
-                        continue
+                    else:
+                        moved = self.moveMail(fname, destination, True)
         # Return the moved flag
         return moved
+
+    """ Action of moving a mail and upgrade the DB """
+    def moveMail(self, mailFrom, mailTo, upgradeDatabase):
+        output = False
+        """ We need to check that we are not moving a file to itself """
+        if mailFrom == mailTo:
+            logging.error("Can not move mail to itself: {} -> {}".format(
+                mailFrom,
+                mailTo))
+            raise SystemExit
+        else:
+            try:
+                " mailFrom must be a file "
+                if not os.path.isfile(mailFrom):
+                    logging.error("mailFrom not a file: {}".format(mailFrom))
+                    raise SystemExit
+                " mailTo must be a directory "
+                if not os.path.isdir(mailTo):
+                    logging.error("mailTo not a dir: {}".format(mailTo))
+                    raise SystemExit
+                filename = os.path.basename(mailFrom)
+                logging.info("Copy original mail: {}".format(filename))
+                logging.info("{} -> {}".format(
+                    os.path.dirname(mailFrom),
+                    os.path.dirname(mailTo)))
+                # 1 COPY
+                shutil.copy2(mailFrom, mailTo)
+                mailToFile = os.path.join(mailTo, filename)
+                if upgradeDatabase:
+                    self.db = notmuch.Database(self.db_path,
+                                               mode=notmuch.Database.MODE.READ_WRITE)
+                    logging.info("Add new copy to the DB: {}".format(mailToFile))
+                    notmuch.Database.add_message(self.db, mailToFile)
+                    self.db = notmuch.Database(self.db_path)
+                logging.info("Delete original file: {}".format(mailFrom))
+                os.remove(mailFrom)
+                # 3 REMOVE ORIGINAL
+                if upgradeDatabase:
+                    self.db = notmuch.Database(self.db_path,
+                                               mode=notmuch.Database.MODE.READ_WRITE)
+                    logging.info("Cleanup the original mail in DB")
+                    # 4 REMOVE ORIGINAL FROM DB
+                    notmuch.Database.remove_message(self.db, mailFrom)
+                    self.db = notmuch.Database(self.db_path)
+                output = True
+            except IOError as e:
+                logging.error("Error IO: {}".format(e))
+                raise SystemExit
+            except shutil.Error as e:
+                logging.error("shutil: {}".format(e))
+                raise SystemExit
+            except OSError as e:
+                logging.error("OS: {}".format(e))
+                raise SystemExit
+            except notmuch.NotmuchError as e:
+                logging.error("notmuch: {}".format(e.status))
+                raise SystemExit
+        return output
 
     #
     # private:
