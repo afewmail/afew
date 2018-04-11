@@ -29,15 +29,10 @@ fyi: afew plays nicely with alot, a GUI for notmuch mail ;)
 
 
 
-Current NEWS
-------------
+IRC
+---
 
-afew is quite young, so expect a few user visible API or configuration
-format changes, though I'll try to minimize such disruptive events.
-
-Please keep an eye on NEWS.md for important news.
-
-Also, feel free to ask your questions and discuss usage in the [#afewmail IRC Channel](http://webchat.freenode.net/?channels=#afewmail) on freenode.
+Feel free to ask your questions and discuss usage in the [#afewmail IRC Channel](http://webchat.freenode.net/?channels=#afewmail) on freenode.
 
 
 
