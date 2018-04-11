@@ -11,23 +11,33 @@ On Debian/Ubuntu systems you can install these by doing:
 
     $ sudo aptitude install notmuch python-notmuch python-dev python-setuptools
 
+Note: if you are installing `notmuch` using Homebrew on macOS, make sure
+to run ``$ brew install --with-python3 notmuch``, because the brew formula
+doesn't install python3 notmuch bindings by default.
+
 Unprivileged Install
 --------------------
 
-And I'd like to suggest to install afew as your unprivileged user.
+It is recommended to install `afew` itself inside a virtualenv as an unprivileged
+user, either via checking out the source code and installing via setup.py, or
+via pip.
 
-.. code-block:: sh
+.. code:: bash
 
-    $ python setup.py install --prefix=~/.local
-    $ mkdir -p ~/.config/afew
+  # create and activate virtualenv
+  $ python -m venv --system-site-packages .venv
+  $ source .venv/bin/activate
 
-If you do, make sure `~/.local/bin` is in your path, say by putting the
-following in your `~/.bashrc`:
+  # install via pip from PyPI:
+  $ pip install afew
 
-.. code-block:: sh
+  # or install from source:
+  $ python setup.py install --prefix=~/.local
 
-    if [ -d ~/.local/bin ]; then
-        PATH=$PATH:~/.local/bin
-    fi
 
-If you want to do a system wide install you can leave off the `--prefix` option.
+You might want to symlink `.venv/bin/afew` somewhere inside your path
+(~/bin/ in this case):
+
+.. code:: bash
+
+  $ ln -snr .venv/bin/afew ~/.bin/afew
