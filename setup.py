@@ -8,7 +8,7 @@ from setuptools import setup, find_packages
 from sys import version_info
 
 def get_requires():
-    if os.environ.get('TRAVIS') != 'true':
+    if os.environ.get('TRAVIS') != 'true' and os.environ.get('READTHEDOCS') != 'True':
         yield 'notmuch'
     yield 'chardet'
     yield 'dkimpy'
