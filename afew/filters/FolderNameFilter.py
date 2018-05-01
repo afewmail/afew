@@ -14,17 +14,16 @@ class FolderNameFilter(Filter):
     message = 'Tags all new messages with their folder'
 
     def __init__(self, database, folder_blacklist='', folder_transforms='',
-            maildir_separator='.', folder_explicit_list='', folder_lowercases=''):
+                 maildir_separator='.', folder_explicit_list='', folder_lowercases=''):
         super(FolderNameFilter, self).__init__(database)
 
         self.__filename_pattern = '{mail_root}/(?P<maildirs>.*)/(cur|new)/[^/]+'.format(
             mail_root=notmuch_settings.get('database', 'path').rstrip('/'))
-        self.__folder_explicit_list = set(folder_explicit_list.split())
+        self.__folder_explicit_list = set(shlex.split(folder_explicit_list))
         self.__folder_blacklist = set(folder_blacklist.split())
         self.__folder_transforms = self.__parse_transforms(folder_transforms)
         self.__folder_lowercases = folder_lowercases != ''
         self.__maildir_separator = maildir_separator
-
 
     def handle_message(self, message):
         # Find all the dirs in the mail directory that this message
@@ -52,7 +51,6 @@ class FolderNameFilter(Filter):
 
             self.add_tags(message, *transformed_folders)
 
-
     def __transform_folders(self, folders):
         '''
         Transforms the given collection of folders according to the transformation rules.
@@ -70,7 +68,6 @@ class FolderNameFilter(Filter):
             return rtn
         return transformations
 
-
     def __parse_transforms(self, transformation_description):
         '''
         Parses the transformation rules specified in the config file.
@@ -80,4 +77,3 @@ class FolderNameFilter(Filter):
             folder, tag = rule.split(':')
             transformations[folder] = tag
         return transformations
-
