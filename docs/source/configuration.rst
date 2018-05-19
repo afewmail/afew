@@ -82,7 +82,7 @@ by removing the new tag before you get to the InboxFilter:
 Full Sample Config
 ------------------
 
-Showing some sample configs is the easiest way to understand.  The 
+Showing some sample configs is the easiest way to understand.  The
 `notmuch initial tagging page`_ shows a sample config:
 
 .. _notmuch initial tagging page: http://notmuchmail.org/initial_tagging/
@@ -107,12 +107,12 @@ The (roughly) equivalent set up in afew would be:
 
     [ArchiveSentMailsFilter]
 
-    [Filter.spamcom]
+    [Filter.1]
     message = Delete all messages from spammer
     query = from:spam@spam.com
     tags = +deleted;-new
 
-    [Filter.notmuch]
+    [Filter.2]
     message = Tag all messages from the notmuch mailing list
     query = to:notmuch@notmuchmail.org
     tags = +notmuch
@@ -122,7 +122,7 @@ The (roughly) equivalent set up in afew would be:
 Not that the queries do not generally include `tag:new` because this is implied when afew
 is run with the `--new` flag.
 
-The differences between them is that 
+The differences between them is that
 
 * the ArchiveSentMailsFilter will add the **sent** tag, as well as archiving the
   email.  And it will not archive email that has been sent to one of your own
