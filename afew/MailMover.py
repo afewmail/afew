@@ -33,20 +33,17 @@ class MailMover(Database):
         self.rename = rename
 
     def get_new_name(self, fname, destination):
+        basename = os.path.basename(fname)
         if self.rename:
-            parts = os.path.basename(fname).split(':')
+            parts = basename.split(':')
             if len(parts) > 1:
                 flagpart = ':' + parts[-1]
             else:
                 flagpart = ''
-            return os.path.join(
-                            destination,
                             # construct a new filename, composed of a made-up ID and the flags part
                             # of the original filename.
-                            str(uuid.uuid1()) + flagpart
-                        )
-        else:
-            return destination
+            basename = str(uuid.uuid1()) + flagpart
+        return os.path.join(destination, basename)
 
     def move(self, maildir, rules):
         '''
