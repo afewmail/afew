@@ -34,11 +34,16 @@ class MailMover(Database):
 
     def get_new_name(self, fname, destination):
         if self.rename:
+            parts = os.path.basename(fname).split(':')
+            if len(parts) > 1:
+                flagpart = ':' + parts[-1]
+            else:
+                flagpart = ''
             return os.path.join(
                             destination,
                             # construct a new filename, composed of a made-up ID and the flags part
                             # of the original filename.
-                            str(uuid.uuid1()) + ':' + os.path.basename(fname).split(':')[-1]
+                            str(uuid.uuid1()) + flagpart
                         )
         else:
             return destination
