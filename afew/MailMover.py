@@ -34,6 +34,7 @@ class MailMover(Database):
 
     def get_new_name(self, fname, destination):
         basename = os.path.basename(fname)
+        submaildir =  os.path.split(os.path.split(fname)[0])[1]
         if self.rename:
             parts = basename.split(':')
             if len(parts) > 1:
@@ -43,7 +44,7 @@ class MailMover(Database):
                             # construct a new filename, composed of a made-up ID and the flags part
                             # of the original filename.
             basename = str(uuid.uuid1()) + flagpart
-        return os.path.join(destination, basename)
+        return os.path.join(destination, submaildir, basename)
 
     def move(self, maildir, rules):
         '''
@@ -54,7 +55,7 @@ class MailMover(Database):
         to_delete_fnames = []
         moved = False
         for query in rules.keys():
-            destination = '{}/{}/cur/'.format(self.db_path, rules[query])
+            destination = '{}/{}/'.format(self.db_path, rules[query])
             main_query = self.query.format(
                 folder=maildir.replace("\"", "\\\""), subquery=query)
             logging.debug("query: {}".format(main_query))
