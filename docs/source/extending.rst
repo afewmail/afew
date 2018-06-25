@@ -10,7 +10,8 @@ So an example small filter you could add might be:
 
 .. code-block:: python
 
-    from afew.Filter import Filter, register_filter
+    from afew.filters.BaseFilter  import Filter
+    from afew.FilterRegistry import register_filter
 
     PROJECT_MAPPING = {
         'fabric': 'deployment',
