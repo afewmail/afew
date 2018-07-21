@@ -103,16 +103,15 @@ class Filter(object):
             db = self.database.open(rw=True)
 
             for message_id in dirty_messages:
-                messages = notmuch.Query(db, 'id:"%s"' % message_id).search_messages()
+                message = db.find_message(message_id)
 
-                for message in messages:
-                    if message_id in self._flush_tags:
-                        message.remove_all_tags()
+                if message_id in self._flush_tags:
+                    message.remove_all_tags()
 
-                    for tag in self._add_tags.get(message_id, []):
-                        message.add_tag(tag)
+                for tag in self._add_tags.get(message_id, []):
+                    message.add_tag(tag)
 
-                    for tag in self._remove_tags.get(message_id, []):
-                        message.remove_tag(tag)
+                for tag in self._remove_tags.get(message_id, []):
+                    message.remove_tag(tag)
 
         self.flush_changes()
