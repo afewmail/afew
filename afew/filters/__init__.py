@@ -4,12 +4,9 @@
 
 from __future__ import print_function, absolute_import, unicode_literals
 
-import sys
 import os
 import glob
 
 __all__ = list(filename[:-3]
-               for filename in glob.glob1(os.path.dirname(__file__),
-                                          # py2.7 compat hack
-                                          b'*.py' if sys.version_info[0] == 2 else '*.py')
+               for filename in glob.glob1(os.path.dirname(__file__), '*.py')
                if filename is not '__init__.py')
