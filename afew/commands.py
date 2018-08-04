@@ -128,9 +128,7 @@ def main():
     logging.basicConfig(level=loglevel)
 
     sys.path.insert(0, user_config_dir)
-    # py2.7 compat hack
-    glob_pattern = b'*.py' if sys.version_info[0] == 2 else '*.py'
-    for file_name in glob.glob1(user_config_dir,  glob_pattern):
+    for file_name in glob.glob1(user_config_dir, '*.py'):
         logging.info('Importing user filter %r' % (file_name, ))
         __import__(file_name[:-3], level=0)
 
