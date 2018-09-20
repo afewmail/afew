@@ -22,12 +22,13 @@ Below we explain what each bit of this means.
 Rules
 -----
 
-First you need to specify which folders should be checked for mails that are to
-be moved (as a whitespace separated list):
+First you need to specify which folders should be checked for mails
+that are to be moved (as a whitespace separated list). Folder names
+containing whitespace need to be quoted:
 
 .. code-block:: ini
 
-    folders = INBOX Junk
+    folders = INBOX Junk "Sent Mail"
 
 Then you have to specify rules that define move actions of the form
 
