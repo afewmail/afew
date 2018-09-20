@@ -7,6 +7,7 @@ from __future__ import print_function, absolute_import, unicode_literals
 import os
 import re
 import collections
+import shlex
 
 from .configparser import SafeConfigParser
 from afew.FilterRegistry import all_filters
@@ -68,7 +69,7 @@ def get_mail_move_rules():
     if settings.has_option(mail_mover_section, 'folders'):
         all_rules = collections.OrderedDict()
 
-        for folder in settings.get(mail_mover_section, 'folders').split():
+        for folder in shlex.split(settings.get(mail_mover_section, 'folders')):
             if settings.has_option(mail_mover_section, folder):
                 rules = collections.OrderedDict()
                 raw_rules = re.findall(rule_pattern,
