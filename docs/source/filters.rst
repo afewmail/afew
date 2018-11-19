@@ -154,7 +154,7 @@ in folders for you, this might be useful.
 
 .. code-block:: ini
 
-    folder transforms = Junk:spam Drafts:draft Sent:sent
+    folder_transforms = Junk:spam Drafts:draft Sent:sent
 
 * folder_lowercases = true
 
