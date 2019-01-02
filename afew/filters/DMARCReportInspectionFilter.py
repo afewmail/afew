@@ -80,10 +80,15 @@ def read_auth_results(document):
     root = ET.fromstring(document)
     for record in root.findall('record'):
         auth_results = record.find('auth_results')
-        dkim = auth_results.find('dkim').find('result')
-        spf = auth_results.find('spf').find('result')
-        results['dkim'] &= not has_failed(dkim)
-        results['spf'] &= not has_failed(spf)
+        if auth_results:
+            dkim = auth_results.find('dkim')
+            if dkim:
+                dkim = dkim.find('result')
+                results['dkim'] &= not has_failed(dkim)
+            spf = auth_results.find('spf')
+            if spf:
+                spf = spf.find('result')
+                results['spf'] &= not has_failed(spf)
 
     return results
 
