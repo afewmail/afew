@@ -22,7 +22,7 @@ class MailMover(Database):
     def __init__(self, max_age=0, rename = False, dry_run=False):
         super(MailMover, self).__init__()
         self.db = notmuch.Database(self.db_path)
-        self.query = 'folder:{folder} AND {subquery}'
+        self.query = 'folder:"{folder}" AND {subquery}'
         if max_age:
             days = timedelta(int(max_age))
             start = date.today() - days
