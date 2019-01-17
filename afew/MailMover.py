@@ -5,6 +5,7 @@
 import notmuch
 import logging
 import os, shutil
+import shlex
 from subprocess import check_call, CalledProcessError
 
 from .Database import Database
@@ -22,7 +23,7 @@ class MailMover(Database):
     def __init__(self, max_age=0, rename = False, dry_run=False):
         super(MailMover, self).__init__()
         self.db = notmuch.Database(self.db_path)
-        self.query = 'folder:"{folder}" AND {subquery}'
+        self.query = 'folder:{folder} AND {subquery}'
         if max_age:
             days = timedelta(int(max_age))
             start = date.today() - days
@@ -53,7 +54,8 @@ class MailMover(Database):
         moved = False
         for query in rules.keys():
             destination = '{}/{}/cur/'.format(self.db_path, rules[query])
-            main_query = self.query.format(folder=maildir, subquery=query)
+            main_query = self.query.format(
+                folder=shlex.quote(maildir), subquery=query)
             logging.debug("query: {}".format(main_query))
             messages = notmuch.Query(self.db, main_query).search_messages()
             for message in messages:
