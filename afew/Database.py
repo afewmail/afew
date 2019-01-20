@@ -4,8 +4,10 @@
 
 from __future__ import print_function, absolute_import, unicode_literals
 
+import os
 import time
 import logging
+import configparser
 
 import notmuch
 
@@ -17,7 +19,9 @@ class Database(object):
     '''
 
     def __init__(self):
-        self.db_path = notmuch_settings.get('database', 'path')
+        self.db_path = notmuch_settings.get('database', 'path',
+                                            fallback=os.environ.get('MAILDIR',
+                                                                    configparser._UNSET))
         self.handle = None
 
     def __enter__(self):
