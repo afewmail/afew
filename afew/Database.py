@@ -20,7 +20,7 @@ class Database(object):
     def __init__(self):
         self.db_path = notmuch_settings.get('database', 'path',
                                             fallback=os.environ.get('MAILDIR',
-                                                                    '%s/mail' % os.environ.get('HOME')))
+                                                                    '{}/mail'.format(os.environ.get('HOME'))))
         self.handle = None
 
     def __enter__(self):
