@@ -33,12 +33,6 @@ See :doc:`installation` for a more detailed guide.
 Initial Config
 --------------
 
-Create the directories to hold the config files:
-
-.. code-block:: sh
-
-    $ mkdir -p ~/.config/afew ~/.local/share/afew/categories
-
 Make sure that `~/.notmuch-config` reads:
 
 .. code-block:: ini
