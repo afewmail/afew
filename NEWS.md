@@ -1,4 +1,67 @@
-afew x.x (xxxx-xx-xx)
+afew 2.0.0 (xxxx-xx-xx)
+=======================
+
+Python 3 support removed
+
+  afew doesn't support Python 2 anymore, and all Python 2 specific compat hacks
+  were removed.
+
+Better support for whitespaces and quotes in folder names
+
+  Previously, afew failed with folders containing quotes or namespaces. These
+  are now properly escaped internally.
+
+afew 1.3.0 (2018-02-06)
+=======================
+
+MeFilter added
+
+  Add filter tagging mail sent directly to any of addresses defined in
+  Notmuch config file: `primary_email` or `other_email`.
+  Default tag is `to-me` and can be customized with `me_tag` option.
+
+License comments replaced with SPDX-License-Identifier
+
+  Where possible, license boilerplate comments were changed to just the
+  SPDX-License-Identifier, while adding the license to the repo and referencing
+  it in `setup.py`, too.
+
+DMARCReportInspectionFilter added
+
+  DMARC reports usually come in ZIP files. To check the report you have to
+  unpack and search thru XML document which is very tedious. The filter tags the
+  message as follows:
+
+  if there's any SPF failure in any attachment, tag the message with
+  "dmarc-spf-fail" tag, otherwise tag with "dmarc-spf-ok"
+
+  if there's any DKIM failure in any attachment, tag the message with
+  "dmarc-dkim-fail" tag, otherwise tag with "dmarc-dkim-ok"
+
+DKIMValidityFilter added
+  This filter verifies DKIM signatures of E-Mails with DKIM header, and adds
+  `dkin-ok` or `dkin-fail` tags.
+
+
+afew 1.2.0 (2017-08-07)
+=======================
+
+FolderNameFilter supporting mails in multiple directories
+
+  FolderNameFilter now looks at all folders that a message is in when adding
+  tags to it.
+
+afew 1.1.0 (2017-06-12)
+=======================
+
+Classification system removed
+
+  As of commit 86d881d948c6ff00a6475dee97551ea092e526a1, the classification
+  system (--learn) was removed, as it was really broken. If someone wants to
+  implement it properly in the future it would be much simpler to start from
+  scratch.
+
+afew 1.0.0 (2017-02-13)
 =====================
 
 Filter behaviour change
