@@ -15,61 +15,6 @@ The standard filter :doc:`configuration` can be applied to these filters as
 well. Though note that most of the filters below set their own value for
 message, query and/or tags, and some ignore some of the standard settings.
 
-SpamFilter
-----------
-
-The settings you can use are:
-
-* spam_tag = <tag>
-
- * Add <tag> to all mails recognized as spam.
- * The default is 'spam'.
- * You may use it to tag your spam as 'junk', 'scum' or whatever suits your mood.
-   Note that only a single tag is supported here.
-
-Email will be considered spam if the header `X-Spam-Flag` is present.
-
-KillThreadsFilter
------------------
-
-If the new message has been added to a thread that has already been tagged
-**killed** then add the **killed** tag to this message.  This allows for ignoring
-all replies to a particular thread.
-
-ListMailsFilter
----------------
-
-This filter looks for the `List-Id` header, and if it finds it, adds a tag
-**lists** and a tag named **lists/<list-id>**.
-
-SentMailsFilter
----------------
-
-The settings you can use are:
-
-* sent_tag = <tag>
-
- * Add <tag> to all mails sent from one of your configured mail addresses.
- * The default is to add no tag, so you need to specify something.
- * You may e.g. use it to tag all mails sent by you as 'sent'. This may make
-   special sense in conjunction with a mail client that is able to not only search
-   for threads but individual mails as well.
-
-   More accurately, it looks for emails that are from one of your addresses
-   *and not* to any of your addresses.
-
-* to_transforms = <transformation rules>
-
- * Transform `To`/`Cc`/`Bcc` e-mail addresses to tags according to the
-   specified rules. <transformation rules> is a space separated list consisting
-   of 'user_part@domain_part:tags' style pairs. The colon separates the e-mail
-   address to be transformed from tags it is to be transformed into. ':tags'
-   is optional and if empty, 'user_part' is used as tag.  'tags' can be
-   a single tag or semi-colon separated list of tags.
-
- * It can be used for example to easily tag posts sent to mailing lists which
-   at this stage don't have `List-Id` field.
-
 ArchiveSentMailsFilter
 ----------------------
 
@@ -78,46 +23,23 @@ It extends `SentMailsFilter` with the following feature:
  * Emails filtered by this filter have the **new** tag removed, so will not have
    the **inbox** tag added by the InboxFilter.
 
-InboxFilter
------------
+DKIMValidityFilter
+------------------
 
-This removes the **new** tag, and adds the **inbox** tag, to any message that isn't
-killed or spam.  (The new tags are set in your notmuch config, and default to
-just **new**.)
+This filter verifies DKIM signatures of E-Mails with DKIM header, and adds `dkin-ok` or `dkin-fail` tags.
 
-HeaderMatchingFilter
---------------------
+DMARCReportInspectionFilter
+---------------------------
 
-This filter adds tags to a message if the named header matches the regular expression
-given.  The tags can be set, or based on the match.  The settings you can use are:
+DMARC reports usually come in ZIP files. To check the report you have to
+unpack and search thru XML document which is very tedious. This filter tags the
+message as follows:
 
-* header = <header_name>
-* pattern = <regex_pattern>
-* tags = <tag_list>
+if there's any SPF failure in any attachment, tag the message with
+"dmarc-spf-fail" tag, otherwise tag with "dmarc-spf-ok"
 
-If you surround a tag with `{}` then it will be replaced with the named match.
-
-Some examples are:
-
-.. code-block:: ini
-
-    [HeaderMatchingFilter.1]
-    header = X-Spam-Flag
-    pattern = YES
-    tags = +spam
-
-    [HeaderMatchingFilter.2]
-    header = List-Id
-    pattern = <(?P<list_id>.*)>
-    tags = +lists;+{list_id}
-
-    [HeaderMatchingFilter.3]
-    header = X-Redmine-Project
-    pattern = (?P<project>.*)
-    tags = +redmine;+{project}
-
-SpamFilter and ListMailsFilter are implemented using HeaderMatchingFilter, and are
-only slightly more complicated than the above examples.
+if there's any DKIM failure in any attachment, tag the message with
+"dmarc-dkim-fail" tag, otherwise tag with "dmarc-dkim-ok"
 
 FolderNameFilter
 ----------------
@@ -194,6 +116,109 @@ you need to configure that divider to have your mails properly tagged:
 .. code-block:: ini
 
    maildir_separator = /
+
+HeaderMatchingFilter
+--------------------
+
+This filter adds tags to a message if the named header matches the regular expression
+given.  The tags can be set, or based on the match.  The settings you can use are:
+
+* header = <header_name>
+* pattern = <regex_pattern>
+* tags = <tag_list>
+
+If you surround a tag with `{}` then it will be replaced with the named match.
+
+Some examples are:
+
+.. code-block:: ini
+
+    [HeaderMatchingFilter.1]
+    header = X-Spam-Flag
+    pattern = YES
+    tags = +spam
+
+    [HeaderMatchingFilter.2]
+    header = List-Id
+    pattern = <(?P<list_id>.*)>
+    tags = +lists;+{list_id}
+
+    [HeaderMatchingFilter.3]
+    header = X-Redmine-Project
+    pattern = (?P<project>.*)
+    tags = +redmine;+{project}
+
+SpamFilter and ListMailsFilter are implemented using HeaderMatchingFilter, and are
+only slightly more complicated than the above examples.
+
+InboxFilter
+-----------
+
+This removes the **new** tag, and adds the **inbox** tag, to any message that isn't
+killed or spam.  (The new tags are set in your notmuch config, and default to
+just **new**.)
+
+KillThreadsFilter
+-----------------
+
+If the new message has been added to a thread that has already been tagged
+**killed** then add the **killed** tag to this message.  This allows for ignoring
+all replies to a particular thread.
+
+ListMailsFilter
+---------------
+
+This filter looks for the `List-Id` header, and if it finds it, adds a tag
+**lists** and a tag named **lists/<list-id>**.
+
+MeFilter
+--------
+
+Add filter tagging mail sent directly to any of addresses defined in
+Notmuch config file: `primary_email` or `other_email`.
+Default tag is `to-me` and can be customized with `me_tag` option.
+
+SentMailsFilter
+---------------
+
+The settings you can use are:
+
+* sent_tag = <tag>
+
+ * Add <tag> to all mails sent from one of your configured mail addresses.
+ * The default is to add no tag, so you need to specify something.
+ * You may e.g. use it to tag all mails sent by you as 'sent'. This may make
+   special sense in conjunction with a mail client that is able to not only search
+   for threads but individual mails as well.
+
+   More accurately, it looks for emails that are from one of your addresses
+   *and not* to any of your addresses.
+
+* to_transforms = <transformation rules>
+
+ * Transform `To`/`Cc`/`Bcc` e-mail addresses to tags according to the
+   specified rules. <transformation rules> is a space separated list consisting
+   of 'user_part@domain_part:tags' style pairs. The colon separates the e-mail
+   address to be transformed from tags it is to be transformed into. ':tags'
+   is optional and if empty, 'user_part' is used as tag.  'tags' can be
+   a single tag or semi-colon separated list of tags.
+
+ * It can be used for example to easily tag posts sent to mailing lists which
+   at this stage don't have `List-Id` field.
+
+SpamFilter
+----------
+
+The settings you can use are:
+
+* spam_tag = <tag>
+
+ * Add <tag> to all mails recognized as spam.
+ * The default is 'spam'.
+ * You may use it to tag your spam as 'junk', 'scum' or whatever suits your mood.
+   Note that only a single tag is supported here.
+
+Email will be considered spam if the header `X-Spam-Flag` is present.
 
 Customizing filters
 -------------------
