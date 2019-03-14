@@ -57,11 +57,11 @@ Features
 Installation and Usage
 ----------------------
 
-Full documentation is available in the `docs/source`_ directory and in
+Full documentation is available in the `docs/`_ directory and in
 rendered form at afew.readthedocs.io_.
 
 .. _afew.readthedocs.io: https://afew.readthedocs.io/en/latest
-.. _docs/source: docs/source/
+.. _docs/: docs/
 
 Have fun :)
 
