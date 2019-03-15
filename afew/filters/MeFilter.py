@@ -16,7 +16,7 @@ class MeFilter(Filter):
     _bare_email_re = re.compile(r"[^<]*<(?P<email>[^@<>]+@[^@<>]+)>")
 
     def __init__(self, database, me_tag='to-me', tags_blacklist=[]):
-        super(MeFilter, self).__init__(database, tags_blacklist=tags_blacklist)
+        super().__init__(database, tags_blacklist=tags_blacklist)
 
         my_addresses = set()
         my_addresses.add(notmuch_settings.get('user', 'primary_email'))

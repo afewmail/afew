@@ -20,7 +20,7 @@ class MailMover(Database):
 
 
     def __init__(self, max_age=0, rename = False, dry_run=False):
-        super(MailMover, self).__init__()
+        super().__init__()
         self.db = notmuch.Database(self.db_path)
         self.query = 'folder:"{folder}" AND {subquery}'
         if max_age:

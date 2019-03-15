@@ -30,7 +30,7 @@ class DKIMValidityFilter(Filter):
     header = 'DKIM-Signature'
 
     def __init__(self, database, ok_tag='dkim-ok', fail_tag='dkim-fail'):
-        super(DKIMValidityFilter, self).__init__(database)
+        super().__init__(database)
         self.dkim_tag = {True: ok_tag, False: fail_tag}
 
     def handle_message(self, message):

@@ -27,7 +27,7 @@ class EventHandler(pyinotify.ProcessEvent):
     def __init__(self, options, database):
         self.options = options
         self.database = database
-        super(EventHandler, self).__init__()
+        super().__init__()
 
     ignore_re = re.compile('(/xapian/.*(base.|tmp)$)|(\.lock$)|(/dovecot)')
 

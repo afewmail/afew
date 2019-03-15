@@ -16,7 +16,7 @@ class SentMailsFilter(Filter):
     _bare_email_re = re.compile(r"[^<]*<(?P<email>[^@<>]+@[^@<>]+)>")
 
     def __init__(self, database, sent_tag='', to_transforms=''):
-        super(SentMailsFilter, self).__init__(database)
+        super().__init__(database)
 
         my_addresses = set()
         my_addresses.add(notmuch_settings.get('user', 'primary_email'))

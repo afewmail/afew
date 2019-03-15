@@ -23,4 +23,4 @@ class InboxFilter(Filter):
 
     def handle_message(self, message):
         self.remove_tags(message, *get_notmuch_new_tags())
-        super(InboxFilter, self).handle_message(message)
+        super().handle_message(message)

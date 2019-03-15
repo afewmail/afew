@@ -16,7 +16,7 @@ class Filter:
     tags_blacklist = []
 
     def __init__(self, database, **kwargs):
-        super(Filter, self).__init__()
+        super().__init__()
 
         self.log = logging.getLogger('{}.{}'.format(
             self.__module__, self.__class__.__name__))
