@@ -96,7 +96,7 @@ try:
 except ImportError as e:
     raise ImportError('Could not load libc: {}'.format(e))
 
-class Libc(object):
+class Libc:
     class c_dir(ctypes.Structure):
         pass
     c_dir_p = ctypes.POINTER(c_dir)

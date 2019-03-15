@@ -14,7 +14,7 @@ class TestFilterRegistry(unittest.TestCase):
     def test_entry_point_registration(self):
         from afew import FilterRegistry
 
-        class FakeRegistry(object):
+        class FakeRegistry:
             name = 'test'
 
             def load(self):

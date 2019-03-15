@@ -24,7 +24,7 @@ sys.path.insert(0, os.path.abspath('../..'))
 # Create mocks so we don't depend on non standard modules to build the
 # documentation
 
-class Mock(object):
+class Mock:
     def __init__(self, *args, **kwargs):
         pass
 

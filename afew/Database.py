@@ -12,7 +12,7 @@ import notmuch
 
 from .NotmuchSettings import notmuch_settings, get_notmuch_new_tags
 
-class Database(object):
+class Database:
     '''
     Convenience wrapper around `notmuch`.
     '''

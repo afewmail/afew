@@ -10,7 +10,7 @@ import pkg_resources
 RAISEIT = object()
 
 
-class FilterRegistry(object):
+class FilterRegistry:
     """
     The FilterRegistry is responsible for returning
     filters by key.
@@ -56,7 +56,7 @@ class FilterRegistry(object):
 
 all_filters = FilterRegistry(pkg_resources.iter_entry_points('afew.filter'))
 
-def register_filter (klass):
+def register_filter(klass):
     '''Decorator function for registering a class as a filter.'''
 
     all_filters[klass.__name__] = klass

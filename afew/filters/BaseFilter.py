@@ -10,7 +10,7 @@ import logging
 import notmuch
 
 
-class Filter(object):
+class Filter:
     message = 'No message specified for filter'
     tags = []
     tags_blacklist = []
