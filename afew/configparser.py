@@ -2,15 +2,9 @@
 # SPDX-License-Identifier: ISC
 # Copyright (c) Justus Winter <4winter@informatik.uni-hamburg.de>
 
-from __future__ import print_function, absolute_import, unicode_literals
+import configparser
 
-try:
-    # py3k
-    import configparser
-except ImportError:
-    import ConfigParser as configparser
-
-class GetListMixIn(object):
+class GetListMixIn:
     def get_list(self, section, key, delimiter = ';',
                  filter_ = lambda value: value.strip(),
                  include_falsish = False):
@@ -22,5 +16,5 @@ class GetListMixIn(object):
         else:
             return filter(None, result)
 
-class SafeConfigParser(configparser.SafeConfigParser, GetListMixIn): pass
+class ConfigParser(configparser.ConfigParser, GetListMixIn): pass
 class RawConfigParser(configparser.RawConfigParser, GetListMixIn): pass
