@@ -12,7 +12,7 @@ import zipfile
 from .BaseFilter import Filter
 
 
-class ReportFilesIterator(object):
+class ReportFilesIterator:
     '''
     Iterator over DMARC reports files attached to the e-mail either directly or
     in ZIP files.
