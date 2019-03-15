@@ -10,8 +10,8 @@ from ..NotmuchSettings import get_notmuch_new_tags
 class ArchiveSentMailsFilter(SentMailsFilter):
     message = 'Archiving all mails sent by myself to others'
 
-    def __init__(self, database, sent_tag=''):
-        super(ArchiveSentMailsFilter, self).__init__(database, sent_tag)
+    def __init__(self, database, sent_tag='', to_transforms=''):
+        super(ArchiveSentMailsFilter, self).__init__(database, sent_tag, to_transforms)
 
     def handle_message(self, message):
         super(ArchiveSentMailsFilter, self).handle_message(message)
