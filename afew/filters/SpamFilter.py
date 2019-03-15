@@ -17,4 +17,4 @@ class SpamFilter(HeaderMatchingFilter):
             # this is for backward-compatibility
             tags = '+' + spam_tag
         kwargs['tags'] = [tags]
-        super(SpamFilter, self).__init__(database, **kwargs)
+        super().__init__(database, **kwargs)

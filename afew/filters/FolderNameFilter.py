@@ -15,7 +15,7 @@ class FolderNameFilter(Filter):
 
     def __init__(self, database, folder_blacklist='', folder_transforms='',
                  maildir_separator='.', folder_explicit_list='', folder_lowercases=''):
-        super(FolderNameFilter, self).__init__(database)
+        super().__init__(database)
 
         self.__filename_pattern = '{mail_root}/(?P<maildirs>.*)/(cur|new)/[^/]+'.format(
             mail_root=notmuch_settings.get('database', 'path').rstrip('/'))
