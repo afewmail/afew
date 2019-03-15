@@ -9,16 +9,11 @@ import re
 import stat
 import logging
 import platform
+import queue
 import threading
 
 if platform.system() != 'Linux':
     raise ImportError('Unsupported platform: {!r}'.format(platform.system()))
-
-try:
-    # py3k
-    import queue
-except ImportError:
-    import Queue as queue
 
 import notmuch
 import pyinotify
