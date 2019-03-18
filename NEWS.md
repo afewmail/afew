@@ -1,7 +1,7 @@
 afew 2.0.0 (xxxx-xx-xx)
 =======================
 
-Python 3 support removed
+Python 2 support removed
 
   afew doesn't support Python 2 anymore, and all Python 2 specific compat hacks
   were removed.
