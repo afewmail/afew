@@ -4,6 +4,7 @@
 
 from __future__ import print_function, absolute_import, unicode_literals
 
+import os
 import time
 import logging
 
@@ -17,7 +18,14 @@ class Database(object):
     '''
 
     def __init__(self):
-        self.db_path = notmuch_settings.get('database', 'path')
+        self.db_path = notmuch_settings.get('database', 'path',
+                                            fallback=os.environ.get('MAILDIR',
+                                                                    '{}/mail'.format(os.environ.get('HOME'))))
+
+        # If path is relative, notmuch prepends $HOME in front
+        if not os.path.isabs(self.db_path):
+            self.db_path = '{}/{}'.format(os.environ.get('HOME'), self.db_path)
+
         self.handle = None
 
     def __enter__(self):
