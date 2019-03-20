@@ -18,15 +18,23 @@ class Database(object):
     '''
 
     def __init__(self):
-        self.db_path = notmuch_settings.get('database', 'path',
-                                            fallback=os.environ.get('MAILDIR',
-                                                                    '{}/mail'.format(os.environ.get('HOME'))))
+        self.db_path = self._calculate_db_path()
+        self.handle = None
+
+    def _calculate_db_path(self):
+        '''
+        Calculates the path to use for the database. Supports notmuch's
+        methodology including falling back to $MAILDIR or $HOME/mail if a path
+        is not specified and using $HOME/<path> if path is relative.
+        '''
+        default_path = os.environ.get('MAILDIR', '{}/mail'.format(os.environ.get('HOME')))
+        db_path = notmuch_settings.get('database', 'path', fallback=default_path)
 
         # If path is relative, notmuch prepends $HOME in front
-        if not os.path.isabs(self.db_path):
-            self.db_path = '{}/{}'.format(os.environ.get('HOME'), self.db_path)
+        if not os.path.isabs(db_path):
+            db_path = '{}/{}'.format(os.environ.get('HOME'), db_path)
 
-        self.handle = None
+        return db_path
 
     def __enter__(self):
         '''
