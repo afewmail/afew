@@ -24,6 +24,11 @@ Support relative path for database location
   parity, afew now supports the same methodology of prepending `$HOME/` if a
   relative path is provided.
 
+Support for removing unread and read tags in filters
+
+  In a filter rule, it was possible to add "unread" and "read" tags but
+  not to remove them.
+
 afew 1.3.0 (2018-02-06)
 =======================
 
