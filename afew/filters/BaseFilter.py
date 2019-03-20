@@ -73,11 +73,6 @@ class Filter(object):
     def remove_tags(self, message, *tags):
         if tags:
             filtered_tags = list(tags)
-            try:
-                filtered_tags.remove('unread')
-                filtered_tags.remove('read')
-            except ValueError:
-                pass
             self.log.debug('Removing tags %s from id:%s' % (', '.join(filtered_tags),
                                                            message.get_message_id()))
             self._remove_tags[message.get_message_id()].update(filtered_tags)
