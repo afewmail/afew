@@ -11,6 +11,12 @@ Better support for whitespaces and quotes in folder names
   Previously, afew failed with folders containing quotes or namespaces. These
   are now properly escaped internally.
 
+Support `MAILDIR` as fallback for database location
+
+  In addition to reading notmuch databse location from notmuch config, afew now
+  supports reading from the `MAILDIR` environment variable, like notmuch CLI
+  does, too.
+
 afew 1.3.0 (2018-02-06)
 =======================
 
