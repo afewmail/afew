@@ -17,6 +17,13 @@ Support `MAILDIR` as fallback for database location
   supports reading from the `MAILDIR` environment variable, like notmuch CLI
   does, too.
 
+Support relative path for database location
+
+  As of notmuch 0.28, a relative path may be provided for the database
+  location. notmuch prepends `$HOME/` to the relative path. For feature
+  parity, afew now supports the same methodology of prepending `$HOME/` if a
+  relative path is provided.
+
 afew 1.3.0 (2018-02-06)
 =======================
 
