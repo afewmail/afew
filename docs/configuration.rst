@@ -159,3 +159,19 @@ Here are a few more example filters from github dotfiles:
     query = 'to:notmuch@notmuchmail.org AND (subject:emacs OR subject:elisp OR "(defun" OR "(setq" OR PATCH)'
     tags = -new
     message = notmuch emacs stuff
+
+    # Assuming the following workflow: all messages for projects or releases should be tagged
+    # as "project/A", "project/B" respectively "release/1.0.1" or "release/1.2.0".
+    #
+    # In most cases replies to messages retain their context: the project, the release(s), ..
+    #
+    # The following config will propagate all project/... or release/... tags from a thread
+    # to all new messages.
+
+    [PropagateTagsByRegexInThreadFilter.1]
+    propagate_tags = project/.*
+    # do not tag spam
+    filter = not is:spam
+
+    [PropagateTagsByRegexInThreadFilter.2]
+    propagate_tags = release/.*
