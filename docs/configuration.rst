@@ -19,7 +19,11 @@ make sure that `~/.notmuch-config` contains:
     [new]
     tags=new
 
-afew reads the notmuch database location from notmuch config. When no database path is set in notmuch config, afew uses the `MAILDIR` environment variable when set, or `$HOME/mail` as a fallback, like notmuch CLI does.
+afew reads the notmuch database location from notmuch config. When no database
+path is set in notmuch config, afew uses the `MAILDIR` environment variable
+when set, or `$HOME/mail` as a fallback, like notmuch CLI does. If a relative
+path is provided, afew prepends `$HOME/` to the path in the same manner as
+notmuch, which was introduced in version 0.28 of notmuch.
 
 Filter Configuration
 --------------------
