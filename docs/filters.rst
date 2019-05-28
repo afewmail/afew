@@ -185,14 +185,12 @@ The settings you can use are:
 
 * sent_tag = <tag>
 
- * Add <tag> to all mails sent from one of your configured mail addresses.
+ * Add <tag> to all mails sent from one of your configured mail addresses, *and
+   not* to any of your addresses.
  * The default is to add no tag, so you need to specify something.
  * You may e.g. use it to tag all mails sent by you as 'sent'. This may make
    special sense in conjunction with a mail client that is able to not only search
    for threads but individual mails as well.
-
-   More accurately, it looks for emails that are from one of your addresses
-   *and not* to any of your addresses.
 
 * to_transforms = <transformation rules>
 

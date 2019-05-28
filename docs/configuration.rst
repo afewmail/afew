@@ -38,6 +38,7 @@ the config file.  The default config file is:
     [KillThreadsFilter]
     [ListMailsFilter]
     [ArchiveSentMailsFilter]
+    sent_tag = ''
     [InboxFilter]
 
 See the :doc:`filters` page for the details of those filters and the custom
@@ -130,9 +131,10 @@ is run with the `--new` flag.
 
 The differences between them is that
 
-* the ArchiveSentMailsFilter will add the **sent** tag, as well as archiving the
-  email.  And it will not archive email that has been sent to one of your own
-  addresses.
+* the ArchiveSentMailsFilter will add tags specified by `sent_tag` option
+  (default `''` means add no tags. You may want to set it to `sent`), as well as
+  archiving the email. And it will not archive email that has been sent to one
+  of your own addresses.
 * the InboxFilter does not add the **unread** tag.  But most mail clients will
   manage the unread status directly in maildir.
 
