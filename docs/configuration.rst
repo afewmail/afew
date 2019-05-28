@@ -19,7 +19,11 @@ make sure that `~/.notmuch-config` contains:
     [new]
     tags=new
 
-afew reads the notmuch database location from notmuch config. When no database path is set in notmuch config, afew uses the `MAILDIR` environment variable when set, or `$HOME/mail` as a fallback, like notmuch CLI does.
+afew reads the notmuch database location from notmuch config. When no database
+path is set in notmuch config, afew uses the `MAILDIR` environment variable
+when set, or `$HOME/mail` as a fallback, like notmuch CLI does. If a relative
+path is provided, afew prepends `$HOME/` to the path in the same manner as
+notmuch, which was introduced in version 0.28 of notmuch.
 
 Filter Configuration
 --------------------
@@ -34,6 +38,7 @@ the config file.  The default config file is:
     [KillThreadsFilter]
     [ListMailsFilter]
     [ArchiveSentMailsFilter]
+    sent_tag = ''
     [InboxFilter]
 
 See the :doc:`filters` page for the details of those filters and the custom
@@ -126,9 +131,10 @@ is run with the `--new` flag.
 
 The differences between them is that
 
-* the ArchiveSentMailsFilter will add the **sent** tag, as well as archiving the
-  email.  And it will not archive email that has been sent to one of your own
-  addresses.
+* the ArchiveSentMailsFilter will add tags specified by `sent_tag` option
+  (default `''` means add no tags. You may want to set it to `sent`), as well as
+  archiving the email. And it will not archive email that has been sent to one
+  of your own addresses.
 * the InboxFilter does not add the **unread** tag.  But most mail clients will
   manage the unread status directly in maildir.
 
