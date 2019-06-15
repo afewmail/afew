@@ -41,3 +41,13 @@ You might want to symlink `.venv/bin/afew` somewhere inside your path
 .. code:: bash
 
   $ ln -snr .venv/bin/afew ~/.bin/afew
+
+Building documentation
+----------------------
+
+Documentation can be built in various formats using Sphinx:
+
+.. code:: bash
+
+  # build docs into build/sphinx/{html,man}
+  $ python setup.py build_sphinx -b html,man
