@@ -1,4 +1,4 @@
-afew 2.0.0 (xxxx-xx-xx)
+afew 2.0.0 (2019-06-16)
 =======================
 
 Python 2 support removed
