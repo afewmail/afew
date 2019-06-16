@@ -23,5 +23,7 @@ install:
   - python setup.py install
 script:
   - coverage run --source=afew setup.py test
+  - pip install sphinx
+  - python setup.py build_sphinx -b html,man
 after_success:
   - codeclimate-test-reporter
