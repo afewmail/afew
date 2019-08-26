@@ -63,6 +63,10 @@ traditional mail server. Tag your mails with notmuch, call afew
 `--move-mails` in an offlineimap presynchook and enjoy a clean inbox
 in your webinterface/GUI-client at work.
 
+Note that in move mode, afew calls `notmuch new` after moving mails around.
+You can use `afew -m --notmuch-args=--no-hooks` in a pre-new notmuch hook
+to avoid loops.
+
 For information on how to configure rules for move mode, what you can
 do with it and what you can't, please refer to :doc:`move_mode`.
 
