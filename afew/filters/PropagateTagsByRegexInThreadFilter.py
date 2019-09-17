@@ -34,11 +34,11 @@ class PropagateTagsByRegexInThreadFilter(Filter):
         [PropagateTagsByRegexInThreadFilter.2]
         propagate_tags = release/.*
 
-    Implementation spec: This filter will search through all (new) messages matched by `filter`.
-    For each message `m` found it goes through the messages thread an collects all assigned
-    tags that match the regexp `propagate_tags` (`t`).
+    Implementation spec: This filter will search through all (new) messages matched by ``filter``.
+    For each message ``m`` found it goes through the messages thread an collects all assigned
+    tags that match the regexp ``propagate_tags`` (``t``).
 
-    All matching tags `t` are then assigned to the new message.
+    All matching tags ``t`` are then assigned to the new message.
     """
 
     def handle_message(self, message):
