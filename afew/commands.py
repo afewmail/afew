@@ -89,6 +89,10 @@ options_group.add_argument(
     help='be more verbose, can be given multiple times'
 )
 
+options_group.add_argument(
+    '-N', '--notmuch-args', default='',
+    help='arguments for notmuch new (in move mode)'
+)
 
 def main():
     if sys.version_info < (3,4):
