@@ -4,14 +4,16 @@
 # Copyright (c) Justus Winter <4winter@informatik.uni-hamburg.de>
 
 import os
+
 from setuptools import setup, find_packages
-from sys import version_info
+
 
 def get_requires():
     if os.environ.get('TRAVIS') != 'true' and os.environ.get('READTHEDOCS') != 'True':
         yield 'notmuch'
     yield 'chardet'
     yield 'dkimpy'
+
 
 setup(
     name='afew',
@@ -41,6 +43,8 @@ setup(
             'MeFilter = afew.filters.MeFilter:MeFilter',
             'SentMailsFilter = afew.filters.SentMailsFilter:SentMailsFilter',
             'SpamFilter = afew.filters.SpamFilter:SpamFilter',
+            'PropagateTagsByRegexInThreadFilter = afew.filters.PropagateTagsByRegexInThreadFilter:PropagateTagsByRegexInThreadFilter',
+            'PropagateTagsInThreadFilter = afew.filters.PropagateTagsInThreadFilter:PropagateTagsInThreadFilter',
         ],
     },
     install_requires=list(get_requires()),
@@ -55,5 +59,5 @@ setup(
         'Topic :: Communications :: Email :: Filters',
         'Topic :: Utilities',
         'Topic :: Database',
-        ],
+    ],
 )

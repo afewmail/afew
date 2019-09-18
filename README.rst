@@ -42,6 +42,7 @@ Features
 
 * spam handling (flush all tags, add spam)
 * killed thread handling
+* automatic propagation of tags to whole thread
 * tags posts to lists with ``lists``, ``$list-id``
 * autoarchives mails sent from you
 * catchall -> remove ``new``, add ``inbox``
