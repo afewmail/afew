@@ -5,7 +5,7 @@
 import notmuch
 import logging
 import os, shutil
-from subprocess import check_call, CalledProcessError
+from subprocess import check_call, CalledProcessError, DEVNULL
 
 from .Database import Database
 from .utils import get_message_summary
@@ -19,7 +19,7 @@ class MailMover(Database):
     '''
 
 
-    def __init__(self, max_age=0, rename = False, dry_run=False, notmuch_args=''):
+    def __init__(self, max_age=0, rename = False, dry_run=False, notmuch_args='', quiet=False):
         super().__init__()
         self.db = notmuch.Database(self.db_path)
         self.query = 'folder:"{folder}" AND {subquery}'
@@ -32,6 +32,7 @@ class MailMover(Database):
         self.dry_run = dry_run
         self.rename = rename
         self.notmuch_args = notmuch_args
+        self.quiet = quiet
 
     def get_new_name(self, fname, destination):
         basename = os.path.basename(fname)
@@ -111,7 +112,10 @@ class MailMover(Database):
         Update the database after mail files have been moved in the filesystem.
         '''
         try:
-            check_call(['notmuch', 'new'] + self.notmuch_args.split())
+            if self.quiet:
+                check_call(['notmuch', 'new'] + self.notmuch_args.split(), stdout=DEVNULL, stderr=DEVNULL)
+            else:
+                check_call(['notmuch', 'new'] + self.notmuch_args.split())
         except CalledProcessError as err:
             logging.error("Could not update notmuch database " \
                           "after syncing maildir '{}': {}".format(maildir, err))
