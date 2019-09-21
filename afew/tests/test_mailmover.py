@@ -1,5 +1,6 @@
 # SPDX-License-Identifier: ISC
 
+from datetime import timedelta
 import email.message
 from email.utils import format_datetime, localtime, make_msgid
 import mailbox
@@ -12,9 +13,12 @@ import unittest
 from afew.Database import Database
 from afew.NotmuchSettings import notmuch_settings, write_notmuch_settings
 
-def create_mail(msg, maildir, notmuch_db, tags):
+def create_mail(msg, maildir, notmuch_db, tags, old=False):
     email_message = email.message.EmailMessage()
-    email_message['Date'] = format_datetime(localtime())
+    if old:
+        email_message['Date'] = format_datetime(localtime() - timedelta(days=20))
+    else:
+        email_message['Date'] = format_datetime(localtime())
     email_message['From'] = 'You <you@example.org>'
     email_message['To'] = 'Me <me@example.com>'
     email_message['Message-ID'] = make_msgid()
@@ -112,6 +116,32 @@ class TestMailMover(unittest.TestCase):
             ])
 
         mover = MailMover.MailMover(quiet=True)
+        mover.move('.inbox', self.rules['.inbox'])
+        mover.move('.archive', self.rules['.archive'])
+        mover.move('.spam', self.rules['.spam'])
+        mover.close()
+
+        with Database() as db:
+            self.assertEqual(expect_inbox, self.get_folder_content(db, '.inbox'))
+            self.assertEqual(expect_archive, self.get_folder_content(db, '.archive'))
+            self.assertEqual(expect_spam, self.get_folder_content(db, '.spam'))
+
+
+    def test_max_age(self):
+        from afew import MailMover
+
+        with Database() as db:
+            expect_inbox = set([
+                create_mail('In inbox, tagged archive, old\n', self.inbox, db, ['archive'], old=True),
+            ])
+
+            expect_archive = set([
+                create_mail('In inbox, tagged archive\n', self.inbox, db, ['archive']),
+            ])
+
+            expect_spam = set([])
+
+        mover = MailMover.MailMover(max_age=15, quiet=True)
         mover.move('.inbox', self.rules['.inbox'])
         mover.move('.archive', self.rules['.archive'])
         mover.move('.spam', self.rules['.spam'])
