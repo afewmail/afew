@@ -95,8 +95,8 @@ options_group.add_argument(
 )
 
 def main():
-    if sys.version_info < (3,4):
-        sys.exit("Python 3.4 or later is required.")
+    if sys.version_info < (3,6):
+        sys.exit("Python 3.6 or later is required.")
 
     args = parser.parse_args()
 
