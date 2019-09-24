@@ -4,7 +4,7 @@ Installation
 Requirements
 ------------
 
-afew works with python 3.4+, and requires notmuch and its python bindings.
+afew works with python 3.6+, and requires notmuch and its python bindings.
 On Debian/Ubuntu systems you can install these by doing:
 
 .. code-block:: sh
