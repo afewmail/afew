@@ -1,8 +1,8 @@
 # SPDX-License-Identifier: ISC
 
-from datetime import timedelta
 import email.message
-from email.utils import format_datetime, localtime, make_msgid
+from email.utils import make_msgid
+from freezegun import freeze_time
 import mailbox
 import notmuch
 import os
@@ -15,10 +15,15 @@ from afew.NotmuchSettings import notmuch_settings, write_notmuch_settings
 
 def create_mail(msg, maildir, notmuch_db, tags, old=False):
     email_message = email.message.EmailMessage()
+    # freezegun doesn't handle time zones properly when generating UNIX
+    # timestamps.  When the local timezone is UTC+2, the generated timestamp
+    # is 2 hours ahead of what it should be.  Due to this we need to make sure
+    # that the dates are always sufficiently far behind 2019-01-30 12:00 to
+    # handle up to UTC+12 .
     if old:
-        email_message['Date'] = format_datetime(localtime() - timedelta(days=20))
+        email_message['Date'] = 'Wed, 10 Jan 2019 13:00:00 +0100'
     else:
-        email_message['Date'] = format_datetime(localtime())
+        email_message['Date'] = 'Wed, 20 Jan 2019 13:00:00 +0100'
     email_message['From'] = 'You <you@example.org>'
     email_message['To'] = 'Me <me@example.com>'
     email_message['Message-ID'] = make_msgid()
@@ -37,6 +42,7 @@ def create_mail(msg, maildir, notmuch_db, tags, old=False):
     return (stripped_msgid, msg)
 
 
+@freeze_time("2019-01-30 12:00:00")
 class TestMailMover(unittest.TestCase):
     def setUp(self):
         self.test_dir = tempfile.mkdtemp()
