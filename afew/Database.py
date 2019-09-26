@@ -162,7 +162,11 @@ class Database:
         :returns: a :class:`notmuch.Message` object
         '''
         # TODO: it would be nice to update notmuchs directory index here
-        message, status = self.open(rw=True).add_message(path, sync_maildir_flags=sync_maildir_flags)
+        handle = self.open(rw=True)
+        if hasattr(notmuch.Database, 'index_file'):
+            message, status = handle.index_file(path, sync_maildir_flags=sync_maildir_flags)
+        else:
+            message, status = handle.add_message(path, sync_maildir_flags=sync_maildir_flags)
 
         if status != notmuch.STATUS.DUPLICATE_MESSAGE_ID:
             logging.info('Found new mail in {}'.format(path))
