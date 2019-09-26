@@ -48,6 +48,7 @@ setup(
         ],
     },
     install_requires=list(get_requires()),
+    tests_require=['freezegun'],
     provides=['afew'],
     classifiers=[
         'License :: OSI Approved :: ISC License (ISCL)',
