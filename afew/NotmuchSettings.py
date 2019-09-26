@@ -14,7 +14,8 @@ def read_notmuch_settings(path = None):
     if path == None:
         path = os.environ.get('NOTMUCH_CONFIG', os.path.expanduser('~/.notmuch-config'))
 
-    notmuch_settings.readfp(open(path))
+    with open(path) as fp:
+        notmuch_settings.readfp(fp)
 
 def write_notmuch_settings(path = None):
     if path == None:
