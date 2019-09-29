@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 # SPDX-License-Identifier: ISC
 # Copyright (c) dtk <dtk@gmx.de>
 

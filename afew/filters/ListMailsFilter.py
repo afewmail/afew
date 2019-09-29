@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 # SPDX-License-Identifier: ISC
 # Copyright (c) Justus Winter <4winter@informatik.uni-hamburg.de>
 
@@ -13,4 +12,3 @@ class ListMailsFilter(HeaderMatchingFilter):
     pattern = r"<(?P<list_id>[a-z0-9!#$%&'*+/=?^_`{|}~-]+)\."
     header = 'List-Id'
     tags = ['+lists', '+lists/{list_id}']
-

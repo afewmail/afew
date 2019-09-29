@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 # SPDX-License-Identifier: ISC
 # Copyright (c) 2011 Justus Winter <4winter@informatik.uni-hamburg.de>
 
