@@ -2,8 +2,6 @@
 # SPDX-License-Identifier: ISC
 # Copyright (c) Amadeusz Zolnowski <aidecoe@aidecoe.name>
 
-from __future__ import print_function, absolute_import, unicode_literals
-
 import re
 import tempfile
 import xml.etree.ElementTree as ET

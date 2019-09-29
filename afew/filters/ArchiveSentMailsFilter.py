@@ -2,10 +2,9 @@
 # SPDX-License-Identifier: ISC
 # Copyright (c) Justus Winter <4winter@informatik.uni-hamburg.de>
 
-from __future__ import print_function, absolute_import, unicode_literals
-
 from ..filters.SentMailsFilter import SentMailsFilter
 from ..NotmuchSettings import get_notmuch_new_tags
+
 
 class ArchiveSentMailsFilter(SentMailsFilter):
     message = 'Archiving all mails sent by myself to others'
