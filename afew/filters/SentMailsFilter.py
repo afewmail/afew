@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 # SPDX-License-Identifier: ISC
 # Copyright (c) Justus Winter <4winter@informatik.uni-hamburg.de>
 
@@ -36,7 +35,6 @@ class SentMailsFilter(Filter):
         if to_transforms:
             self.__email_to_tags = self.__build_email_to_tags(to_transforms)
 
-
     def handle_message(self, message):
         if self.sent_tag:
             self.add_tags(message, self.sent_tag)
@@ -47,7 +45,6 @@ class SentMailsFilter(Filter):
                     self.add_tags(message, tag)
                 else:
                     break
-
 
     def __build_email_to_tags(self, to_transforms):
         email_to_tags = dict()
@@ -62,14 +59,12 @@ class SentMailsFilter(Filter):
 
         return email_to_tags
 
-
     def __get_bare_email(self, email):
         if not '<' in email:
             return email
         else:
             match = self._bare_email_re.search(email)
             return match.group('email')
-
 
     def __pick_tags(self, email):
         if email in self.__email_to_tags:

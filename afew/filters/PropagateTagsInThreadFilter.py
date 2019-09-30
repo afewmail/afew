@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 # Copyright (c) Jens Neuhalfen <jens@neuhalfen.name>
 
 from __future__ import print_function, absolute_import, unicode_literals
