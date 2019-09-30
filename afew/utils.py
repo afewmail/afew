@@ -1,10 +1,7 @@
 # SPDX-License-Identifier: ISC
 # Copyright (c) Justus Winter <4winter@informatik.uni-hamburg.de>
 
-import codecs
 import re
-import sys
-import email
 from datetime import datetime
 
 def get_message_summary(message):
