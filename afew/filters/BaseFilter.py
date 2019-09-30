@@ -4,8 +4,6 @@
 import collections
 import logging
 
-import notmuch
-
 
 class Filter:
     message = 'No message specified for filter'
