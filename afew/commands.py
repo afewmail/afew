@@ -10,7 +10,7 @@ from afew.Database import Database
 from afew.main import main as inner_main
 from afew.FilterRegistry import all_filters
 from afew.Settings import user_config_dir, get_filter_chain, \
-        get_mail_move_rules, get_mail_move_age, get_mail_move_rename
+    get_mail_move_rules, get_mail_move_age, get_mail_move_rename
 from afew.NotmuchSettings import read_notmuch_settings, get_notmuch_new_query
 from afew.version import version
 
@@ -58,12 +58,12 @@ options_group = parser.add_argument_group('General options')
 options_group.add_argument(
     '-C', '--notmuch-config', default=None,
     help='path to the notmuch configuration file [default: $NOTMUCH_CONFIG or'
-    ' ~/.notmuch-config]'
+         ' ~/.notmuch-config]'
 )
 options_group.add_argument(
     '-e', '--enable-filters',
     help="filter classes to use, separated by ',' [default: filters specified"
-    " in afew's config]"
+         " in afew's config]"
 )
 options_group.add_argument(
     '-d', '--dry-run', default=False, action='store_true',
@@ -89,8 +89,9 @@ options_group.add_argument(
     help='arguments for notmuch new (in move mode)'
 )
 
+
 def main():
-    if sys.version_info < (3,6):
+    if sys.version_info < (3, 6):
         sys.exit("Python 3.6 or later is required.")
 
     args = parser.parse_args()
@@ -106,9 +107,9 @@ def main():
         sys.exit('Please specify exactly one action')
 
     no_query_modifiers = len(filter(None, (args.all,
-                                                  args.new, args.query)))
+                                           args.new, args.query)))
     if no_query_modifiers == 0 and not args.watch \
-        and not args.move_mails:
+            and not args.move_mails:
         sys.exit('You need to specify one of --new, --all or a query string')
     elif no_query_modifiers > 1:
         sys.exit('Please specify either --all, --new or a query string')
@@ -131,7 +132,7 @@ def main():
 
     sys.path.insert(0, user_config_dir)
     for file_name in glob.glob1(user_config_dir, '*.py'):
-        logging.info('Importing user filter %r' % (file_name, ))
+        logging.info('Importing user filter %r' % (file_name,))
         __import__(file_name[:-3], level=0)
 
     if args.move_mails:

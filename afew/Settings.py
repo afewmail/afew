@@ -12,7 +12,7 @@ from afew.FilterRegistry import all_filters
 user_config_dir = os.path.join(os.environ.get('XDG_CONFIG_HOME',
                                               os.path.expanduser('~/.config')),
                                'afew')
-user_config_dir=os.path.expandvars(user_config_dir)
+user_config_dir = os.path.expandvars(user_config_dir)
 
 settings = ConfigParser()
 # preserve the capitalization of the keys.
@@ -26,6 +26,8 @@ value_is_a_list = ['tags', 'tags_blacklist']
 mail_mover_section = 'MailMover'
 
 section_re = re.compile(r'^(?P<name>[a-z_][a-z0-9_]*)(\((?P<parent_class>[a-z_][a-z0-9_]*)\)|\.(?P<index>\d+))?$', re.I)
+
+
 def get_filter_chain(database):
     filter_chain = []
 
@@ -48,9 +50,10 @@ def get_filter_chain(database):
             try:
                 parent_class = all_filters[match.group('parent_class')]
             except KeyError:
-                raise NameError('Parent class %r not found in filter type definition %r.' % (match.group('parent_class'), section))
+                raise NameError(
+                    'Parent class %r not found in filter type definition %r.' % (match.group('parent_class'), section))
 
-            new_type = type(match.group('name'), (parent_class, ), kwargs)
+            new_type = type(match.group('name'), (parent_class,), kwargs)
             all_filters[match.group('name')] = new_type
         else:
             try:
@@ -60,6 +63,7 @@ def get_filter_chain(database):
             filter_chain.append(klass(database, **kwargs))
 
     return filter_chain
+
 
 def get_mail_move_rules():
     rule_pattern = re.compile(r"'(.+?)':((?P<quote>['\"])(.*?)(?P=quote)|\S+)")
@@ -83,11 +87,13 @@ def get_mail_move_rules():
     else:
         raise NameError("No folders defined to move mails from.")
 
+
 def get_mail_move_age():
     max_age = 0
     if settings.has_option(mail_mover_section, 'max_age'):
         max_age = settings.get(mail_mover_section, 'max_age')
     return max_age
+
 
 def get_mail_move_rename():
     rename = False

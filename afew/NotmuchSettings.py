@@ -7,7 +7,8 @@ from afew.configparser import RawConfigParser
 
 notmuch_settings = RawConfigParser()
 
-def read_notmuch_settings(path = None):
+
+def read_notmuch_settings(path=None):
     if path == None:
         path = os.environ.get('NOTMUCH_CONFIG', os.path.expanduser('~/.notmuch-config'))
 
@@ -21,9 +22,11 @@ def write_notmuch_settings(path = None):
     with open(path, 'w+') as fp:
         notmuch_settings.write(fp)
 
+
 def get_notmuch_new_tags():
     # see issue 158
     return filter(lambda x: x != 'unread', notmuch_settings.get_list('new', 'tags'))
+
 
 def get_notmuch_new_query():
     return '(%s)' % ' AND '.join('tag:%s' % tag for tag in get_notmuch_new_tags())

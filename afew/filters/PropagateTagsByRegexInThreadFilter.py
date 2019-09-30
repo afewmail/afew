@@ -65,7 +65,7 @@ class PropagateTagsByRegexInThreadFilter(Filter):
                 propagate_tags, filter)
         else:
             self.message = "Propagating tag(s) matching regexp /%s/ from threads to (new) messages'" % (
-            propagate_tags,)
+                propagate_tags,)
 
         self._filter = filter
         self._propagate_tags = re.compile(propagate_tags)

@@ -9,6 +9,7 @@ import notmuch
 
 from afew.NotmuchSettings import notmuch_settings, get_notmuch_new_tags
 
+
 class Database:
     """
     Convenience wrapper around `notmuch`.
@@ -54,8 +55,8 @@ class Database:
             while True:
                 try:
                     self.handle = notmuch.Database(self.db_path,
-                                                   mode = notmuch.Database.MODE.READ_WRITE,
-                                                   create = create)
+                                                   mode=notmuch.Database.MODE.READ_WRITE,
+                                                   create=create)
                     break
                 except notmuch.NotmuchError:
                     time_left = int(retry_for - (time.time() - start_time))
@@ -64,7 +65,8 @@ class Database:
                         raise
 
                     if time_left % 15 == 0:
-                        logging.debug('Opening the database failed. Will keep trying for another {} seconds'.format(time_left))
+                        logging.debug(
+                            'Opening the database failed. Will keep trying for another {} seconds'.format(time_left))
 
                     time.sleep(retry_delay)
         else:
@@ -93,7 +95,7 @@ class Database:
         logging.debug('Executing query %r' % query)
         return notmuch.Query(self.open(), query)
 
-    def get_messages(self, query, full_thread = False):
+    def get_messages(self, query, full_thread=False):
         """
         Get all messages mathing the given query.
 
