@@ -49,9 +49,9 @@ class FolderNameFilter(Filter):
             self.add_tags(message, *transformed_folders)
 
     def __transform_folders(self, folders):
-        '''
+        """
         Transforms the given collection of folders according to the transformation rules.
-        '''
+        """
         transformations = set()
         for folder in folders:
             if folder in self.__folder_transforms:
@@ -66,9 +66,9 @@ class FolderNameFilter(Filter):
         return transformations
 
     def __parse_transforms(self, transformation_description):
-        '''
+        """
         Parses the transformation rules specified in the config file.
-        '''
+        """
         transformations = dict()
         for rule in shlex.split(transformation_description):
             folder, tag = rule.split(':')

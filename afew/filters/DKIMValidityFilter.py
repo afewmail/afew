@@ -7,12 +7,12 @@ from afew.filters.BaseFilter import Filter
 
 
 def verify_dkim(path):
-    '''
+    """
     Verify DKIM signature of an e-mail file.
 
     :param path: Path to the e-mail file.
     :returns: Whether DKIM signature is valid or not.
-    '''
+    """
     with open(path, 'rb') as message_file:
         message_bytes = message_file.read()
 
@@ -20,9 +20,9 @@ def verify_dkim(path):
 
 
 class DKIMValidityFilter(Filter):
-    '''
+    """
     Verifies DKIM signature of an e-mail which has DKIM header.
-    '''
+    """
     message = 'Verify DKIM signature'
     header = 'DKIM-Signature'
 

@@ -13,9 +13,9 @@ import uuid
 
 
 class MailMover(Database):
-    '''
+    """
     Move mail files matching a given notmuch query into a target maildir folder.
-    '''
+    """
 
 
     def __init__(self, max_age=0, rename = False, dry_run=False, notmuch_args='', quiet=False):
@@ -48,9 +48,9 @@ class MailMover(Database):
         return os.path.join(destination, submaildir, basename)
 
     def move(self, maildir, rules):
-        '''
+        """
         Move mails in folder maildir according to the given rules.
-        '''
+        """
         # identify and move messages
         logging.info("checking mails in '{}'".format(maildir))
         to_delete_fnames = []
@@ -101,15 +101,10 @@ class MailMover(Database):
         else:
             logging.info("Would update database")
 
-
-    #
-    # private:
-    #
-
     def __update_db(self, maildir):
-        '''
+        """
         Update the database after mail files have been moved in the filesystem.
-        '''
+        """
         try:
             if self.quiet:
                 check_call(['notmuch', 'new'] + self.notmuch_args.split(), stdout=DEVNULL, stderr=DEVNULL)
