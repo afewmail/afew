@@ -1,7 +1,7 @@
 # SPDX-License-Identifier: ISC
 # Copyright (c) Justus Winter <4winter@informatik.uni-hamburg.de>
 
-from .HeaderMatchingFilter import HeaderMatchingFilter
+from afew.filters.HeaderMatchingFilter import HeaderMatchingFilter
 
 
 class ListMailsFilter(HeaderMatchingFilter):

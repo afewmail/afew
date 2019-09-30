@@ -6,7 +6,7 @@ import re
 import collections
 import shlex
 
-from .configparser import ConfigParser
+from afew.configparser import ConfigParser
 from afew.FilterRegistry import all_filters
 
 user_config_dir = os.path.join(os.environ.get('XDG_CONFIG_HOME',

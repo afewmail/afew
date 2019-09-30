@@ -1,8 +1,8 @@
 # SPDX-License-Identifier: ISC
 # Copyright (c) Justus Winter <4winter@informatik.uni-hamburg.de>
 
-from ..filters.SentMailsFilter import SentMailsFilter
-from ..NotmuchSettings import get_notmuch_new_tags
+from afew.filters.SentMailsFilter import SentMailsFilter
+from afew.NotmuchSettings import get_notmuch_new_tags
 
 
 class ArchiveSentMailsFilter(SentMailsFilter):

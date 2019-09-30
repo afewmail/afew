@@ -7,7 +7,7 @@ import logging
 
 import notmuch
 
-from .NotmuchSettings import notmuch_settings, get_notmuch_new_tags
+from afew.NotmuchSettings import notmuch_settings, get_notmuch_new_tags
 
 class Database:
     '''

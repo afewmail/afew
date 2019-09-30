@@ -1,8 +1,8 @@
 # SPDX-License-Identifier: ISC
 # Copyright (c) Justus Winter <4winter@informatik.uni-hamburg.de>
 
-from .BaseFilter import Filter
-from ..NotmuchSettings import get_notmuch_new_tags, get_notmuch_new_query
+from afew.filters.BaseFilter import Filter
+from afew.NotmuchSettings import get_notmuch_new_tags, get_notmuch_new_query
 
 
 class InboxFilter(Filter):

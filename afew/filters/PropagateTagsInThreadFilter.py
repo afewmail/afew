@@ -1,6 +1,6 @@
 # Copyright (c) Jens Neuhalfen <jens@neuhalfen.name>
 
-from .BaseFilter import Filter
+from afew.filters.BaseFilter import Filter
 
 
 class PropagateTagsInThreadFilter(Filter):

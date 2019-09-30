@@ -4,7 +4,7 @@
 # Copyright (c) 2013 Patrick Totzke <patricktotzke@gmail.com>
 # Copyright (c) 2014 Lars Kellogg-Stedman <lars@redhat.com>
 
-from .BaseFilter import Filter
+from afew.filters.BaseFilter import Filter
 
 import re
 

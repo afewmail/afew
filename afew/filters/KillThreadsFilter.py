@@ -1,7 +1,7 @@
 # SPDX-License-Identifier: ISC
 # Copyright (c) Justus Winter <4winter@informatik.uni-hamburg.de>
 
-from .BaseFilter import Filter
+from afew.filters.BaseFilter import Filter
 
 
 class KillThreadsFilter(Filter):

@@ -4,7 +4,7 @@
 import random
 import sys
 
-from .MailMover import MailMover
+from afew.MailMover import MailMover
 
 try:
     from .files import watch_for_new_files, quick_find_dirs_hack
