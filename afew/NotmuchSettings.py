@@ -3,7 +3,7 @@
 
 import os
 
-from .configparser import RawConfigParser
+from afew.configparser import RawConfigParser
 
 notmuch_settings = RawConfigParser()
 

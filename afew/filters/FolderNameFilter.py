@@ -1,8 +1,8 @@
 # SPDX-License-Identifier: ISC
 # Copyright (c) dtk <dtk@gmx.de>
 
-from .BaseFilter import Filter
-from ..NotmuchSettings import notmuch_settings
+from afew.filters.BaseFilter import Filter
+from afew.NotmuchSettings import notmuch_settings
 import re
 import shlex
 

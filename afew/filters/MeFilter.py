@@ -3,9 +3,9 @@
 
 import re
 
-from ..utils import filter_compat
-from .BaseFilter import Filter
-from ..NotmuchSettings import notmuch_settings
+from afew.utils import filter_compat
+from afew.filters.BaseFilter import Filter
+from afew.NotmuchSettings import notmuch_settings
 
 
 class MeFilter(Filter):

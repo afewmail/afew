@@ -6,8 +6,8 @@ import logging
 import os, shutil
 from subprocess import check_call, CalledProcessError, DEVNULL
 
-from .Database import Database
-from .utils import get_message_summary
+from afew.Database import Database
+from afew.utils import get_message_summary
 from datetime import date, datetime, timedelta
 import uuid
 

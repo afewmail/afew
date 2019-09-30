@@ -3,7 +3,7 @@
 
 import dkim
 
-from .BaseFilter import Filter
+from afew.filters.BaseFilter import Filter
 
 
 def verify_dkim(path):

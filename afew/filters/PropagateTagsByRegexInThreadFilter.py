@@ -3,7 +3,7 @@
 import re
 from itertools import chain
 
-from .BaseFilter import Filter
+from afew.filters.BaseFilter import Filter
 
 
 def _flatten(listOfLists):
