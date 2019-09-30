@@ -4,8 +4,6 @@
 # Copyright (c) 2013 Patrick Totzke <patricktotzke@gmail.com>
 # Copyright (c) 2014 Lars Kellogg-Stedman <lars@redhat.com>
 
-from __future__ import print_function, absolute_import, unicode_literals
-
 from .BaseFilter import Filter
 
 import re

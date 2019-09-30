@@ -1,8 +1,6 @@
 # SPDX-License-Identifier: ISC
 # Copyright (c) dtk <dtk@gmx.de>
 
-from __future__ import print_function, absolute_import, unicode_literals
-
 from .BaseFilter import Filter
 from ..NotmuchSettings import notmuch_settings
 import re
