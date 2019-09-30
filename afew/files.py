@@ -15,6 +15,7 @@ if platform.system() != 'Linux':
 import notmuch
 import pyinotify
 
+
 class EventHandler(pyinotify.ProcessEvent):
     def __init__(self, options, database):
         self.options = options
@@ -62,12 +63,13 @@ class EventHandler(pyinotify.ProcessEvent):
         finally:
             self.database.close()
 
+
 def watch_for_new_files(options, database, paths, daemonize=False):
     wm = pyinotify.WatchManager()
     mask = (
-        pyinotify.IN_DELETE |
-        pyinotify.IN_MOVED_FROM |
-        pyinotify.IN_MOVED_TO)
+            pyinotify.IN_DELETE |
+            pyinotify.IN_MOVED_FROM |
+            pyinotify.IN_MOVED_TO)
     handler = EventHandler(options, database)
     notifier = pyinotify.Notifier(wm, handler)
 
@@ -80,6 +82,7 @@ def watch_for_new_files(options, database, paths, daemonize=False):
     logging.debug('Running mainloop')
     notifier.loop()
 
+
 import ctypes
 import contextlib
 
@@ -88,9 +91,11 @@ try:
 except ImportError as e:
     raise ImportError('Could not load libc: {}'.format(e))
 
+
 class Libc:
     class c_dir(ctypes.Structure):
         pass
+
     c_dir_p = ctypes.POINTER(c_dir)
 
     opendir = libc.opendir
@@ -130,6 +135,7 @@ class Libc:
             ('d_type', ctypes.c_byte),
             ('d_name', ctypes.c_char * 4096),
         )
+
     c_dirent_p = ctypes.POINTER(c_dirent)
 
     readdir = libc.readdir
@@ -139,7 +145,9 @@ class Libc:
     # magic value for directory
     DT_DIR = 4
 
+
 blacklist = {'.', '..', 'tmp'}
+
 
 def walk_linux(channel, path):
     channel.put(path)
@@ -153,6 +161,7 @@ def walk_linux(channel, path):
             if dirent_p.contents.d_type == Libc.DT_DIR and \
                     dirent_p.contents.d_name not in blacklist:
                 walk_linux(channel, os.path.join(path, dirent_p.contents.d_name))
+
 
 def walk(channel, path):
     channel.put(path)
@@ -168,9 +177,11 @@ def walk(channel, path):
         if stat_result.st_mode & stat.S_IFDIR:
             walk(channel, child_path)
 
+
 def walker(channel, path):
     walk_linux(channel, path)
     channel.put(None)
+
 
 def quick_find_dirs_hack(path):
     results = queue.Queue()

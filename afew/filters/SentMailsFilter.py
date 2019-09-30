@@ -21,11 +21,11 @@ class SentMailsFilter(Filter):
                 my_addresses.add(other_email)
 
         self.query = (
-            '(' +
-            ' OR '.join('from:"%s"' % address for address in my_addresses)
-            + ') AND NOT (' +
-            ' OR '.join('to:"%s"'   % address for address in my_addresses)
-            + ')'
+                '(' +
+                ' OR '.join('from:"%s"' % address for address in my_addresses)
+                + ') AND NOT (' +
+                ' OR '.join('to:"%s"' % address for address in my_addresses)
+                + ')'
         )
 
         self.sent_tag = sent_tag
@@ -71,6 +71,6 @@ class SentMailsFilter(Filter):
                 return tags
             else:
                 user_part, domain_part = email.split('@')
-                return (user_part, )
+                return (user_part,)
 
         return tuple()

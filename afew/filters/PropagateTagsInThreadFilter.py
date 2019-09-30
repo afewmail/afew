@@ -32,7 +32,7 @@ class PropagateTagsInThreadFilter(Filter):
     def __init__(self, database, propagate_tags="", filter=None, **kwargs):
         if filter:
             self.message = "Propagating tag(s) '%s' for messages matching '%s' to whole threads" % (
-            propagate_tags, filter)
+                propagate_tags, filter)
         else:
             self.message = "Propagating tag(s) '%s' to whole threads" % (propagate_tags,)
 
