@@ -9,7 +9,6 @@ import argparse
 
 from afew.Database import Database
 from afew.main import main as inner_main
-from afew.utils import filter_compat
 from afew.FilterRegistry import all_filters
 from afew.Settings import user_config_dir, get_filter_chain, \
         get_mail_move_rules, get_mail_move_age, get_mail_move_rename
@@ -97,7 +96,7 @@ def main():
 
     args = parser.parse_args()
 
-    no_actions = len(filter_compat(None, (
+    no_actions = len(filter(None, (
         args.tag,
         args.watch,
         args.move_mails
@@ -107,7 +106,7 @@ def main():
     elif no_actions > 1:
         sys.exit('Please specify exactly one action')
 
-    no_query_modifiers = len(filter_compat(None, (args.all,
+    no_query_modifiers = len(filter(None, (args.all,
                                                   args.new, args.query)))
     if no_query_modifiers == 0 and not args.watch \
         and not args.move_mails:

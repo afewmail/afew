@@ -3,7 +3,6 @@
 
 import re
 
-from afew.utils import filter_compat
 from afew.filters.BaseFilter import Filter
 from afew.NotmuchSettings import notmuch_settings
 
@@ -18,8 +17,8 @@ class MeFilter(Filter):
         my_addresses = set()
         my_addresses.add(notmuch_settings.get('user', 'primary_email'))
         if notmuch_settings.has_option('user', 'other_email'):
-            other_emails = notmuch_settings.get('user', 'other_email').split(';')
-            my_addresses.update(filter_compat(None, other_emails))
+            for other_email in notmuch_settings.get('user', 'other_email').split(';'):
+                my_addresses.add(other_email)
 
         self.query = ' OR '.join('to:"%s"' % address
                                  for address in my_addresses)
