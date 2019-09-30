@@ -10,20 +10,20 @@ import notmuch
 from afew.NotmuchSettings import notmuch_settings, get_notmuch_new_tags
 
 class Database:
-    '''
+    """
     Convenience wrapper around `notmuch`.
-    '''
+    """
 
     def __init__(self):
         self.db_path = self._calculate_db_path()
         self.handle = None
 
     def _calculate_db_path(self):
-        '''
+        """
         Calculates the path to use for the database. Supports notmuch's
         methodology including falling back to $MAILDIR or $HOME/mail if a path
         is not specified and using $HOME/<path> if path is relative.
-        '''
+        """
         default_path = os.environ.get('MAILDIR', '{}/mail'.format(os.environ.get('HOME')))
         db_path = notmuch_settings.get('database', 'path', fallback=default_path)
 
@@ -34,15 +34,15 @@ class Database:
         return db_path
 
     def __enter__(self):
-        '''
+        """
         Implements the context manager protocol.
-        '''
+        """
         return self
 
     def __exit__(self, exc_type, exc_value, traceback):
-        '''
+        """
         Implements the context manager protocol.
-        '''
+        """
         self.close()
 
     def open(self, rw=False, retry_for=180, retry_delay=1, create=False):
@@ -74,27 +74,27 @@ class Database:
         return self.handle
 
     def close(self):
-        '''
+        """
         Closes the notmuch database if it has been opened.
-        '''
+        """
         if self.handle:
             self.handle.close()
             self.handle = None
 
     def do_query(self, query):
-        '''
+        """
         Executes a notmuch query.
 
         :param query: the query to execute
         :type  query: str
         :returns: the query result
         :rtype:   :class:`notmuch.Query`
-        '''
+        """
         logging.debug('Executing query %r' % query)
         return notmuch.Query(self.open(), query)
 
     def get_messages(self, query, full_thread = False):
-        '''
+        """
         Get all messages mathing the given query.
 
         :param query: the query to execute using :func:`Database.do_query`
@@ -102,7 +102,7 @@ class Database:
         :param full_thread: return all messages from mathing threads
         :type  full_thread: bool
         :returns: an iterator over :class:`notmuch.Message` objects
-        '''
+        """
         if not full_thread:
             for message in self.do_query(query).search_messages():
                 yield message
@@ -112,13 +112,13 @@ class Database:
                     yield message
 
     def walk_replies(self, message):
-        '''
+        """
         Returns all replies to the given message.
 
         :param message: the message to start from
         :type  message: :class:`notmuch.Message`
         :returns: an iterator over :class:`notmuch.Message` objects
-        '''
+        """
         yield message
 
         # TODO: bindings are *very* unpythonic here... iterator *or* None
@@ -131,20 +131,20 @@ class Database:
                     yield message
 
     def walk_thread(self, thread):
-        '''
+        """
         Returns all messages in the given thread.
 
-        :param message: the tread you are interested in
-        :type  message: :class:`notmuch.Thread`
+        :param thread: the tread you are interested in
+        :type  thread: :class:`notmuch.Thread`
         :returns: an iterator over :class:`notmuch.Message` objects
-        '''
+        """
         for message in thread.get_toplevel_messages():
             # TODO: yield from
             for message in self.walk_replies(message):
                 yield message
 
     def add_message(self, path, sync_maildir_flags=False, new_mail_handler=None):
-        '''
+        """
         Adds the given message to the notmuch index.
 
         :param path: path to the message
@@ -158,7 +158,7 @@ class Database:
                                  its only argument
         :raises: :class:`notmuch.NotmuchError` if adding the message fails
         :returns: a :class:`notmuch.Message` object
-        '''
+        """
         # TODO: it would be nice to update notmuchs directory index here
         handle = self.open(rw=True)
         if hasattr(notmuch.Database, 'index_file'):
@@ -178,10 +178,10 @@ class Database:
         return message
 
     def remove_message(self, path):
-        '''
+        """
         Remove the given message from the notmuch index.
 
         :param path: path to the message
         :type  path: str
-        '''
+        """
         self.open(rw=True).remove_message(path)

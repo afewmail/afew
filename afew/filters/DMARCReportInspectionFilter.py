@@ -10,13 +10,13 @@ from .BaseFilter import Filter
 
 
 class ReportFilesIterator:
-    '''
+    """
     Iterator over DMARC reports files attached to the e-mail either directly or
     in ZIP files.
 
     Returns content of each document file (as bytes, not as string) which needs
     to be decoded from charset encoding.
-    '''
+    """
     def __init__(self, message):
         self.message = message
 
@@ -34,7 +34,7 @@ class ReportFilesIterator:
 
 
 def and_dict(dict1, dict2):
-    '''
+    """
     Apply logical conjunction between values of dictionaries of the same keys.
 
     Keys set must be identical in both dictionaries. Otherwise KeyError
@@ -43,7 +43,7 @@ def and_dict(dict1, dict2):
     :param dict1: Dictionary of bool values.
     :param dict2: Dictionary of bool values.
     :returns: A dictionary with the same set of keys but with modified values.
-    '''
+    """
     dict3 = {}
     for key in dict1.keys():
         dict3[key] = dict1[key] & dict2.get(key, False)
@@ -51,19 +51,19 @@ def and_dict(dict1, dict2):
 
 
 def has_failed(node):
-    '''
+    """
     Check whether status is "failed".
 
     To avoid false positives check whether status is one of "pass" or "none".
 
     :param node: XML node holding status as text.
     :returns: Whether the status is reported as "failed".
-    '''
+    """
     return (node.text.strip() not in ['pass', 'none'])
 
 
 def read_auth_results(document):
-    '''
+    """
     Parse DMARC document.
 
     Look for results for DKIM and SPF. If there's more than one record, return
@@ -72,7 +72,7 @@ def read_auth_results(document):
 
     :returns: Results as a dictionary where keys are: `dkim` and `spf` and
     values are boolean values.
-    '''
+    """
     results = {'dkim': True, 'spf': True}
     root = ET.fromstring(document)
     for record in root.findall('record'):
@@ -91,9 +91,9 @@ def read_auth_results(document):
 
 
 class DMARCReportInspectionFilter(Filter):
-    '''
+    """
     Inspect DMARC reports for DKIM and SPF status.
-    '''
+    """
     def __init__(self,                     # pylint: disable=too-many-arguments
                  database,
                  dkim_ok_tag='dmarc/dkim-ok',
