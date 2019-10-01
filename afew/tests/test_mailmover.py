@@ -42,8 +42,7 @@ def create_mail(msg, maildir, notmuch_db, tags, old=False):
     return (stripped_msgid, msg)
 
 
-@freeze_time("2019-01-30 12:00:00")
-class TestFolderMailMover(unittest.TestCase):
+class MailMoverTestBaseClass:
     def setUp(self):
         self.test_dir = tempfile.mkdtemp()
 
@@ -61,6 +60,25 @@ class TestFolderMailMover(unittest.TestCase):
         self.inbox = self.root.add_folder('inbox')
         self.archive = self.root.add_folder('archive')
         self.spam = self.root.add_folder('spam')
+
+
+    def tearDown(self):
+        shutil.rmtree(self.test_dir)
+
+
+    @staticmethod
+    def get_folder_content(db, folder):
+        return {
+            (os.path.basename(msg.get_message_id()), msg.get_part(1).decode())
+            for msg in db.do_query('folder:{}'.format(folder)).search_messages()
+        }
+
+
+
+@freeze_time("2019-01-30 12:00:00")
+class TestFolderMailMover(MailMoverTestBaseClass, unittest.TestCase):
+    def __init__(self, *args, **kwargs):
+        super(TestFolderMailMover, self).__init__(*args, **kwargs)
 
         # Dict of rules that are passed to FolderMailMover.
         #
@@ -81,18 +99,6 @@ class TestFolderMailMover(unittest.TestCase):
                 'NOT tag:spam AND tag:archive': '.archive',
                 'NOT tag:spam AND NOT tag:archive': '.inbox',
             },
-        }
-
-
-    def tearDown(self):
-        shutil.rmtree(self.test_dir)
-
-
-    @staticmethod
-    def get_folder_content(db, folder):
-        return {
-            (os.path.basename(msg.get_message_id()), msg.get_part(1).decode())
-            for msg in db.do_query('folder:{}'.format(folder)).search_messages()
         }
 
 
