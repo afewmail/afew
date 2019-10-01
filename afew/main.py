@@ -24,8 +24,13 @@ def main(options, database, query_string):
         watch_for_new_files(options, database,
                             quick_find_dirs_hack(database.db_path))
     elif options.move_mails:
+        if options.mail_move_kind == 'folder':
+            mover_class = FolderMailMover
+        else:
+            sys.exit('Mail mover kind {:r} is not recognized'.format(options.mail_move_kind))
+
         for maildir, rules in options.mail_move_rules.items():
-            mover = FolderMailMover(
+            mover = mover_class(
                 max_age=options.mail_move_age,
                 rename=options.mail_move_rename,
                 dry_run=options.dry_run,
