@@ -3,7 +3,7 @@
 
 import sys
 
-from afew.MailMover import MailMover
+from afew.MailMover import FolderMailMover
 
 try:
     from .files import watch_for_new_files, quick_find_dirs_hack
@@ -25,8 +25,12 @@ def main(options, database, query_string):
                             quick_find_dirs_hack(database.db_path))
     elif options.move_mails:
         for maildir, rules in options.mail_move_rules.items():
-            mover = MailMover(options.mail_move_age, options.mail_move_rename, options.dry_run, options.notmuch_args)
+            mover = FolderMailMover(
+                max_age=options.mail_move_age,
+                rename=options.mail_move_rename,
+                dry_run=options.dry_run,
+                notmuch_args=options.notmuch_args
+            )
             mover.move(maildir, rules)
-            mover.close()
     else:
         sys.exit('Weird... please file a bug containing your command line.')

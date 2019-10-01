@@ -43,7 +43,7 @@ def create_mail(msg, maildir, notmuch_db, tags, old=False):
 
 
 @freeze_time("2019-01-30 12:00:00")
-class TestMailMover(unittest.TestCase):
+class TestFolderMailMover(unittest.TestCase):
     def setUp(self):
         self.test_dir = tempfile.mkdtemp()
 
@@ -62,11 +62,11 @@ class TestMailMover(unittest.TestCase):
         self.archive = self.root.add_folder('archive')
         self.spam = self.root.add_folder('spam')
 
-        # Dict of rules that are passed to MailMover.
+        # Dict of rules that are passed to FolderMailMover.
         #
         # The top level key represents a particular mail directory to work on.
         #
-        # The second level key is the notmuch query that MailMover will execute,
+        # The second level key is the notmuch query that FolderMailMover will execute,
         # and its value is the directory to move the matching emails to.
         self.rules = {
             '.inbox': {
@@ -121,11 +121,10 @@ class TestMailMover(unittest.TestCase):
                 create_mail('In spam, tagged archive, spam\n', self.spam, db, ['archive', 'spam']),
             ])
 
-        mover = MailMover.MailMover(quiet=True)
+        mover = MailMover.FolderMailMover(quiet=True)
         mover.move('.inbox', self.rules['.inbox'])
         mover.move('.archive', self.rules['.archive'])
         mover.move('.spam', self.rules['.spam'])
-        mover.close()
 
         with Database() as db:
             self.assertEqual(expect_inbox, self.get_folder_content(db, '.inbox'))
@@ -147,11 +146,10 @@ class TestMailMover(unittest.TestCase):
 
             expect_spam = set([])
 
-        mover = MailMover.MailMover(max_age=15, quiet=True)
+        mover = MailMover.FolderMailMover(max_age=15, quiet=True)
         mover.move('.inbox', self.rules['.inbox'])
         mover.move('.archive', self.rules['.archive'])
         mover.move('.spam', self.rules['.spam'])
-        mover.close()
 
         with Database() as db:
             self.assertEqual(expect_inbox, self.get_folder_content(db, '.inbox'))
