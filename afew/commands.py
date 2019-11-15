@@ -96,18 +96,18 @@ def main():
 
     args = parser.parse_args()
 
-    no_actions = len(filter(None, (
+    no_actions = len(list(filter(None, (
         args.tag,
         args.watch,
         args.move_mails
-    )))
+    ))))
     if no_actions == 0:
         sys.exit('You need to specify an action')
     elif no_actions > 1:
         sys.exit('Please specify exactly one action')
 
-    no_query_modifiers = len(filter(None, (args.all,
-                                           args.new, args.query)))
+    no_query_modifiers = len(list(filter(None, (args.all,
+                                                args.new, args.query))))
     if no_query_modifiers == 0 and not args.watch \
             and not args.move_mails:
         sys.exit('You need to specify one of --new, --all or a query string')
