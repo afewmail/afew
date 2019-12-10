@@ -64,6 +64,13 @@ Then edit the `post-new` file to contain:
 
     #!/bin/sh
     $HOME/.local/bin/afew --tag --new
+    
+The file also needs to be made executable:
+
+.. code-block:: sh
+
+    chmod +x path/to/maildir/.notmuch/hooks/post-new
+
 
 Next Steps
 ----------
