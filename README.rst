@@ -61,7 +61,7 @@ Installation and Usage
 Full documentation is available in the `docs/`_ directory and in
 rendered form at afew.readthedocs.io_.
 
-.. _afew.readthedocs.io: https://afew.readthedocs.io/en/latest
+.. _afew.readthedocs.io: https://afew.readthedocs.io/en/latest/
 .. _docs/: docs/
 
 Have fun :)
