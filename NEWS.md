@@ -1,3 +1,29 @@
+afew 3.0.0 (2020-03-10)
+=======================
+
+MailMover: many fixes
+
+  Previously, MailMover didn't properly preserve flags when renaming files, and
+  moved all mail to `cur`. This was fixed. Also, MailMover gained a test suite.
+
+New filters: PropagateTags[ByRegex]InThreadFilter
+
+  These filters allow propagating tags set to a message to the whole thread.
+
+New command line argument: --notmuch-args= in move mode
+
+  In move mode, afew calls `notmuch new` after moving mails around. This
+  prevents `afew -m` from being used in a pre-new hook in `notmuch`.
+
+  Now it's possible to specify notmuch args, so something like `afew -m
+  --notmuch-args=--no-hooks` can live happily in a pre-new hook.
+
+Python 3.4 and 3.5 support dropped
+
+  afew stopped supporting the older python versions 3.4 and 3.5, and removed
+  some more Python 2 compatibility code. (`from __future__ import …`, utf-8
+  headers, relative imports, …)
+
 afew 2.0.0 (2019-06-16)
 =======================
 
