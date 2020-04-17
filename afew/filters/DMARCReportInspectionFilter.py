@@ -1,12 +1,30 @@
 # SPDX-License-Identifier: ISC
 # Copyright (c) Amadeusz Zolnowski <aidecoe@aidecoe.name>
 
+"""
+DMARC report inspection filter.
+
+Looks into DMARC report whether all results are successful or any is failing.
+Add tags 2 of the tags below:
+- dmarc/dkim-ok
+- dmarc/dkim-fail
+- dmarc/spf-ok
+- dmarc/spf-fail
+
+"""
+
+import logging
 import re
 import tempfile
 import xml.etree.ElementTree as ET
 import zipfile
 
 from .BaseFilter import Filter
+
+
+class DMARCInspectionError(Exception):
+    """Failed to inspect DMARC report.
+    """
 
 
 class ReportFilesIterator:
@@ -25,10 +43,14 @@ class ReportFilesIterator:
             if part.get_content_type() == 'application/zip':
                 with tempfile.TemporaryFile(suffix='.zip') as file:
                     file.write(part.get_payload(decode=True))
-                    with zipfile.ZipFile(file) as zip_file:
-                        for member_file in zip_file.infolist():
-                            if member_file.filename.endswith('.xml'):
-                                yield zip_file.read(member_file)
+                    try:
+                        with zipfile.ZipFile(file) as zip_file:
+                            for member_file in zip_file.infolist():
+                                if member_file.filename.endswith('.xml'):
+                                    yield zip_file.read(member_file)
+                    except zipfile.BadZipFile as zip_error:
+                        raise DMARCInspectionError(str(zip_error)) \
+                            from zip_error
             elif part.get_content_type() == 'application/xml':
                 yield part.get_payload(decode=True)
 
@@ -73,19 +95,22 @@ def read_auth_results(document):
     :returns: Results as a dictionary where keys are: `dkim` and `spf` and
     values are boolean values.
     """
-    results = {'dkim': True, 'spf': True}
-    root = ET.fromstring(document)
-    for record in root.findall('record'):
-        auth_results = record.find('auth_results')
-        if auth_results:
-            dkim = auth_results.find('dkim')
-            if dkim:
-                dkim = dkim.find('result')
-                results['dkim'] &= not has_failed(dkim)
-            spf = auth_results.find('spf')
-            if spf:
-                spf = spf.find('result')
-                results['spf'] &= not has_failed(spf)
+    try:
+        results = {'dkim': True, 'spf': True}
+        root = ET.fromstring(document)
+        for record in root.findall('record'):
+            auth_results = record.find('auth_results')
+            if auth_results:
+                dkim = auth_results.find('dkim')
+                if dkim:
+                    dkim = dkim.find('result')
+                    results['dkim'] &= not has_failed(dkim)
+                spf = auth_results.find('spf')
+                if spf:
+                    spf = spf.find('result')
+                    results['spf'] &= not has_failed(spf)
+    except ET.ParseError as parse_error:
+        raise DMARCInspectionError(str(parse_error)) from parse_error
 
     return results
 
@@ -105,6 +130,8 @@ class DMARCReportInspectionFilter(Filter):
         self.spf_tag = {True: spf_ok_tag, False: spf_fail_tag}
         self.dmarc_subject = re.compile(r'^report domain:',
                                         flags=re.IGNORECASE)
+        self.log = logging.getLogger('{}.{}'.format(
+            self.__module__, self.__class__.__name__))
 
     def handle_message(self, message):
         if not self.dmarc_subject.match(message.get_header('Subject')):
@@ -112,11 +139,19 @@ class DMARCReportInspectionFilter(Filter):
 
         auth_results = {'dkim': True, 'spf': True}
 
-        for file_content in ReportFilesIterator(message):
-            document = file_content.decode('UTF-8')
-            auth_results = and_dict(auth_results, read_auth_results(document))
+        try:
+            for file_content in ReportFilesIterator(message):
+                document = file_content.decode('UTF-8')
+                auth_results = and_dict(auth_results,
+                                        read_auth_results(document))
 
-        self.add_tags(message,
-                      'dmarc',
-                      self.dkim_tag[auth_results['dkim']],
-                      self.spf_tag[auth_results['spf']])
+            self.add_tags(message,
+                          'dmarc',
+                          self.dkim_tag[auth_results['dkim']],
+                          self.spf_tag[auth_results['spf']])
+        except DMARCInspectionError as inspection_error:
+            self.log.error(
+                "Failed to verify DMARC report of '%s': %s (not tagging)",
+                message.get_message_id(),
+                inspection_error
+            )
