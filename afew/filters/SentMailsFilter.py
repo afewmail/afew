@@ -18,7 +18,8 @@ class SentMailsFilter(Filter):
         my_addresses.add(notmuch_settings.get('user', 'primary_email'))
         if notmuch_settings.has_option('user', 'other_email'):
             for other_email in notmuch_settings.get('user', 'other_email').split(';'):
-                my_addresses.add(other_email)
+                if other_email:
+                    my_addresses.add(other_email)
 
         self.query = (
                 '(' +
