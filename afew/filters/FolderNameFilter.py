@@ -16,6 +16,8 @@ class FolderNameFilter(Filter):
 
         self.__filename_pattern = '{mail_root}/(?P<maildirs>.*)/(cur|new)/[^/]+'.format(
             mail_root=notmuch_settings.get('database', 'path').rstrip('/'))
+        if not(self.__filename_pattern.startswith("/")):
+            self.__filename_pattern = os.path.expanduser("~/"+self.__filename_pattern)
         self.__folder_explicit_list = set(shlex.split(folder_explicit_list))
         self.__folder_blacklist = set(folder_blacklist.split())
         self.__folder_transforms = self.__parse_transforms(folder_transforms)
