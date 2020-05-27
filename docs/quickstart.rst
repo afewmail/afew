@@ -17,7 +17,7 @@ The following commands will get you going on Debian/Ubuntu systems:
     $ sudo aptitude install notmuch python-notmuch dbacl
     $ git clone git://github.com/teythoon/afew.git
     $ cd afew
-    $ python setup.py install --prefix
+    $ python setup.py install --prefix=~/.local
 
 Ensure that `~/.local/bin` is in your path. One way is to add the following to
 your `~/.bashrc`:
