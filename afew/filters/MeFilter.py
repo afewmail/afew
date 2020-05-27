@@ -11,7 +11,7 @@ class MeFilter(Filter):
     message = 'Tagging all mails sent directly to myself'
     _bare_email_re = re.compile(r"[^<]*<(?P<email>[^@<>]+@[^@<>]+)>")
 
-    def __init__(self, database, me_tag='to-me', tags_blacklist=[]):
+    def __init__(self, database, me_tag=None, tags_blacklist=[]):
         super().__init__(database, tags_blacklist=tags_blacklist)
 
         my_addresses = set()
@@ -23,8 +23,10 @@ class MeFilter(Filter):
         self.query = ' OR '.join('to:"%s"' % address
                                  for address in my_addresses)
 
-        self.me_tag = me_tag
-
-    def handle_message(self, message):
-        if not self._tag_blacklist.intersection(message.get_tags()):
-            self.add_tags(message, self.me_tag)
+        # The me_tag option does nothing that couldn't be done with the
+        # "normal" tags option. If the me_tag is explicitly configured or there
+        # is no tags option make use of it.
+        if not me_tag is None or (not self._tags_to_add and not self._tags_to_remove):
+            if me_tag is None:
+                me_tag = 'to-me'
+            self._tags_to_add.append(me_tag)
