@@ -11,8 +11,8 @@ class MeFilter(Filter):
     message = 'Tagging all mails sent directly to myself'
     _bare_email_re = re.compile(r"[^<]*<(?P<email>[^@<>]+@[^@<>]+)>")
 
-    def __init__(self, database, me_tag=None, tags_blacklist=[]):
-        super().__init__(database, tags_blacklist=tags_blacklist)
+    def __init__(self, database, me_tag=None, **kwargs):
+        super().__init__(database, **kwargs)
 
         my_addresses = set()
         my_addresses.add(notmuch_settings.get('user', 'primary_email'))
