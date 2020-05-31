@@ -57,7 +57,7 @@ And create a `post-new` hook for notmuch to call afew:
 
     $ notmuchdir=path/to/maildir/.notmuch
     $ mkdir -p "$notmuchdir/hooks"
-    $ printf > "$notmuchdir/hooks/post-new" '#!/bin/sh\n$HOME/.local/bin/afew --tag --new\n'
+    $ printf > "$notmuchdir/hooks/post-new" '#!/usr/bin/env sh\n$HOME/.local/bin/afew --tag --new\n'
     $ chmod u+x "$notmuchdir/hooks/post-new"
 
 Next Steps
