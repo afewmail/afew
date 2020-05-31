@@ -17,7 +17,7 @@ The following commands will get you going on Debian/Ubuntu systems:
     $ sudo aptitude install notmuch python-notmuch dbacl
     $ git clone git://github.com/teythoon/afew.git
     $ cd afew
-    $ python setup.py install --prefix
+    $ python setup.py install --prefix=~/.local
 
 Ensure that `~/.local/bin` is in your path. One way is to add the following to
 your `~/.bashrc`:
@@ -51,19 +51,14 @@ Put a list of filters into `~/.config/afew/config`:
     [ArchiveSentMailsFilter]
     [InboxFilter]
 
-And create a post-new hook for notmuch.
+And create a `post-new` hook for notmuch to call afew:
 
 .. code-block:: sh
 
-    $ mkdir -p path/to/maildir/.notmuch/hooks
-    $ touch path/to/maildir/.notmuch/hooks/post-new
-
-Then edit the `post-new` file to contain:
-
-.. code-block:: sh
-
-    #!/bin/sh
-    $HOME/.local/bin/afew --tag --new
+    $ notmuchdir=path/to/maildir/.notmuch
+    $ mkdir -p "$notmuchdir/hooks"
+    $ printf > "$notmuchdir/hooks/post-new" '#!/bin/sh\n$HOME/.local/bin/afew --tag --new\n'
+    $ chmod u+x "$notmuchdir/hooks/post-new"
 
 Next Steps
 ----------
