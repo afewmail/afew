@@ -61,7 +61,7 @@ jobs:
     steps:
       - name: Upload to TestPyPI
         uses: pypa/gh-action-pypi-publish@186232109eade3d22bfe1bca29ac9a1312598511
-        if: ${{github.ref == 'master'}}
+        if: ${{github.ref == 'refs/heads/master'}}
         with:
           user: __token__
           password: ${{ secrets.testpypi_token }}
