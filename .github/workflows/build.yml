@@ -57,14 +57,3 @@ jobs:
           source ./env/bin/activate
           pip install sphinx
           python setup.py build_sphinx -b html,man
-  release:
-    needs: [build-ubuntu]
-    runs-on: ubuntu-latest
-    steps:
-      - name: Upload to TestPyPI
-        uses: pypa/gh-action-pypi-publish@186232109eade3d22bfe1bca29ac9a1312598511
-        if: ${{github.ref == 'refs/heads/master'}}
-        with:
-          user: __token__
-          password: ${{ secrets.testpypi_token }}
-          repository_url: https://test.pypi.org/legacy/
