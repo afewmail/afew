@@ -37,5 +37,4 @@ jobs:
         run: |
           source ./env/bin/activate
           python setup.py sdist
-          twine check dist/*
           twine upload dist/*
