@@ -1,0 +1,53 @@
+name: test
+
+on: push
+
+jobs:
+  build-ubuntu:
+    strategy:
+      matrix:
+        python: [3.6, 3.7, 3.8]
+    name: Build (Python ${{ matrix.python }})
+    runs-on: ubuntu-18.04
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+      - name: Set up Python
+        uses: actions/setup-python@v1
+        with:
+          python-version: '${{ matrix.python }}'
+      - name: Install dependencies
+        shell: bash
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y notmuch python3-notmuch python3-venv
+          python3 -m venv env
+          source ./env/bin/activate
+          pip install setuptools pytest dkimpy
+          ln -s /usr/lib/python3/dist-packages/notmuch ./env/lib/python*/site-packages
+      - name: Tests
+        run: |
+          source ./env/bin/activate
+          pip install freezegun
+          pytest
+      - name: build
+        run: |
+          source ./env/bin/activate
+          python setup.py build
+      - name: install
+        run: |
+          source ./env/bin/activate
+          python setup.py install
+      - name: Generate coverage report
+        run: |
+          source ./env/bin/activate
+          pip install pytest-cov
+          pytest --cov=./ --cov-report=xml
+      - name: Upload coverage to Codecov
+        uses: codecov/codecov-action@v1
+        with:
+          file: ./coverage.xml
+          flags: unittests
+          name: codecov-umbrella
+          fail_ci_if_error: true
