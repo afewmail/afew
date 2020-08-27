@@ -26,13 +26,7 @@ jobs:
           source ./env/bin/activate
           pip install setuptools pytest dkimpy
           ln -s /usr/lib/python3/dist-packages/notmuch ./env/lib/python*/site-packages
-      - name: listing
+      - name: flake8
         run: |
           source ./env/bin/activate
-          ls
-          pwd
-      - name: Run linters
-        uses: wearerequired/lint-action@v1
-        with:
-          # Enable linters
-          flake8: true
+          flake8 --ignore=E501,E701,E402,E129,E126,E711,E302,E251,E722,W503,E713,E401,F401,E303 afew/
