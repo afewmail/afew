@@ -1,7 +1,7 @@
-name: CI
+name: build
 
 # Trigger the workflow on push or pull request
-on: [push, pull_request]
+on: push
 
 jobs:
   build-ubuntu:
@@ -27,31 +27,10 @@ jobs:
           source ./env/bin/activate
           pip install setuptools pytest dkimpy
           ln -s /usr/lib/python3/dist-packages/notmuch ./env/lib/python*/site-packages
-      - name: Tests
-        run: |
-          source ./env/bin/activate
-          pip install freezegun
-          pytest
       - name: build
         run: |
           source ./env/bin/activate
           python setup.py build
-      - name: install
-        run: |
-          source ./env/bin/activate
-          python setup.py install
-      - name: Generate coverage report
-        run: |
-          source ./env/bin/activate
-          pip install pytest-cov
-          pytest --cov=./ --cov-report=xml
-      - name: Upload coverage to Codecov
-        uses: codecov/codecov-action@v1
-        with:
-          file: ./coverage.xml
-          flags: unittests
-          name: codecov-umbrella
-          fail_ci_if_error: true
       - name: Docs
         run: |
           source ./env/bin/activate
