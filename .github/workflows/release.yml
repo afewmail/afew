@@ -24,7 +24,7 @@ jobs:
         shell: bash
         run: |
           sudo apt-get update
-          sudo apt-get install -y notmuch python3-notmuch python3-venv setuptools setuptools_scm wheel twine
+          sudo apt-get install -y notmuch python3-notmuch python3-venv python3-setuptools python3-wheel twine
           python3 -m venv env
           source ./env/bin/activate
           pip install setuptools pytest dkimpy
