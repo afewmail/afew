@@ -58,7 +58,7 @@ class SentMailsFilter(Filter):
         return email_to_tags
 
     def __get_bare_email(self, email):
-        if not '<' in email:
+        if '<' not in email:
             return email
         else:
             match = self._bare_email_re.search(email)
