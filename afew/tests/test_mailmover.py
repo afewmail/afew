@@ -83,10 +83,8 @@ class TestMailMover(unittest.TestCase):
             },
         }
 
-
     def tearDown(self):
         shutil.rmtree(self.test_dir)
-
 
     @staticmethod
     def get_folder_content(db, folder):
@@ -94,7 +92,6 @@ class TestMailMover(unittest.TestCase):
             (os.path.basename(msg.get_message_id()), msg.get_part(1).decode())
             for msg in db.do_query('folder:{}'.format(folder)).search_messages()
         }
-
 
     def test_all_rule_cases(self):
         from afew import MailMover
@@ -131,7 +128,6 @@ class TestMailMover(unittest.TestCase):
             self.assertEqual(expect_inbox, self.get_folder_content(db, '.inbox'))
             self.assertEqual(expect_archive, self.get_folder_content(db, '.archive'))
             self.assertEqual(expect_spam, self.get_folder_content(db, '.spam'))
-
 
     def test_max_age(self):
         from afew import MailMover
