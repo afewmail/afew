@@ -1,9 +1,6 @@
 #
 import unittest
 
-from afew import utils
-
-
 class TestUtils(unittest.TestCase):
     pass
 

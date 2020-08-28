@@ -4,7 +4,6 @@ import email.message
 from email.utils import make_msgid
 from freezegun import freeze_time
 import mailbox
-import notmuch
 import os
 import shutil
 import tempfile
