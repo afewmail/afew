@@ -12,6 +12,7 @@ import unittest
 from afew.Database import Database
 from afew.NotmuchSettings import notmuch_settings, write_notmuch_settings
 
+
 def create_mail(msg, maildir, notmuch_db, tags, old=False):
     email_message = email.message.EmailMessage()
     # freezegun doesn't handle time zones properly when generating UNIX
