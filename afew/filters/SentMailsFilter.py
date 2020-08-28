@@ -22,10 +22,10 @@ class SentMailsFilter(Filter):
 
         self.query = (
                 '(' +
-                ' OR '.join('from:"%s"' % address for address in my_addresses)
-                + ') AND NOT (' +
-                ' OR '.join('to:"%s"' % address for address in my_addresses)
-                + ')'
+                ' OR '.join('from:"%s"' % address for address in my_addresses) +
+                ') AND NOT (' +
+                ' OR '.join('to:"%s"' % address for address in my_addresses) +
+                ')'
         )
 
         self.sent_tag = sent_tag
