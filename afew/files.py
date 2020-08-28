@@ -171,7 +171,7 @@ def walk(channel, path):
                        if child not in blacklist):
         try:
             stat_result = os.stat(child_path)
-        except:
+        except Exception:
             continue
 
         if stat_result.st_mode & stat.S_IFDIR:
