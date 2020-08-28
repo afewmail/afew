@@ -12,6 +12,8 @@ def get_requires():
     yield 'chardet'
     yield 'dkimpy'
 
+with open(os.path.join(os.path.abspath(os.path.dirname(__file__)), 'README.rst'), encoding='utf-8') as f:
+    long_description = f.read()
 
 setup(
     name='afew',
@@ -19,6 +21,8 @@ setup(
     description="An initial tagging script for notmuch mail",
     url="https://github.com/afewmail/afew",
     license="ISC",
+    long_description=long_description,
+    long_description_content_type="text/x-rst",
     setup_requires=['setuptools_scm'],
     packages=find_packages(),
     test_suite='afew.tests',
