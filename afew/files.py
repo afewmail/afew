@@ -67,9 +67,9 @@ class EventHandler(pyinotify.ProcessEvent):
 def watch_for_new_files(options, database, paths, daemonize=False):
     wm = pyinotify.WatchManager()
     mask = (
-            pyinotify.IN_DELETE |
-            pyinotify.IN_MOVED_FROM |
-            pyinotify.IN_MOVED_TO)
+        pyinotify.IN_DELETE |
+        pyinotify.IN_MOVED_FROM |
+        pyinotify.IN_MOVED_TO)
     handler = EventHandler(options, database)
     notifier = pyinotify.Notifier(wm, handler)
 
