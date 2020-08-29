@@ -126,7 +126,7 @@ class Database:
         # TODO: bindings are *very* unpythonic here... iterator *or* None
         #       is a nono
         replies = message.get_replies()
-        if replies != None:
+        if replies is not None:
             for message in replies:
                 # TODO: yield from
                 for message in self.walk_replies(message):

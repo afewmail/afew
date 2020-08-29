@@ -193,7 +193,7 @@ def quick_find_dirs_hack(path):
     while True:
         result = results.get()
 
-        if result != None:
+        if result is not None:
             yield result
         else:
             break
