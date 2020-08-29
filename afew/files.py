@@ -8,12 +8,13 @@ import logging
 import platform
 import queue
 import threading
+import notmuch
+import pyinotify
+import ctypes
+import contextlib
 
 if platform.system() != 'Linux':
     raise ImportError('Unsupported platform: {!r}'.format(platform.system()))
-
-import notmuch
-import pyinotify
 
 
 class EventHandler(pyinotify.ProcessEvent):
@@ -82,9 +83,6 @@ def watch_for_new_files(options, database, paths, daemonize=False):
     logging.debug('Running mainloop')
     notifier.loop()
 
-
-import ctypes
-import contextlib
 
 try:
     libc = ctypes.CDLL(ctypes.util.find_library("c"))
