@@ -9,7 +9,7 @@ notmuch_settings = RawConfigParser()
 
 
 def read_notmuch_settings(path=None):
-    if path == None:
+    if path is None:
         path = os.environ.get('NOTMUCH_CONFIG', os.path.expanduser('~/.notmuch-config'))
 
     with open(path) as fp:
@@ -17,7 +17,7 @@ def read_notmuch_settings(path=None):
 
 
 def write_notmuch_settings(path=None):
-    if path == None:
+    if path is None:
         path = os.environ.get('NOTMUCH_CONFIG', os.path.expanduser('~/.notmuch-config'))
 
     with open(path, 'w+') as fp:
