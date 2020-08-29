@@ -17,7 +17,9 @@ class GetListMixIn:
             return filter(None, result)
 
 
-class ConfigParser(configparser.ConfigParser, GetListMixIn): pass
+class ConfigParser(configparser.ConfigParser, GetListMixIn):
+    pass
 
 
-class RawConfigParser(configparser.RawConfigParser, GetListMixIn): pass
+class RawConfigParser(configparser.RawConfigParser, GetListMixIn):
+    pass
