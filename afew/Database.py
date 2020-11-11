@@ -5,7 +5,7 @@ import os
 import time
 import logging
 
-import notmuch
+import notmuch2
 
 from afew.NotmuchSettings import notmuch_settings, get_notmuch_new_tags
 
@@ -48,17 +48,17 @@ class Database:
 
     def open(self, rw=False, retry_for=180, retry_delay=1, create=False):
         if rw:
-            if self.handle and self.handle.mode == notmuch.Database.MODE.READ_WRITE:
+            if self.handle and self.handle.mode == notmuch2.Database.MODE.READ_WRITE:
                 return self.handle
 
             start_time = time.time()
             while True:
                 try:
-                    self.handle = notmuch.Database(self.db_path,
-                                                   mode=notmuch.Database.MODE.READ_WRITE,
-                                                   create=create)
+                    self.handle = notmuch2.Database(self.db_path,
+                                                    mode=notmuch2.Database.MODE.READ_WRITE,
+                                                    create=create)
                     break
-                except notmuch.NotmuchError:
+                except notmuch2.NotmuchError:
                     time_left = int(retry_for - (time.time() - start_time))
 
                     if time_left <= 0:
@@ -71,7 +71,8 @@ class Database:
                     time.sleep(retry_delay)
         else:
             if not self.handle:
-                self.handle = notmuch.Database(self.db_path, create=create)
+                self.handle = notmuch2.Database(self.db_path,
+                                                mode=notmuch2.Database.MODE.READ_WRITE)
 
         return self.handle
 
@@ -93,7 +94,7 @@ class Database:
         :rtype:   :class:`notmuch.Query`
         """
         logging.debug('Executing query %r' % query)
-        return notmuch.Query(self.open(), query)
+        return notmuch2.Database.messages(self.open(), query)
 
     def get_messages(self, query, full_thread=False):
         """
@@ -106,10 +107,10 @@ class Database:
         :returns: an iterator over :class:`notmuch.Message` objects
         """
         if not full_thread:
-            for message in self.do_query(query).search_messages():
+            for message in self.do_query(query):
                 yield message
         else:
-            for thread in self.do_query(query).search_threads():
+            for thread in self.do_query(query):
                 for message in self.walk_thread(thread):
                     yield message
 
@@ -163,12 +164,12 @@ class Database:
         """
         # TODO: it would be nice to update notmuchs directory index here
         handle = self.open(rw=True)
-        if hasattr(notmuch.Database, 'index_file'):
+        if hasattr(notmuch2.Database, 'index_file'):
             message, status = handle.index_file(path, sync_maildir_flags=sync_maildir_flags)
         else:
             message, status = handle.add_message(path, sync_maildir_flags=sync_maildir_flags)
 
-        if status != notmuch.STATUS.DUPLICATE_MESSAGE_ID:
+        if status != notmuch2.STATUS.DUPLICATE_MESSAGE_ID:
             logging.info('Found new mail in {}'.format(path))
 
             for tag in get_notmuch_new_tags():
