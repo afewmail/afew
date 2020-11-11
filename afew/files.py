@@ -8,7 +8,7 @@ import logging
 import platform
 import queue
 import threading
-import notmuch
+import notmuch2
 import pyinotify
 import ctypes
 import contextlib
@@ -52,10 +52,10 @@ class EventHandler(pyinotify.ProcessEvent):
             self.database.add_message(event.pathname,
                                       sync_maildir_flags=True,
                                       new_mail_handler=new_mail)
-        except notmuch.FileError as e:
+        except notmuch2.FileError as e:
             logging.warn('Error opening mail file: {}'.format(e))
             return
-        except notmuch.FileNotEmailError as e:
+        except notmuch2.FileNotEmailError as e:
             logging.warn('File does not look like an email: {}'.format(e))
             return
         else:
