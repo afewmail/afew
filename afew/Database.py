@@ -97,7 +97,7 @@ class Database:
 
     def get_messages(self, query, full_thread=False):
         """
-        Get all messages mathing the given query.
+        Get all messages matching the given query.
 
         :param query: the query to execute using :func:`Database.do_query`
         :type  query: str
