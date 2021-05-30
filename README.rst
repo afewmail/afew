@@ -32,9 +32,9 @@ fyi: afew plays nicely with alot, a GUI for notmuch mail ;)
 IRC
 ---
 
-Feel free to ask your questions and discuss usage in the `#afewmail IRC Channel`_ on freenode.
+Feel free to ask your questions and discuss usage in the `#afewmail IRC Channel`_ on Libera.Chat.
 
-.. _#afewmail IRC Channel: http://webchat.freenode.net/?channels=#afewmail
+.. _#afewmail IRC Channel: http://web.libera.chat/?channels=#afewmail
 
 
 Features
