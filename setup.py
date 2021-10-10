@@ -11,6 +11,7 @@ def get_requires():
         yield 'notmuch'
     yield 'chardet'
     yield 'dkimpy'
+    yield 'watchdog'
 
 with open(os.path.join(os.path.abspath(os.path.dirname(__file__)), 'README.rst'), encoding='utf-8') as f:
     long_description = f.read()
