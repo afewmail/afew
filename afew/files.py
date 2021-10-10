@@ -15,7 +15,7 @@ BLACKLIST = {'.', '..', 'tmp'}
 
 
 class EventHandler(FileSystemEventHandler):
-    ignore_re = re.compile('(/xapian/.*(base.|tmp)$)|(\.lock$)|(/dovecot)')
+    ignore_re = re.compile(r'(/xapian/.*(base.|tmp)$)|(\.lock$)|(/dovecot)')
 
     def __init__(self, options, database):
         self.options = options
