@@ -3,6 +3,7 @@
 import unittest
 from email.utils import make_msgid
 from unittest import mock
+import asyncio
 
 import dkim
 import dns.exception
@@ -70,7 +71,7 @@ class TestDKIMValidityFilter(unittest.TestCase):
         with mock.patch('afew.filters.DKIMValidityFilter.dkim.verify') \
                 as dkim_verify:
             dkim_verify.return_value = True
-            dkim_filter.handle_message(message)
+            asyncio.run(dkim_filter.handle_message(message))
 
         self.assertSetEqual(tags, set())
 
@@ -87,7 +88,7 @@ class TestDKIMValidityFilter(unittest.TestCase):
         with mock.patch('afew.filters.DKIMValidityFilter.dkim.verify') \
                 as dkim_verify:
             dkim_verify.return_value = True
-            dkim_filter.handle_message(message)
+            asyncio.run(dkim_filter.handle_message(message))
 
         self.assertSetEqual(tags, {'dkim-ok'})
 
@@ -104,7 +105,7 @@ class TestDKIMValidityFilter(unittest.TestCase):
         with mock.patch('afew.filters.DKIMValidityFilter.dkim.verify') \
                 as dkim_verify:
             dkim_verify.return_value = False
-            dkim_filter.handle_message(message)
+            asyncio.run(dkim_filter.handle_message(message))
 
         self.assertSetEqual(tags, {'dkim-fail'})
 
@@ -121,7 +122,7 @@ class TestDKIMValidityFilter(unittest.TestCase):
         with mock.patch('afew.filters.DKIMValidityFilter.dkim.verify') \
                 as dkim_verify:
             dkim_verify.side_effect = [True, False, True]
-            dkim_filter.handle_message(message)
+            asyncio.run(dkim_filter.handle_message(message))
 
         self.assertSetEqual(tags, {'dkim-fail'})
 
@@ -137,7 +138,7 @@ class TestDKIMValidityFilter(unittest.TestCase):
         with mock.patch('afew.filters.DKIMValidityFilter.dkim.verify') \
                 as dkim_verify:
             dkim_verify.side_effect = dns.resolver.NoNameservers()
-            dkim_filter.handle_message(message)
+            asyncio.run(dkim_filter.handle_message(message))
 
         self.assertSetEqual(tags, {'dkim-fail'})
 
@@ -153,6 +154,6 @@ class TestDKIMValidityFilter(unittest.TestCase):
         with mock.patch('afew.filters.DKIMValidityFilter.dkim.verify') \
                 as dkim_verify:
             dkim_verify.side_effect = dkim.KeyFormatError()
-            dkim_filter.handle_message(message)
+            asyncio.run(dkim_filter.handle_message(message))
 
         self.assertSetEqual(tags, {'dkim-fail'})
