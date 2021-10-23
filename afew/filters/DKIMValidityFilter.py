@@ -28,7 +28,6 @@ def verify_dkim(path):
     :param path: Path to the e-mail file.
     :returns: Whether DKIM signature is valid or not.
     """
-    print("HERE")
     with open(path, "rb") as message_file:
         message_bytes = message_file.read()
 
