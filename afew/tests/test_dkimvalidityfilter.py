@@ -151,3 +151,46 @@ async def test_dkim_verify_failed():
             await dkim_filter.handle_message(message)
 
     assert tags == {"dkim-fail"}
+
+
+@mock.patch("afew.Database.Database.get_messages",
+            return_value=[
+                _make_message(),
+                _make_message(),
+                _make_message()
+            ])
+@pytest.mark.asyncio
+async def test_dkim_validity_filter_run(get_messages):
+    """Test filter run, on which runs a N coroutines for N messages
+    """
+    dkim_filter, tags = _make_dkim_validity_filter()
+    message = _make_message()
+    message.get_filenames.return_value = ["a", "b", "c"]
+
+    with mock.patch("builtins.open", mock.mock_open(read_data=b"")):
+        with mock.patch("afew.filters.DKIMValidityFilter.dkim.verify") as dkim_verify:
+            dkim_verify.return_value = True
+            await dkim_filter.run("")
+
+    assert get_messages.called
+
+
+@mock.patch("afew.Database.Database.get_messages", return_value=set())
+@pytest.mark.asyncio
+async def test_dkim_validity_filter_run_sets_query(get_messages):
+    """Test filter run with a query attribute set
+    """
+    dkim_filter, tags = _make_dkim_validity_filter()
+
+    # without the query attribute
+    await dkim_filter.run("folder:archived")
+    assert get_messages.call_args.args == ('folder:archived',)
+
+    # with query attribute
+    dkim_filter.query = "folder:inbox"
+    await dkim_filter.run("folder:archived")
+    assert get_messages.call_args.args == ('(folder:archived) AND (folder:inbox)',)
+
+    # with query attribute and no query
+    await dkim_filter.run("")
+    assert get_messages.call_args.args == ('folder:inbox',)
