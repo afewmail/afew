@@ -25,7 +25,7 @@ jobs:
           sudo apt-get install -y notmuch python3-notmuch python3-venv flake8
           python3 -m venv env
           source ./env/bin/activate
-          pip install setuptools pytest dkimpy
+          pip install setuptools pytest dkimpy pytest-asyncio
           ln -s /usr/lib/python3/dist-packages/notmuch ./env/lib/python*/site-packages
       - name: flake8 lint
         run: |
