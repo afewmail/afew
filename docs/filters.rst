@@ -26,7 +26,7 @@ It extends `SentMailsFilter` with the following feature:
 DKIMValidityFilter
 ------------------
 
-This filter verifies DKIM signatures of E-Mails with DKIM header, and adds `dkin-ok` or `dkin-fail` tags.
+This filter verifies DKIM signatures of E-Mails with DKIM header, and adds `dkim-ok` or `dkim-fail` tags.
 
 DMARCReportInspectionFilter
 ---------------------------
