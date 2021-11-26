@@ -7,7 +7,7 @@ from unittest import mock
 from afew.Database import Database
 from afew.filters.HeaderMatchingFilter import HeaderMatchingFilter
 
-from notmuch.errors import NullPointerError
+from notmuch2._errors import NullPointerError
 
 
 class _AddTags:  # pylint: disable=too-few-public-methods
@@ -38,23 +38,23 @@ def _make_message(should_fail):
 
     Mocked methods:
 
-    - `get_header()` returns non-empty string. When testing with mocked
+    - `header()` returns non-empty string. When testing with mocked
       function for verifying DKIM signature, DKIM signature doesn't matter as
       long as it's non-empty string.
 
-    - `get_filenames()` returns list of non-empty string. When testing with
+    - `filenames()` returns list of non-empty string. When testing with
     mocked file open, it must just be non-empty string.
 
-    - `get_message_id()` returns some generated message ID.
+    - `message` returns some generated message ID.
     """
     message = mock.Mock()
     if should_fail:
-        message.get_header.side_effect = NullPointerError
+        message.header.side_effect = NullPointerError
     else:
-        message.get_header.return_value = 'header'
-    message.get_filenames.return_value = ['a']
-    message.get_tags.return_value = ['a']
-    message.get_message_id.return_value = make_msgid()
+        message.header.return_value = 'header'
+    message.filenames.return_value = ['a']
+    message.tags = ['a']
+    message.messageid = make_msgid()
     return message
 
 
