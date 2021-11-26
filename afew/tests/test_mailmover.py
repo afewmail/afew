@@ -36,7 +36,7 @@ def create_mail(msg, maildir, notmuch_db, tags, old=False):
     fname = os.path.join(maildir._path, maildir._lookup(message_key))
     notmuch_msg = notmuch_db.add_message(fname)
     for tag in tags:
-        notmuch_msg.add_tag(tag, False)
+        notmuch_msg.tags.add(tag)
 
     # Remove the angle brackets automatically added around the message ID by make_msgid.
     stripped_msgid = email_message['Message-ID'].strip('<>')
@@ -89,10 +89,12 @@ class TestMailMover(unittest.TestCase):
 
     @staticmethod
     def get_folder_content(db, folder):
-        return {
-            (os.path.basename(msg.get_message_id()), msg.get_part(1).decode())
-            for msg in db.do_query('folder:{}'.format(folder)).search_messages()
-        }
+        ret = set()
+        for msg in db.open().messages('folder:{}'.format(folder)):
+            with open(msg.path) as f:
+                ret.add((os.path.basename(msg.messageid),
+                         email.message_from_file(f).get_payload()))
+        return ret
 
     def test_all_rule_cases(self):
         from afew import MailMover

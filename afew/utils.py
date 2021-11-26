@@ -6,15 +6,21 @@ from datetime import datetime
 
 
 def get_message_summary(message):
-    when = datetime.fromtimestamp(float(message.get_date()))
+    when = datetime.fromtimestamp(float(message.date))
     sender = get_sender(message)
-    subject = message.get_header('Subject')
+    try:
+        subject = message.header('Subject')
+    except LookupError:
+        subject = ''
     return '[{date}] {sender} | {subject}'.format(date=when, sender=sender,
                                                   subject=subject)
 
 
 def get_sender(message):
-    sender = message.get_header('From')
+    try:
+        sender = message.header('From')
+    except LookupError:
+        sender = ''
     name_match = re.search(r'(.+) <.+@.+\..+>', sender)
     if name_match:
         sender = name_match.group(1)

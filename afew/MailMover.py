@@ -63,7 +63,7 @@ class MailMover(Database):
             for message in messages:
                 # a single message (identified by Message-ID) can be in several
                 # places; only touch the one(s) that exists in this maildir
-                all_message_fnames = message.get_filenames()
+                all_message_fnames = (str(name) for name in message.filenames())
                 to_move_fnames = [name for name in all_message_fnames
                                   if maildir in name]
                 if not to_move_fnames:
