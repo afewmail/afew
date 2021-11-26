@@ -8,6 +8,7 @@ import os
 import shutil
 import tempfile
 import unittest
+import notmuch2
 
 from afew.Database import Database
 from afew.NotmuchSettings import notmuch_settings, write_notmuch_settings
@@ -55,7 +56,7 @@ class TestMailMover(unittest.TestCase):
         write_notmuch_settings()
 
         # Create notmuch database
-        Database().open(create=True).close()
+        notmuch2.Database.create().close()
 
         self.root = mailbox.Maildir(self.test_dir)
         self.inbox = self.root.add_folder('inbox')
