@@ -26,5 +26,5 @@ class MeFilter(Filter):
         self.me_tag = me_tag
 
     def handle_message(self, message):
-        if not self._tag_blacklist.intersection(message.get_tags()):
+        if not self._tag_blacklist.intersection(message.tags):
             self.add_tags(message, self.me_tag)

@@ -38,7 +38,10 @@ class SentMailsFilter(Filter):
             self.add_tags(message, self.sent_tag)
         if self.to_transforms:
             for header in ('To', 'Cc', 'Bcc'):
-                email = self.__get_bare_email(message.get_header(header))
+                try:
+                    email = self.__get_bare_email(message.header(header))
+                except LookupError:
+                    email = ''
                 for tag in self.__pick_tags(email):
                     self.add_tags(message, tag)
                 else:

@@ -24,8 +24,8 @@ class FolderNameFilter(Filter):
     def handle_message(self, message):
         # Find all the dirs in the mail directory that this message
         # belongs to
-        maildirs = [re.match(self.__filename_pattern, filename)
-                    for filename in message.get_filenames()]
+        maildirs = [re.match(self.__filename_pattern, str(filename))
+                    for filename in message.filenames()]
         maildirs = filter(None, maildirs)
         if maildirs:
             # Make the folders relative to mail_root and split them.
@@ -34,8 +34,12 @@ class FolderNameFilter(Filter):
             folders = set([folder
                            for folder_group in folder_groups
                            for folder in folder_group])
+            try:
+                subject = message.header('subject')
+            except LookupError:
+                subject = ''
             self.log.debug('found folders {} for message {!r}'.format(
-                folders, message.get_header('subject')))
+                folders, subject))
 
             # remove blacklisted folders
             clean_folders = folders - self.__folder_blacklist
