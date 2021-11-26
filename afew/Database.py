@@ -46,7 +46,7 @@ class Database:
         """
         self.close()
 
-    def open(self, rw=False, retry_for=180, retry_delay=1, create=False):
+    def open(self, rw=False, retry_for=180, retry_delay=1):
         if rw:
             if self.handle and self.handle.mode == notmuch2.Database.MODE.READ_WRITE:
                 return self.handle
@@ -55,8 +55,7 @@ class Database:
             while True:
                 try:
                     self.handle = notmuch2.Database(self.db_path,
-                                                    mode=notmuch2.Database.MODE.READ_WRITE,
-                                                    create=create)
+                                                    mode=notmuch2.Database.MODE.READ_WRITE)
                     break
                 except notmuch2.NotmuchError:
                     time_left = int(retry_for - (time.time() - start_time))
@@ -72,7 +71,7 @@ class Database:
         else:
             if not self.handle:
                 self.handle = notmuch2.Database(self.db_path,
-                                                mode=notmuch2.Database.MODE.READ_WRITE)
+                                                mode=notmuch2.Database.MODE.READ_ONLY)
 
         return self.handle
 
