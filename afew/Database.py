@@ -163,16 +163,13 @@ class Database:
         """
         # TODO: it would be nice to update notmuchs directory index here
         handle = self.open(rw=True)
-        if hasattr(notmuch2.Database, 'index_file'):
-            message, status = handle.index_file(path, sync_maildir_flags=sync_maildir_flags)
-        else:
-            message, status = handle.add_message(path, sync_maildir_flags=sync_maildir_flags)
+        message, duplicate = handle.add(path, sync_flags=sync_maildir_flags)
 
-        if status != notmuch2.STATUS.DUPLICATE_MESSAGE_ID:
+        if not duplicate:
             logging.info('Found new mail in {}'.format(path))
 
             for tag in get_notmuch_new_tags():
-                message.add_tag(tag)
+                message.tags.add(tag)
 
             if new_mail_handler:
                 new_mail_handler(message)
