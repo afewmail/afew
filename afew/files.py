@@ -13,6 +13,9 @@ from watchdog.events import FileSystemEventHandler
 
 BLACKLIST = {'.', '..', 'tmp'}
 
+# NOTE: if loop makes testing easier, as we get an infinit loop here
+LOOP_FOREVER = True
+
 
 class EventHandler(FileSystemEventHandler):
     ignore_re = re.compile(r'(/xapian/.*(base.|tmp)$)|(\.lock$)|(/dovecot)')
@@ -30,29 +33,29 @@ class EventHandler(FileSystemEventHandler):
         self.database.remove_message(event.src_path)
         self.database.close()
 
+    def _new_mail_handler(self, message):
+        for filter_ in self.options.enable_filters:
+            try:
+                filter_.run('id:"{}"'.format(message.get_message_id()))
+                filter_.commit(self.options.dry_run)
+            except Exception as e:
+                logging.warn(f'Error processing mail with filter {filter_.message}: {e}')
+
     def on_moved(self, event):
         if self.ignore_re.search(event.src_path):
             return
 
         logging.debug(f"Detected file rename: {event.src_path} -> {event.dest_path}")
 
-        def new_mail(message):
-            for filter_ in self.options.enable_filters:
-                try:
-                    filter_.run('id:"{}"'.format(message.get_message_id()))
-                    filter_.commit(self.options.dry_run)
-                except Exception as e:
-                    logging.warn(f'Error processing mail with filter {filter_.message}: {e}')
-
         try:
             self.database.add_message(event.dest_path,
                                       sync_maildir_flags=True,
-                                      new_mail_handler=new_mail)
+                                      new_mail_handler=self._new_mail_handler)
         except notmuch.FileError as e:
-            logging.warn(f'Error opening mail file: {e}')
+            logging.warning(f'Error opening mail file: {e}')
             return
         except notmuch.FileNotEmailError as e:
-            logging.warn(f'File does not look like an email: {e}')
+            logging.warning(f'File does not look like an email: {e}')
             return
         else:
             if event.src_path:
@@ -61,7 +64,7 @@ class EventHandler(FileSystemEventHandler):
             self.database.close()
 
 
-def watch_for_new_files(options, database, paths, daemonize=False):
+def watch_for_new_files(options, database, paths):
     observer = Observer()
     handler = EventHandler(options, database)
 
@@ -73,14 +76,15 @@ def watch_for_new_files(options, database, paths, daemonize=False):
     logging.debug('Running mainloop')
     observer.start()
 
-    try:
-        while True:
-            pass
+    if LOOP_FOREVER:
+        try:
+            while True:
+                pass
 
-    except KeyboardInterrupt:
-        logging.info('Exiting file watch.')
-        observer.stop()
-        observer.join()
+        except KeyboardInterrupt:
+            logging.info('Exiting file watch.')
+            observer.stop()
+            observer.join()
 
 
 def __walk(channel, path):
