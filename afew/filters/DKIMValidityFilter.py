@@ -8,6 +8,7 @@ Verifies DKIM signature of an e-mail which has DKIM header.
 """
 
 import logging
+import asyncio
 
 import dkim
 import dns.exception
@@ -27,7 +28,7 @@ def verify_dkim(path):
     :param path: Path to the e-mail file.
     :returns: Whether DKIM signature is valid or not.
     """
-    with open(path, 'rb') as message_file:
+    with open(path, "rb") as message_file:
         message_bytes = message_file.read()
 
     try:
@@ -49,7 +50,23 @@ class DKIMValidityFilter(Filter):
         self.log = logging.getLogger('{}.{}'.format(
             self.__module__, self.__class__.__name__))
 
-    def handle_message(self, message):
+    async def run(self, query):
+        self.log.info(self.message)
+
+        if getattr(self, "query", None):
+            if query:
+                query = "(%s) AND (%s)" % (query, self.query)
+            else:
+                query = self.query
+
+        coroutines = set()
+
+        for message in self.database.get_messages(query):
+            coroutines.add(self.handle_message(message))
+
+        return await asyncio.gather(*coroutines, return_exceptions=True)
+
+    async def handle_message(self, message):
         if message.get_header(self.header):
             try:
                 dkim_ok = all(map(verify_dkim, message.get_filenames()))

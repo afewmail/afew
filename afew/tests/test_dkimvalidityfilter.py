@@ -1,14 +1,25 @@
 """Test suite for DKIMValidityFilter.
 """
-import unittest
 from email.utils import make_msgid
 from unittest import mock
 
+import pytest
 import dkim
 import dns.exception
 
 from afew.Database import Database
 from afew.filters.DKIMValidityFilter import DKIMValidityFilter
+
+
+@pytest.fixture
+def db_messages():
+    with mock.patch("afew.Database.Database.get_messages",
+                    return_value=[
+                        _make_message(),
+                        _make_message(),
+                        _make_message()
+                    ]) as m:
+        yield m
 
 
 class _AddTags:  # pylint: disable=too-few-public-methods
@@ -55,104 +66,138 @@ def _make_message():
     return message
 
 
-class TestDKIMValidityFilter(unittest.TestCase):
-    """Test suite for `DKIMValidityFilter`.
+@pytest.mark.asyncio
+async def test_no_dkim_header():
+    """Test message without DKIM-Signature header doesn't get any tags."""
+    dkim_filter, tags = _make_dkim_validity_filter()
+    message = _make_message()
+    message.get_header.return_value = False
+
+    with mock.patch("builtins.open", mock.mock_open(read_data=b"")):
+        with mock.patch("afew.filters.DKIMValidityFilter.dkim.verify") as dkim_verify:
+            dkim_verify.return_value = True
+            await dkim_filter.handle_message(message)
+
+    assert tags == set()
+
+
+@pytest.mark.asyncio
+async def test_dkim_all_ok():
+    """Test message, with multiple files all having good signature, gets
+    only 'dkim-ok' tag.
     """
-    @mock.patch('afew.filters.DKIMValidityFilter.open',
-                mock.mock_open(read_data=b''))
-    def test_no_dkim_header(self):
-        """Test message without DKIM-Signature header doesn't get any tags.
-        """
-        dkim_filter, tags = _make_dkim_validity_filter()
-        message = _make_message()
-        message.get_header.return_value = False
+    dkim_filter, tags = _make_dkim_validity_filter()
+    message = _make_message()
+    message.get_filenames.return_value = ["a", "b", "c"]
 
-        with mock.patch('afew.filters.DKIMValidityFilter.dkim.verify') \
-                as dkim_verify:
+    with mock.patch("builtins.open", mock.mock_open(read_data=b"")):
+        with mock.patch("afew.filters.DKIMValidityFilter.dkim.verify") as dkim_verify:
             dkim_verify.return_value = True
-            dkim_filter.handle_message(message)
+            await dkim_filter.handle_message(message)
 
-        self.assertSetEqual(tags, set())
+    assert tags == {"dkim-ok"}
 
-    @mock.patch('afew.filters.DKIMValidityFilter.open',
-                mock.mock_open(read_data=b''))
-    def test_dkim_all_ok(self):
-        """Test message, with multiple files all having good signature, gets
-        only 'dkim-ok' tag.
-        """
-        dkim_filter, tags = _make_dkim_validity_filter()
-        message = _make_message()
-        message.get_filenames.return_value = ['a', 'b', 'c']
 
-        with mock.patch('afew.filters.DKIMValidityFilter.dkim.verify') \
-                as dkim_verify:
-            dkim_verify.return_value = True
-            dkim_filter.handle_message(message)
+@pytest.mark.asyncio
+async def test_dkim_all_fail():
+    """Test message, with multiple files all having bad signature, gets
+    only 'dkim-fail' tag.
+    """
+    dkim_filter, tags = _make_dkim_validity_filter()
+    message = _make_message()
+    message.get_filenames.return_value = ["a", "b", "c"]
 
-        self.assertSetEqual(tags, {'dkim-ok'})
-
-    @mock.patch('afew.filters.DKIMValidityFilter.open',
-                mock.mock_open(read_data=b''))
-    def test_dkim_all_fail(self):
-        """Test message, with multiple files all having bad signature, gets
-        only 'dkim-fail' tag.
-        """
-        dkim_filter, tags = _make_dkim_validity_filter()
-        message = _make_message()
-        message.get_filenames.return_value = ['a', 'b', 'c']
-
-        with mock.patch('afew.filters.DKIMValidityFilter.dkim.verify') \
-                as dkim_verify:
+    with mock.patch("builtins.open", mock.mock_open(read_data=b"")):
+        with mock.patch("afew.filters.DKIMValidityFilter.dkim.verify") as dkim_verify:
             dkim_verify.return_value = False
-            dkim_filter.handle_message(message)
+            await dkim_filter.handle_message(message)
 
-        self.assertSetEqual(tags, {'dkim-fail'})
+    assert tags == {"dkim-fail"}
 
-    @mock.patch('afew.filters.DKIMValidityFilter.open',
-                mock.mock_open(read_data=b''))
-    def test_dkim_some_fail(self):
-        """Test message, with multiple files but only some having bad
-        signature, still gets only 'dkim-fail' tag.
-        """
-        dkim_filter, tags = _make_dkim_validity_filter()
-        message = _make_message()
-        message.get_filenames.return_value = ['a', 'b', 'c']
 
-        with mock.patch('afew.filters.DKIMValidityFilter.dkim.verify') \
-                as dkim_verify:
+@pytest.mark.asyncio
+async def test_dkim_some_fail():
+    """Test message, with multiple files but only some having bad
+    signature, still gets only 'dkim-fail' tag.
+    """
+    dkim_filter, tags = _make_dkim_validity_filter()
+    message = _make_message()
+    message.get_filenames.return_value = ["a", "b", "c"]
+
+    with mock.patch("builtins.open", mock.mock_open(read_data=b"")):
+        with mock.patch("afew.filters.DKIMValidityFilter.dkim.verify") as dkim_verify:
             dkim_verify.side_effect = [True, False, True]
-            dkim_filter.handle_message(message)
+            await dkim_filter.handle_message(message)
 
-        self.assertSetEqual(tags, {'dkim-fail'})
+    assert tags == {"dkim-fail"}
 
-    @mock.patch('afew.filters.DKIMValidityFilter.open',
-                mock.mock_open(read_data=b''))
-    def test_dkim_dns_resolve_failure(self):
-        """Test message, on which DNS resolution failure happens when verifying
-        DKIM signature, gets only 'dkim-fail' tag.
-        """
-        dkim_filter, tags = _make_dkim_validity_filter()
-        message = _make_message()
 
-        with mock.patch('afew.filters.DKIMValidityFilter.dkim.verify') \
-                as dkim_verify:
+@pytest.mark.asyncio
+async def test_dkim_dns_resolve_failure():
+    """Test message, on which DNS resolution failure happens when verifying
+    DKIM signature, gets only 'dkim-fail' tag.
+    """
+    dkim_filter, tags = _make_dkim_validity_filter()
+    message = _make_message()
+
+    with mock.patch("builtins.open", mock.mock_open(read_data=b"")):
+        with mock.patch("afew.filters.DKIMValidityFilter.dkim.verify") as dkim_verify:
             dkim_verify.side_effect = dns.resolver.NoNameservers()
-            dkim_filter.handle_message(message)
+            await dkim_filter.handle_message(message)
 
-        self.assertSetEqual(tags, {'dkim-fail'})
+    assert tags == {"dkim-fail"}
 
-    @mock.patch('afew.filters.DKIMValidityFilter.open',
-                mock.mock_open(read_data=b''))
-    def test_dkim_verify_failed(self):
-        """Test message, on which DKIM key parsing failure occurs, gets only
-        'dkim-fail' tag.
-        """
-        dkim_filter, tags = _make_dkim_validity_filter()
-        message = _make_message()
 
-        with mock.patch('afew.filters.DKIMValidityFilter.dkim.verify') \
-                as dkim_verify:
+@pytest.mark.asyncio
+async def test_dkim_verify_failed():
+    """Test message, on which DKIM key parsing failure occurs, gets only
+    'dkim-fail' tag.
+    """
+    dkim_filter, tags = _make_dkim_validity_filter()
+    message = _make_message()
+
+    with mock.patch("builtins.open", mock.mock_open(read_data=b"")):
+        with mock.patch("afew.filters.DKIMValidityFilter.dkim.verify") as dkim_verify:
             dkim_verify.side_effect = dkim.KeyFormatError()
-            dkim_filter.handle_message(message)
+            await dkim_filter.handle_message(message)
 
-        self.assertSetEqual(tags, {'dkim-fail'})
+    assert tags == {"dkim-fail"}
+
+
+@pytest.mark.asyncio
+async def test_dkim_validity_filter_run(db_messages):
+    """Test filter run, on which runs a N coroutines for N messages
+    """
+    dkim_filter, tags = _make_dkim_validity_filter()
+    message = _make_message()
+    message.get_filenames.return_value = ["a", "b", "c"]
+
+    with mock.patch("builtins.open", mock.mock_open(read_data=b"")):
+        with mock.patch("afew.filters.DKIMValidityFilter.dkim.verify") as dkim_verify:
+            dkim_verify.return_value = True
+            await dkim_filter.run("")
+
+    assert db_messages.called
+
+
+@pytest.mark.asyncio
+async def test_dkim_validity_filter_run_sets_query(db_messages):
+    """Test filter run with a query attribute set
+    """
+    dkim_filter, tags = _make_dkim_validity_filter()
+    db_messages.return_value = set()
+
+    # without the query attribute
+    await dkim_filter.run("folder:archived")
+    db_messages.assert_called_once_with('folder:archived')
+
+    # with query attribute
+    dkim_filter.query = "folder:inbox"
+    await dkim_filter.run("folder:archived")
+    assert db_messages.call_args == [('(folder:archived) AND (folder:inbox)',), {}]
+    assert db_messages.call_count == 2
+
+    # with query attribute and no query
+    await dkim_filter.run("")
+    db_messages.assert_called_with('folder:inbox',)
+    assert db_messages.call_count == 3

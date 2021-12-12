@@ -2,6 +2,7 @@
 # Copyright (c) Justus Winter <4winter@informatik.uni-hamburg.de>
 
 import sys
+import asyncio
 
 from afew.MailMover import MailMover
 
@@ -16,7 +17,13 @@ else:
 def main(options, database, query_string):
     if options.tag:
         for filter_ in options.enable_filters:
-            filter_.run(query_string)
+            # FIXME: this is temporary, as not all filters have
+            # been converted to async (or need?) async at all
+            if asyncio.iscoroutinefunction(filter_.run):
+                asyncio.get_event_loop().run_until_complete(filter_.run(query_string))
+            else:
+                filter_.run(query_string)
+
             filter_.commit(options.dry_run)
     elif options.watch:
         if not watch_available:
