@@ -20,7 +20,7 @@ def main(options, database, query_string):
             filter_.commit(options.dry_run)
     elif options.watch:
         if not watch_available:
-            sys.exit('Sorry, this feature requires Linux and pyinotify')
+            sys.exit('Sorry, this feature requires watchdog')
         watch_for_new_files(options, database,
                             quick_find_dirs_hack(database.db_path))
     elif options.move_mails:

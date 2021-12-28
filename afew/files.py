@@ -3,181 +3,101 @@
 
 import os
 import re
-import stat
 import logging
-import platform
 import queue
 import threading
 import notmuch
-import pyinotify
-import ctypes
-import contextlib
 
-if platform.system() != 'Linux':
-    raise ImportError('Unsupported platform: {!r}'.format(platform.system()))
+from watchdog.observers import Observer
+from watchdog.events import FileSystemEventHandler
+
+BLACKLIST = {'.', '..', 'tmp'}
+
+# NOTE: if loop makes testing easier, as we get an infinit loop here
+LOOP_FOREVER = True
 
 
-class EventHandler(pyinotify.ProcessEvent):
+class EventHandler(FileSystemEventHandler):
+    ignore_re = re.compile(r'(/xapian/.*(base.|tmp)$)|(\.lock$)|(/dovecot)')
+
     def __init__(self, options, database):
         self.options = options
         self.database = database
         super().__init__()
 
-    ignore_re = re.compile('(/xapian/.*(base.|tmp)$)|(\.lock$)|(/dovecot)')
-
-    def process_IN_DELETE(self, event):
-        if self.ignore_re.search(event.pathname):
+    def on_deleted(self, event):
+        if self.ignore_re.search(event.src_path):
             return
 
-        logging.debug("Detected file removal: {!r}".format(event.pathname))
-        self.database.remove_message(event.pathname)
+        logging.debug(f"Detected file removal: {event.src_path}")
+        self.database.remove_message(event.src_path)
         self.database.close()
 
-    def process_IN_MOVED_TO(self, event):
-        if self.ignore_re.search(event.pathname):
+    def _new_mail_handler(self, message):
+        for filter_ in self.options.enable_filters:
+            try:
+                filter_.run('id:"{}"'.format(message.get_message_id()))
+                filter_.commit(self.options.dry_run)
+            except Exception as e:
+                logging.warn(f'Error processing mail with filter {filter_.message}: {e}')
+
+    def on_moved(self, event):
+        if self.ignore_re.search(event.src_path):
             return
 
-        src_pathname = event.src_pathname if hasattr(event, 'src_pathname') else None
-        logging.debug("Detected file rename: {!r} -> {!r}".format(src_pathname, event.pathname))
-
-        def new_mail(message):
-            for filter_ in self.options.enable_filters:
-                try:
-                    filter_.run('id:"{}"'.format(message.get_message_id()))
-                    filter_.commit(self.options.dry_run)
-                except Exception as e:
-                    logging.warn('Error processing mail with filter {!r}: {}'.format(filter_.message, e))
+        logging.debug(f"Detected file rename: {event.src_path} -> {event.dest_path}")
 
         try:
-            self.database.add_message(event.pathname,
+            self.database.add_message(event.dest_path,
                                       sync_maildir_flags=True,
-                                      new_mail_handler=new_mail)
+                                      new_mail_handler=self._new_mail_handler)
         except notmuch.FileError as e:
-            logging.warn('Error opening mail file: {}'.format(e))
+            logging.warning(f'Error opening mail file: {e}')
             return
         except notmuch.FileNotEmailError as e:
-            logging.warn('File does not look like an email: {}'.format(e))
+            logging.warning(f'File does not look like an email: {e}')
             return
         else:
-            if src_pathname:
-                self.database.remove_message(src_pathname)
+            if event.src_path:
+                self.database.remove_message(event.src_path)
         finally:
             self.database.close()
 
 
-def watch_for_new_files(options, database, paths, daemonize=False):
-    wm = pyinotify.WatchManager()
-    mask = (
-        pyinotify.IN_DELETE |
-        pyinotify.IN_MOVED_FROM |
-        pyinotify.IN_MOVED_TO)
+def watch_for_new_files(options, database, paths):
+    observer = Observer()
     handler = EventHandler(options, database)
-    notifier = pyinotify.Notifier(wm, handler)
 
     logging.debug('Registering inotify watch descriptors')
-    wdds = dict()
+
     for path in paths:
-        wdds[path] = wm.add_watch(path, mask)
+        observer.schedule(handler, path)
 
-    # TODO: honor daemonize
     logging.debug('Running mainloop')
-    notifier.loop()
+    observer.start()
 
-
-try:
-    libc = ctypes.CDLL(ctypes.util.find_library("c"))
-except ImportError as e:
-    raise ImportError('Could not load libc: {}'.format(e))
-
-
-class Libc:
-    class c_dir(ctypes.Structure):
-        pass
-
-    c_dir_p = ctypes.POINTER(c_dir)
-
-    opendir = libc.opendir
-    opendir.argtypes = [ctypes.c_char_p]
-    opendir.restype = c_dir_p
-
-    closedir = libc.closedir
-    closedir.argtypes = [c_dir_p]
-    closedir.restype = ctypes.c_int
-
-    @classmethod
-    @contextlib.contextmanager
-    def open_directory(cls, path):
-        handle = cls.opendir(path)
-        yield handle
-        cls.closedir(handle)
-
-    class c_dirent(ctypes.Structure):
-        '''
-        man 3 readdir says::
-
-        On Linux, the dirent structure is defined as follows:
-
-           struct dirent {
-               ino_t          d_ino;       /* inode number */
-               off_t          d_off;       /* offset to the next dirent */
-               unsigned short d_reclen;    /* length of this record */
-               unsigned char  d_type;      /* type of file; not supported
-                                              by all file system types */
-               char           d_name[256]; /* filename */
-           };
-        '''
-        _fields_ = (
-            ('d_ino', ctypes.c_long),
-            ('d_off', ctypes.c_long),
-            ('d_reclen', ctypes.c_ushort),
-            ('d_type', ctypes.c_byte),
-            ('d_name', ctypes.c_char * 4096),
-        )
-
-    c_dirent_p = ctypes.POINTER(c_dirent)
-
-    readdir = libc.readdir
-    readdir.argtypes = [c_dir_p]
-    readdir.restype = c_dirent_p
-
-    # magic value for directory
-    DT_DIR = 4
-
-
-blacklist = {'.', '..', 'tmp'}
-
-
-def walk_linux(channel, path):
-    channel.put(path)
-
-    with Libc.open_directory(path) as handle:
-        while True:
-            dirent_p = Libc.readdir(handle)
-            if not dirent_p:
-                break
-
-            if dirent_p.contents.d_type == Libc.DT_DIR and \
-                    dirent_p.contents.d_name not in blacklist:
-                walk_linux(channel, os.path.join(path, dirent_p.contents.d_name))
-
-
-def walk(channel, path):
-    channel.put(path)
-
-    for child_path in (os.path.join(path, child)
-                       for child in os.listdir(path)
-                       if child not in blacklist):
+    if LOOP_FOREVER:
         try:
-            stat_result = os.stat(child_path)
-        except Exception:
-            continue
+            while True:
+                pass
 
-        if stat_result.st_mode & stat.S_IFDIR:
-            walk(channel, child_path)
+        except KeyboardInterrupt:
+            logging.info('Exiting file watch.')
+            observer.stop()
+            observer.join()
+
+
+def __walk(channel, path):
+    channel.put(path)
+
+    with os.scandir(path) as it:
+        for entry in it:
+            if entry.is_dir() and entry.name not in BLACKLIST:
+                __walk(channel, os.path.join(path, entry.name))
 
 
 def walker(channel, path):
-    walk_linux(channel, path)
+    __walk(channel, path)
     channel.put(None)
 
 
