@@ -7,7 +7,7 @@ jobs:
   build-ubuntu:
     strategy:
       matrix:
-        python: [3.6, 3.7, 3.8]
+        python-version: ["3.7", "3.8", "3.9", "3.10"]
     name: Build (Python ${{ matrix.python }})
     runs-on: ubuntu-18.04
     steps:
