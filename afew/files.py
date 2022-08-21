@@ -23,7 +23,7 @@ class EventHandler(pyinotify.ProcessEvent):
         self.database = database
         super().__init__()
 
-    ignore_re = re.compile('(/xapian/.*(base.|tmp)$)|(\.lock$)|(/dovecot)')
+    ignore_re = re.compile(r'(/xapian/.*(base.|tmp)$)|(\.lock$)|(/dovecot)')
 
     def process_IN_DELETE(self, event):
         if self.ignore_re.search(event.pathname):
