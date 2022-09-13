@@ -30,7 +30,7 @@ jobs:
       - name: flake8 lint
         run: |
           source ./env/bin/activate
-          flake8 --ignore=E501 afew/
+          flake8 --ignore=E501,W504 afew/
       - name: Tests
         run: |
           source ./env/bin/activate
