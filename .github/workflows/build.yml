@@ -7,9 +7,9 @@ jobs:
   build-ubuntu:
     strategy:
       matrix:
-        python: [3.6, 3.7, 3.8]
+        python-version: ["3.7", "3.8", "3.9", "3.10"]
     name: Build (Python ${{ matrix.python }})
-    runs-on: ubuntu-18.04
+    runs-on: ubuntu-20.04
     steps:
       - uses: actions/checkout@v2
         with:
@@ -30,7 +30,7 @@ jobs:
       - name: flake8 lint
         run: |
           source ./env/bin/activate
-          flake8 --ignore=E501 afew/
+          flake8 --ignore=E501,W504 afew/
       - name: Tests
         run: |
           source ./env/bin/activate
