@@ -118,6 +118,16 @@ def read_auth_results(document):
 class DMARCReportInspectionFilter(Filter):
     """
     Inspect DMARC reports for DKIM and SPF status.
+
+    Config:
+
+    [DMARCReportInspectionFilter]
+    dkim_ok_tag = "dmarc/dkim-ok"
+    dkim_fail_tag = "dmarc/dkim-fail"
+    spf_ok_tag = "dmarc/spf-ok"
+    spf_fail_tag = "dmarc/spf-fail"
+    subject_regexp = "^report domain:"
+
     """
     def __init__(self,                     # pylint: disable=too-many-arguments
                  database,
