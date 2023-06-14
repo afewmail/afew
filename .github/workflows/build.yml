@@ -7,8 +7,8 @@ jobs:
   build-ubuntu:
     strategy:
       matrix:
-        python-version: ["3.7", "3.8", "3.9", "3.10"]
-    name: Build (Python ${{ matrix.python }})
+        python-version: ["3.8", "3.9", "3.10", "3.11", "3.12"]
+    name: Build (Python ${{ matrix.python-version }})
     runs-on: ubuntu-20.04
     steps:
       - uses: actions/checkout@v2
