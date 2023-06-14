@@ -1,3 +1,11 @@
+afew 3.1.0 (unreleased)
+=======================
+
+Python 3.6 support dropped
+
+  afew stopped supporting the older python version 3.6.
+
+
 afew 3.0.0 (2020-03-10)
 =======================
 
