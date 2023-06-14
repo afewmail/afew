@@ -2,7 +2,7 @@
 afew
 ====
 
-|GithubTag| |CodeCov| |CI Status|
+|GithubTag| |CI Status|
 
 About
 -----
@@ -68,7 +68,5 @@ Have fun :)
 
 .. |GithubTag| image:: https://img.shields.io/github/tag/afewmail/afew.svg
     :target: https://github.com/afewmail/afew/releases
-.. |CodeCov| image:: https://codecov.io/gh/afewmail/afew/branch/master/graph/badge.svg
-    :target: https://codecov.io/gh/afewmail/afew
 .. |CI Status| image:: https://github.com/afewmail/afew/workflows/CI/badge.svg
     :target: https://github.com/afewmail/afew/actions
