@@ -5,6 +5,21 @@ Python 3.6 support dropped
 
   afew stopped supporting the older python version 3.6.
 
+Handle DMARC report with empty spf or dkim XML nodes
+
+DMARC Filter: allow to define subject regexp
+
+  Some DMARC report mail have a prefix before "Dmarc Report" in the subject
+  and where not checked by the plugin.
+  Afew now allows the user to define the suject regexp in the config file.
+
+Get notmuch database path using Database wrapper
+
+  This allows FolderNameFilter to work with a relative path in database.path of notmuch config file.
+
+HeaderMatchingFilter: do not convert user supplied tags
+
+  This prevents afew to lowercase the tags defined by the user, allowing to have non lowercase tags.
 
 afew 3.0.0 (2020-03-10)
 =======================
