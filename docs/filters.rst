@@ -145,7 +145,7 @@ Some examples are:
 
     [HeaderMatchingFilter.3]
     header = X-Redmine-Project
-    pattern = (?P<project>.*)
+    pattern = (?P<project>.+)
     tags = +redmine;+{project}
 
 SpamFilter and ListMailsFilter are implemented using HeaderMatchingFilter, and are
