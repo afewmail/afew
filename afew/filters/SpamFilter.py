@@ -6,8 +6,8 @@ from afew.filters.HeaderMatchingFilter import HeaderMatchingFilter
 
 class SpamFilter(HeaderMatchingFilter):
     message = 'Tagging spam messages'
-    header = 'X-Spam-Flag'
-    pattern = 'YES'
+    header = ['X-Spam-Flag', 'X-Spam', 'X-Bogosity']
+    pattern = 'YES|Spam'
 
     def __init__(self, database, tags='+spam', spam_tag=None, **kwargs):
         if spam_tag is not None:

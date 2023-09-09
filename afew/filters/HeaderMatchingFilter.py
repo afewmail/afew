@@ -22,7 +22,14 @@ class HeaderMatchingFilter(Filter):
     def handle_message(self, message):
         if self.header is not None and self.pattern is not None:
             if not self._tag_blacklist.intersection(message.get_tags()):
-                value = message.get_header(self.header)
+                if not isinstance(self.header, list):
+                    self.header = [self.header]
+
+                try:
+                    value = next(filter(None, map(message.get_header, self.header)))
+                except StopIteration:
+                    return
+
                 match = self.pattern.search(value)
                 if match:
                     tagdict = {k: v.lower() for k, v in match.groupdict().items()}
