@@ -6,6 +6,8 @@
 
 from afew.filters.BaseFilter import Filter
 
+from notmuch.errors import NullPointerError
+
 import re
 
 
@@ -22,10 +24,13 @@ class HeaderMatchingFilter(Filter):
     def handle_message(self, message):
         if self.header is not None and self.pattern is not None:
             if not self._tag_blacklist.intersection(message.get_tags()):
-                value = message.get_header(self.header)
-                match = self.pattern.search(value)
-                if match:
-                    tagdict = {k: v.lower() for k, v in match.groupdict().items()}
-                    sub = (lambda tag: tag.format(**tagdict))
-                    self.remove_tags(message, *map(sub, self._tags_to_remove))
-                    self.add_tags(message, *map(sub, self._tags_to_add))
+                try:
+                    value = message.get_header(self.header)
+                    match = self.pattern.search(value)
+                    if match:
+                        tagdict = {k: v.lower() for k, v in match.groupdict().items()}
+                        sub = (lambda tag: tag.format(**tagdict))
+                        self.remove_tags(message, *map(sub, self._tags_to_remove))
+                        self.add_tags(message, *map(sub, self._tags_to_add))
+                except NullPointerError:
+                    pass
