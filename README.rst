@@ -23,7 +23,7 @@ In move mode, afew will move mails between maildir folders according to
 configurable rules that can contain arbitrary notmuch queries to match against
 any searchable attributes.
 
-fyi: afew plays nicely with alot, a GUI for notmuch mail ;)
+fyi: afew plays nicely with alot, a TUI for notmuch mail ;)
 
 * https://github.com/pazz/alot
 
