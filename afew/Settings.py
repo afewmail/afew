@@ -9,23 +9,35 @@ import shlex
 from afew.configparser import ConfigParser
 from afew.FilterRegistry import all_filters
 
-user_config_dir = os.path.join(os.environ.get('XDG_CONFIG_HOME',
+user_config_dir = None
+settings = None
+
+
+default_user_config_dir = os.path.join(os.environ.get('XDG_CONFIG_HOME',
                                               os.path.expanduser('~/.config')),
                                'afew')
-user_config_dir = os.path.expandvars(user_config_dir)
-
-settings = ConfigParser()
-# preserve the capitalization of the keys.
-settings.optionxform = str
-
-settings.readfp(open(os.path.join(os.path.dirname(__file__), 'defaults', 'afew.config')))
-settings.read(os.path.join(user_config_dir, 'config'))
+default_user_config_dir = os.path.expandvars(default_user_config_dir)
 
 # All the values for keys listed here are interpreted as ;-delimited lists
 value_is_a_list = ['tags', 'tags_blacklist']
 mail_mover_section = 'MailMover'
 
 section_re = re.compile(r'^(?P<name>[a-z_][a-z0-9_]*)(\((?P<parent_class>[a-z_][a-z0-9_]*)\)|\.(?P<index>\d+))?$', re.I)
+
+
+def parse_settings(argument_user_config_dir = None):
+    global user_config_dir, settings
+
+    if not argument_user_config_dir:
+        argument_user_config_dir = default_user_config_dir
+    user_config_dir = argument_user_config_dir
+    
+    settings = ConfigParser()
+    # preserve the capitalization of the keys.
+    settings.optionxform = str
+
+    settings.readfp(open(os.path.join(os.path.dirname(__file__), 'defaults', 'afew.config')))
+    settings.read(os.path.join(user_config_dir, 'config'))
 
 
 def get_filter_chain(database):

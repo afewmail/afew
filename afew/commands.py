@@ -9,8 +9,9 @@ import argparse
 from afew.Database import Database
 from afew.main import main as inner_main
 from afew.FilterRegistry import all_filters
-from afew.Settings import user_config_dir, get_filter_chain, \
-    get_mail_move_rules, get_mail_move_age, get_mail_move_rename
+from afew.Settings import default_user_config_dir, user_config_dir, \
+    parse_settings, get_filter_chain, get_mail_move_rules, \
+    get_mail_move_age, get_mail_move_rename
 from afew.NotmuchSettings import read_notmuch_settings, get_notmuch_new_query
 from afew.version import version
 
@@ -54,6 +55,10 @@ query_modifier_group.add_argument(
 
 # general options
 options_group = parser.add_argument_group('General options')
+options_group.add_argument(
+    '-c', '--config', default=default_user_config_dir,
+    help="path to directory containing afew's config [default: %(default)s]"
+)
 # TODO: get config via notmuch api
 options_group.add_argument(
     '-C', '--notmuch-config', default=None,
@@ -114,6 +119,7 @@ def main():
     elif no_query_modifiers > 1:
         sys.exit('Please specify either --all, --new or a query string')
 
+    parse_settings(args.config)
     read_notmuch_settings(args.notmuch_config)
 
     if args.new:
