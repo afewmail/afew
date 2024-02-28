@@ -54,7 +54,7 @@ class FolderNameFilter(Filter):
         transformations = set()
         for folder in folders:
             if folder in self.__folder_transforms:
-                transformations.add(self.__folder_transforms[folder])
+                transformations.update(self.__folder_transforms[folder])
             else:
                 transformations.add(folder)
         if self.__folder_lowercases:
@@ -71,5 +71,8 @@ class FolderNameFilter(Filter):
         transformations = dict()
         for rule in shlex.split(transformation_description):
             folder, tag = rule.split(':')
-            transformations[folder] = tag
+            try:
+                transformations[folder].add(tag)
+            except KeyError:
+                transformations[folder] = set([tag])
         return transformations
