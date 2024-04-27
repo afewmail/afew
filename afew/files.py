@@ -46,17 +46,17 @@ class EventHandler(pyinotify.ProcessEvent):
                     filter_.run('id:"{}"'.format(message.get_message_id()))
                     filter_.commit(self.options.dry_run)
                 except Exception as e:
-                    logging.warn('Error processing mail with filter {!r}: {}'.format(filter_.message, e))
+                    logging.warning('Error processing mail with filter {!r}: {}'.format(filter_.message, e))
 
         try:
             self.database.add_message(event.pathname,
                                       sync_maildir_flags=True,
                                       new_mail_handler=new_mail)
         except notmuch.FileError as e:
-            logging.warn('Error opening mail file: {}'.format(e))
+            logging.warning('Error opening mail file: {}'.format(e))
             return
         except notmuch.FileNotEmailError as e:
-            logging.warn('File does not look like an email: {}'.format(e))
+            logging.warning('File does not look like an email: {}'.format(e))
             return
         else:
             if src_pathname:
