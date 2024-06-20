@@ -23,6 +23,13 @@ It extends `SentMailsFilter` with the following feature:
  * Emails filtered by this filter have the **new** tag removed, so will not have
    the **inbox** tag added by the InboxFilter.
 
+In addition the SentMailsFilter settings, you can use:
+
+* archive_thread = <True|False> (default: False)
+  * When True, the inbox tag will be removed from the thread containing the sent
+    mail. (like the gmail 'Send and Archive' function)
+  * Useful for those who like a clean inbox
+
 DKIMValidityFilter
 ------------------
 
