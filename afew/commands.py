@@ -151,9 +151,12 @@ def main():
                 sys.exit('Unknown filter(s) selected: %s' % (' '.join(
                     enabled_filters_set.difference(all_filters_set))))
 
-            args.enable_filters = [all_filters[filter_name](database)
-                                   for filter_name
-                                   in args.enable_filters]
+            enabled_classes = [all_filters[filter_name]
+                               for filter_name
+                               in args.enable_filters]
+            args.enable_filters = [i for i in
+                                   filter(lambda f: f.__class__ in enabled_classes,
+                                          configured_filter_chain)]
         else:
             args.enable_filters = configured_filter_chain
 
