@@ -146,23 +146,23 @@ Here are a few more example filters from github dotfiles:
 .. code-block:: ini
 
     [Filter.1]
-    query = 'sicsa-students@sicsa.ac.uk'
+    query = sicsa-students@sicsa.ac.uk
     tags = +sicsa
     message = sicsa
 
     [Filter.2]
-    query = 'from:foosoc.ed@gmail.com OR from:GT Silber OR from:lizzie.brough@eusa.ed.ac.uk'
+    query = from:foosoc.ed@gmail.com OR from:GT Silber OR from:lizzie.brough@eusa.ed.ac.uk
     tags = +soc;+foo
     message = foosoc
 
     [Filter.3]
-    query = 'folder:gmail/G+'
+    query = folder:gmail/G+
     tags = +G+
     message = gmail spam
 
     # skip inbox
     [Filter.6]
-    query = 'to:notmuch@notmuchmail.org AND (subject:emacs OR subject:elisp OR "(defun" OR "(setq" OR PATCH)'
+    query = to:notmuch@notmuchmail.org AND (subject:emacs OR subject:elisp OR "(defun" OR "(setq" OR PATCH)
     tags = -new
     message = notmuch emacs stuff
 
