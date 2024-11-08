@@ -18,7 +18,7 @@ settings = ConfigParser()
 # preserve the capitalization of the keys.
 settings.optionxform = str
 
-settings.readfp(open(os.path.join(os.path.dirname(__file__), 'defaults', 'afew.config')))
+settings.read_file(open(os.path.join(os.path.dirname(__file__), 'defaults', 'afew.config')))
 settings.read(os.path.join(user_config_dir, 'config'))
 
 # All the values for keys listed here are interpreted as ;-delimited lists
