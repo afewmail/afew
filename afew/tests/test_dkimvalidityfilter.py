@@ -39,19 +39,19 @@ def _make_message():
 
     Mocked methods:
 
-    - `get_header()` returns non-empty string. When testing with mocked
+    - `header()` returns non-empty string. When testing with mocked
       function for verifying DKIM signature, DKIM signature doesn't matter as
       long as it's non-empty string.
 
-    - `get_filenames()` returns list of non-empty string. When testing with
+    - `filenames()` returns list of non-empty string. When testing with
     mocked file open, it must just be non-empty string.
 
-    - `get_message_id()` returns some generated message ID.
+    - `messageid` returns some generated message ID.
     """
     message = mock.Mock()
-    message.get_header.return_value = 'sig'
-    message.get_filenames.return_value = ['a']
-    message.get_message_id.return_value = make_msgid()
+    message.header.return_value = 'sig'
+    message.filenames.return_value = ['a']
+    message.messageid = make_msgid()
     return message
 
 
@@ -65,7 +65,7 @@ class TestDKIMValidityFilter(unittest.TestCase):
         """
         dkim_filter, tags = _make_dkim_validity_filter()
         message = _make_message()
-        message.get_header.return_value = False
+        message.header.return_value = False
 
         with mock.patch('afew.filters.DKIMValidityFilter.dkim.verify') \
                 as dkim_verify:
@@ -82,7 +82,7 @@ class TestDKIMValidityFilter(unittest.TestCase):
         """
         dkim_filter, tags = _make_dkim_validity_filter()
         message = _make_message()
-        message.get_filenames.return_value = ['a', 'b', 'c']
+        message.filenames.return_value = ['a', 'b', 'c']
 
         with mock.patch('afew.filters.DKIMValidityFilter.dkim.verify') \
                 as dkim_verify:
@@ -99,7 +99,7 @@ class TestDKIMValidityFilter(unittest.TestCase):
         """
         dkim_filter, tags = _make_dkim_validity_filter()
         message = _make_message()
-        message.get_filenames.return_value = ['a', 'b', 'c']
+        message.filenames.return_value = ['a', 'b', 'c']
 
         with mock.patch('afew.filters.DKIMValidityFilter.dkim.verify') \
                 as dkim_verify:
@@ -116,7 +116,7 @@ class TestDKIMValidityFilter(unittest.TestCase):
         """
         dkim_filter, tags = _make_dkim_validity_filter()
         message = _make_message()
-        message.get_filenames.return_value = ['a', 'b', 'c']
+        message.filenames.return_value = ['a', 'b', 'c']
 
         with mock.patch('afew.filters.DKIMValidityFilter.dkim.verify') \
                 as dkim_verify:

@@ -9,7 +9,7 @@ jobs:
       matrix:
         python-version: ["3.8", "3.9", "3.10", "3.11", "3.12"]
     name: Build (Python ${{ matrix.python-version }})
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-21.04
     steps:
       - uses: actions/checkout@v2
         with:
@@ -24,11 +24,11 @@ jobs:
         shell: bash
         run: |
           sudo apt-get update
-          sudo apt-get install -y notmuch python3-notmuch python3-venv flake8
+          sudo apt-get install -y notmuch python3-notmuch2 python3-venv flake8
           python3 -m venv env
           source ./env/bin/activate
           pip install setuptools setuptools_scm pytest dkimpy
-          ln -s /usr/lib/python3/dist-packages/notmuch ./env/lib/python*/site-packages
+          ln -s /usr/lib/python3/dist-packages/notmuch2 ./env/lib/python*/site-packages
       - name: flake8 lint
         run: |
           source ./env/bin/activate

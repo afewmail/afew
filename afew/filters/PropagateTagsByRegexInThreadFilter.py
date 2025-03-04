@@ -39,7 +39,7 @@ class PropagateTagsByRegexInThreadFilter(Filter):
     """
 
     def handle_message(self, message):
-        thread_query = 'thread:"%s"' % (message.get_thread_id(),)
+        thread_query = 'thread:"%s"' % (message.threadid,)
         if self._filter:
             query = self.database.get_messages("(%s) AND (%s)" % (thread_query, self._filter))
         else:
@@ -50,7 +50,7 @@ class PropagateTagsByRegexInThreadFilter(Filter):
         messages = list(query)
 
         # flatten  tags
-        tags_in_thread_t = {m.get_tags() for m in messages}  # a set of Tags instances
+        tags_in_thread_t = {m.tags for m in messages}  # a set of Tags instances
         tags_in_thread = set(_flatten(tags_in_thread_t))
 
         # filter tags

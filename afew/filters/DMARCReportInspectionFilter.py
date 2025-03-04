@@ -147,7 +147,7 @@ class DMARCReportInspectionFilter(Filter):
             self.__module__, self.__class__.__name__))
 
     def handle_message(self, message):
-        if not self.dmarc_subject.match(message.get_header('Subject')):
+        if not self.dmarc_subject.match(message.header('Subject')):
             return
 
         auth_results = {'dkim': True, 'spf': True}
@@ -165,6 +165,6 @@ class DMARCReportInspectionFilter(Filter):
         except DMARCInspectionError as inspection_error:
             self.log.error(
                 "Failed to verify DMARC report of '%s': %s (not tagging)",
-                message.get_message_id(),
+                message.messageid,
                 inspection_error
             )
