@@ -176,7 +176,11 @@ MeFilter
 
 Add filter tagging mail sent directly to any of addresses defined in
 Notmuch config file: `primary_email` or `other_email`.
-Default tag is `to-me` and can be customized with `me_tag` option.
+Default tag action is `+to-me`.
+
+(In the past there used to be advertised a `me_tag` option to overwrite the tag
+to apply. The current code still handles it as it used to work, but usage is
+discouraged.)
 
 SentMailsFilter
 ---------------
