@@ -102,6 +102,9 @@ class Filter:
                     message.tags.add(tag)
 
                 for tag in self._remove_tags.get(message_id, []):
-                    message.tags.remove(tag)
+                    try:
+                        message.tags.remove(tag)
+                    except KeyError:
+                        pass
 
         self.flush_changes()
