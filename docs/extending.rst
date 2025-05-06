@@ -36,7 +36,7 @@ we ensure we don't bother looking at messages we've already looked at.
 
 The `handle_message()` method is the key one to implement.  This will be called
 for each message that matches the query.  The argument is a `notmuch message object`_
-and the key methods used by the afew filters are `get_header()`, `get_filename()`
+and the key methods used by the afew filters are `header()`, `filename()`
 and `get_thread()`.
 
 .. _notmuch message object: http://pythonhosted.org/notmuch/#message-a-single-message

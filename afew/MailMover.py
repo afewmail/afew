@@ -8,8 +8,6 @@ import uuid
 from datetime import date, datetime, timedelta
 from subprocess import check_call, CalledProcessError, DEVNULL
 
-import notmuch
-
 from afew.Database import Database
 from afew.utils import get_message_summary
 
@@ -21,7 +19,7 @@ class MailMover(Database):
 
     def __init__(self, max_age=0, rename=False, dry_run=False, notmuch_args='', quiet=False):
         super().__init__()
-        self.db = notmuch.Database(self.db_path)
+        self.db = Database()
         self.query = 'folder:"{folder}" AND {subquery}'
         if max_age:
             days = timedelta(int(max_age))
@@ -61,11 +59,11 @@ class MailMover(Database):
             main_query = self.query.format(
                 folder=maildir.replace("\"", "\\\""), subquery=query)
             logging.debug("query: {}".format(main_query))
-            messages = notmuch.Query(self.db, main_query).search_messages()
+            messages = self.db.get_messages(main_query)
             for message in messages:
                 # a single message (identified by Message-ID) can be in several
                 # places; only touch the one(s) that exists in this maildir
-                all_message_fnames = message.get_filenames()
+                all_message_fnames = (str(name) for name in message.filenames())
                 to_move_fnames = [name for name in all_message_fnames
                                   if maildir in name]
                 if not to_move_fnames:

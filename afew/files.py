@@ -8,7 +8,7 @@ import logging
 import platform
 import queue
 import threading
-import notmuch
+import notmuch2
 import pyinotify
 import ctypes
 import contextlib
@@ -43,19 +43,19 @@ class EventHandler(pyinotify.ProcessEvent):
         def new_mail(message):
             for filter_ in self.options.enable_filters:
                 try:
-                    filter_.run('id:"{}"'.format(message.get_message_id()))
+                    filter_.run('id:"{}"'.format(message.messageid))
                     filter_.commit(self.options.dry_run)
                 except Exception as e:
                     logging.warning('Error processing mail with filter {!r}: {}'.format(filter_.message, e))
 
         try:
             self.database.add_message(event.pathname,
-                                      sync_maildir_flags=True,
+                                      sync_flags=True,
                                       new_mail_handler=new_mail)
-        except notmuch.FileError as e:
+        except notmuch2.FileError as e:
             logging.warning('Error opening mail file: {}'.format(e))
             return
-        except notmuch.FileNotEmailError as e:
+        except notmuch2.FileNotEmailError as e:
             logging.warning('File does not look like an email: {}'.format(e))
             return
         else:

@@ -20,7 +20,7 @@ class PropagateTagsInThreadFilter(Filter):
 
     def handle_message(self, message):
         for tag in self._propagate_tags:
-            tag_query = 'thread:"%s" AND is:"%s"' % (message.get_thread_id(), tag)
+            tag_query = 'thread:"%s" AND is:"%s"' % (message.threadid, tag)
             if self._filter:
                 query = self.database.get_messages("(%s) AND (%s)" % (tag_query, self._filter))
             else:

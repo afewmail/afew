@@ -55,27 +55,27 @@ class Filter:
             self.handle_message(message)
 
     def handle_message(self, message):
-        if not self._tag_blacklist.intersection(message.get_tags()):
+        if not self._tag_blacklist.intersection(message.tags):
             self.remove_tags(message, *self._tags_to_remove)
             self.add_tags(message, *self._tags_to_add)
 
     def add_tags(self, message, *tags):
         if tags:
             self.log.debug('Adding tags %s to id:%s' % (', '.join(tags),
-                                                        message.get_message_id()))
-            self._add_tags[message.get_message_id()].update(tags)
+                                                        message.messageid))
+            self._add_tags[message.messageid].update(tags)
 
     def remove_tags(self, message, *tags):
         if tags:
             filtered_tags = list(tags)
             self.log.debug('Removing tags %s from id:%s' % (', '.join(filtered_tags),
-                                                            message.get_message_id()))
-            self._remove_tags[message.get_message_id()].update(filtered_tags)
+                                                            message.messageid))
+            self._remove_tags[message.messageid].update(filtered_tags)
 
     def flush_tags(self, message):
         self.log.debug('Removing all tags from id:%s' %
-                       message.get_message_id())
-        self._flush_tags.append(message.get_message_id())
+                       message.messageid)
+        self._flush_tags.append(message.messageid)
 
     def commit(self, dry_run=True):
         dirty_messages = set()
@@ -93,15 +93,18 @@ class Filter:
             db = self.database.open(rw=True)
 
             for message_id in dirty_messages:
-                message = db.find_message(message_id)
+                message = db.find(message_id)
 
                 if message_id in self._flush_tags:
                     message.remove_all_tags()
 
                 for tag in self._add_tags.get(message_id, []):
-                    message.add_tag(tag)
+                    message.tags.add(tag)
 
                 for tag in self._remove_tags.get(message_id, []):
-                    message.remove_tag(tag)
+                    try:
+                        message.tags.remove(tag)
+                    except KeyError:
+                        pass
 
         self.flush_changes()

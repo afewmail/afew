@@ -9,7 +9,7 @@ class KillThreadsFilter(Filter):
     query = 'NOT tag:killed'
 
     def handle_message(self, message):
-        query = self.database.get_messages('thread:"%s" AND tag:killed' % message.get_thread_id())
+        query = self.database.get_messages('thread:"%s" AND tag:killed' % message.threadid)
 
         if len(list(query)):
             self.add_tags(message, 'killed')

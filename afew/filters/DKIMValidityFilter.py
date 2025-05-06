@@ -50,14 +50,18 @@ class DKIMValidityFilter(Filter):
             self.__module__, self.__class__.__name__))
 
     def handle_message(self, message):
-        if message.get_header(self.header):
+        try:
+            selfhead = message.header(self.header)
+        except LookupError:
+            selfhead = ''
+        if selfhead:
             try:
-                dkim_ok = all(map(verify_dkim, message.get_filenames()))
+                dkim_ok = all(map(verify_dkim, message.filenames()))
             except DKIMVerifyError as verify_error:
                 self.log.warning(
                     "Failed to verify DKIM of '%s': %s "
                     "(marked as 'dkim-fail')",
-                    message.get_message_id(),
+                    message.messageid,
                     verify_error
                 )
                 dkim_ok = False

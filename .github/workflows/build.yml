@@ -24,11 +24,11 @@ jobs:
         shell: bash
         run: |
           sudo apt-get update
-          sudo apt-get install -y notmuch python3-notmuch python3-venv flake8
+          sudo apt-get install -y notmuch libnotmuch-dev python3-venv flake8
           python3 -m venv env
           source ./env/bin/activate
           pip install setuptools setuptools_scm pytest dkimpy
-          ln -s /usr/lib/python3/dist-packages/notmuch ./env/lib/python*/site-packages
+          pip install notmuch2
       - name: flake8 lint
         run: |
           source ./env/bin/activate
