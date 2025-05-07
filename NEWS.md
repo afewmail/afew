@@ -1,4 +1,73 @@
-afew 3.1.0 (unreleased)
+afew 4.0.0 (unreleased)
+=======================
+
+Python <3.9 support dropped
+ 
+  Afew stopped supporting older version (eol) prior 3.9
+
+Upgrade ci env
+
+  The build ci now use ubuntu-24-04
+  The actions/checkout and actions/setup-python is now v4 (node20)
+Fix python version used in venv
+Show the python version used by the ci builder
+gh actions: fix docs build
+gh actions: drop codecov
+gh actions: pip install setuptools_scm
+gh actions: update python versions
+Bump runner to latest ubuntu stable
+release.yml: run on published releases, invoke twine manually
+build.yml: set fetch-depth: 0
+.github/workflows/build.yml: fix if condition
+build.yml: fix syntax
+build.yml: upload all master commits to testpypi
+
+Add ci tests
+
+  Add flake8 lint test
+  Add pytest task in the ci
+
+Fix flake8 issue
+
+  flake8 fix E701 E402 E126 E711 E302 E251 E722 W503 E713 F401 E303 E401 E265 W605
+  flake8 add ignore W504
+
+Upgrade ci tasks
+
+  Remove the codecoverage task and icon
+  Add docs build html
+  Add docs build man
+
+Upgrade documentation content
+
+  README: drop wrong python version claim
+  README: s/freenode/libera/
+  Fix one-letter typo in README.
+  Upgrade NEWS.md for 3.1.0
+  setup.py: add long_description, reading from README.rst
+  docs: Fix HeaderMatchingFilter example
+NEWS: add python 3.6 drop
+add .readthedocs.yaml
+Add config documentation to main DMARC Filter class
+
+Code upgrade
+
+Replace logging.warn usage with logging.warning
+afew/tests: Add a test for HeaderMatchingFilter
+HeaderMatchingFilter: Gracefully handle missing headers
+DMARC Filter: allow to define subject regexp
+
+Upgrade python versions
+Get notmuch database path using Database wrapper
+fix typo in DKIM filter docs
+HeaderMatchingFilter: do not convert user supplied tags
+Handle report with empty spf or dkim XML nodes
+fix a typo: mathing -> matching
+Add lint step
+afew.tests.test_utils: remove
+
+
+afew 3.1.0 (2020-08-26)
 =======================
 
 Python 3.6 support dropped
