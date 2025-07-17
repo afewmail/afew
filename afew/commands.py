@@ -5,6 +5,7 @@ import glob
 import sys
 import logging
 import argparse
+import os
 
 from afew.Database import Database
 from afew.main import main as inner_main
@@ -131,9 +132,9 @@ def main():
     logging.basicConfig(level=loglevel)
 
     sys.path.insert(0, user_config_dir)
-    for file_name in glob.glob1(user_config_dir, '*.py'):
+    for file_name in glob.glob(os.path.join(user_config_dir, '*.py')):
         logging.info('Importing user filter %r' % (file_name,))
-        __import__(file_name[:-3], level=0)
+        __import__(os.path.basename(file_name)[:-3], level=0)
 
     if args.move_mails:
         args.mail_move_rules = get_mail_move_rules()
