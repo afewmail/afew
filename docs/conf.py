@@ -14,7 +14,7 @@
 
 import sys
 import os
-from pkg_resources import get_distribution
+from importlib.metadata import version
 
 # If extensions (or modules to document with autodoc) are in another directory,
 # add these directories to sys.path here. If the directory is relative to the
@@ -74,7 +74,7 @@ pretended_version = os.environ.get('SETUPTOOLS_SCM_PRETEND_VERSION')
 if pretended_version:
     release = pretended_version
 else:
-    release = get_distribution('afew').version
+    release = version('afew')
 # The X.Y.Z version.
 version = '.'.join(release.split('.')[:3])
 
