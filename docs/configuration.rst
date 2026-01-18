@@ -126,7 +126,7 @@ The (roughly) equivalent set up in afew would be:
 
     [InboxFilter]
 
-Not that the queries do not generally include `tag:new` because this is implied when afew
+Note that the queries do not generally include `tag:new` because this is implied when afew
 is run with the `--new` flag.
 
 The differences between them is that
