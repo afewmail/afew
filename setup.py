@@ -21,6 +21,7 @@ setup(
     description="An initial tagging script for notmuch mail",
     url="https://github.com/afewmail/afew",
     license="ISC",
+    license_files=['LICENSE'],
     long_description=long_description,
     long_description_content_type="text/x-rst",
     python_requires='>=3.9',
@@ -54,7 +55,6 @@ setup(
     tests_require=['freezegun'],
     provides=['afew'],
     classifiers=[
-        'License :: OSI Approved :: ISC License (ISCL)',
         'Development Status :: 4 - Beta',
         'Environment :: Console',
         'Intended Audience :: End Users/Desktop',
