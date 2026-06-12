@@ -14,7 +14,7 @@ class FolderNameFilter(Filter):
         super().__init__(database)
 
         self.__filename_pattern = '{mail_root}/(?P<maildirs>.*)/(cur|new)/[^/]+'.format(
-            mail_root=database.db_path.rstrip('/'))
+            mail_root=database.mail_root.rstrip('/'))
         self.__folder_explicit_list = set(shlex.split(folder_explicit_list))
         self.__folder_blacklist = set(shlex.split(folder_blacklist))
         self.__folder_transforms = self.__parse_transforms(folder_transforms)
