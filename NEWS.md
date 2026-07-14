@@ -1,9 +1,9 @@
 afew 3.1.0 (unreleased)
 =======================
 
-Python 3.6 support dropped
+Python 3.10 and older support dropped
 
-  afew stopped supporting the older python version 3.6.
+  afew needs Python 3.11 or later. 3.14 has been included into CI.
 
 Handle DMARC report with empty spf or dkim XML nodes
 
