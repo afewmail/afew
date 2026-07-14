@@ -1,0 +1,2 @@
+graft afew/tests
+global-exclude *.py[cod]
