@@ -25,7 +25,7 @@ setup(
     long_description_content_type="text/x-rst",
     python_requires='>=3.9',
     setup_requires=['setuptools_scm'],
-    packages=find_packages(),
+    packages=find_packages(exclude=["afew.tests", "afew.tests.*"]),
     test_suite='afew.tests',
     package_data={
         'afew': ['defaults/afew.config']
