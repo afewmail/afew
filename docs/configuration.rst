@@ -7,6 +7,9 @@ Configuration File
 Customization of tag filters takes place in afew's config file in
 `~/.config/afew/config`.
 
+The format is similar to what's found in Microsoft Windows INI files.
+Note values should not be quoted.
+
 NotMuch Config
 --------------
 
