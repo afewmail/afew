@@ -1,4 +1,4 @@
-afew 3.1.0 (unreleased)
+afew 4.0.0 (2026-07-16)
 =======================
 
 Migration from deprecated `pkg_resources` to `importlib.metadata`
@@ -12,6 +12,12 @@ Migration to notmuch2 python bindings
 Python 3.10 and older support dropped
 
   afew needs Python 3.11 or later. 3.14 has been included into CI.
+
+Various CI changes
+
+  CI has been reworked, it now runs lints and tests,
+  and deals with uploading to PyPi by using the 'Trusted Publisher' feature.
+  Some old tooling and references to old tooling (Travis, codecoverage) have been removed.
 
 Handle DMARC report with empty spf or dkim XML nodes
 
