@@ -24,17 +24,6 @@ jobs:
         with:
           name: python-package-distributions
           path: dist/
-      - name: Docs
-        run: |
-          python3 -m pip install . --user
-          python3 -m pip install sphinx --user
-          sphinx-build -b html docs/ sphinx/html
-          sphinx-build -b man docs/ sphinx/man
-      - name: Store docs
-        uses: actions/upload-artifact@v5
-        with:
-          name: docs
-          path: sphinx/
 
 
   testpypi-publish:
