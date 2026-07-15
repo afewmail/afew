@@ -11,44 +11,45 @@ jobs:
     name: Build (Python ${{ matrix.python-version }})
     runs-on: ubuntu-24.04
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
         with:
           fetch-depth: 0
+          persist-credentials: false
       - name: Set up Python ${{ matrix.python-version }}
         uses: actions/setup-python@v4
         with:
           python-version: '${{ matrix.python-version }}'
-      - name: Display Python version
-        run: python -c "import sys; print(sys.version)"
+      - name: Install pypa/build and build-system deps
+        run: |
+          python3 -m pip install build setuptools setuptools_scm --user
+      - name: Build a binary wheel and a source tarball
+        run: python3 -m build
+      - name: Store the distribution packages
+        uses: actions/upload-artifact@v5
+        with:
+          name: python-package-distributions
+          path: dist/
       - name: Install dependencies
         shell: bash
         run: |
           sudo apt-get update
-          sudo apt-get install -y notmuch libnotmuch-dev python3-venv flake8
-          python3 -m venv env
-          source ./env/bin/activate
-          pip install setuptools setuptools_scm pytest dkimpy
-          pip install git+https://github.com/weilbith/notmuch2-python-bindings@69b50a0682a7c917bc0cd3bffd38efacf4f1679c
+          sudo apt-get install -y notmuch libnotmuch-dev flake8
+          python3 -m pip install pytest dkimpy flake8 git+https://github.com/weilbith/notmuch2-python-bindings@69b50a0682a7c917bc0cd3bffd38efacf4f1679c --user
       - name: flake8 lint
         run: |
-          source ./env/bin/activate
           flake8 --ignore=E501,W504 afew/
       - name: Tests
         run: |
-          source ./env/bin/activate
-          pip install freezegun
+          python3 -m pip install freezegun --user
           pytest
-      - name: build
-        run: |
-          source ./env/bin/activate
-          python setup.py build
-      - name: install
-        run: |
-          source ./env/bin/activate
-          python setup.py install
       - name: Docs
         run: |
-          source ./env/bin/activate
-          pip install sphinx
-          sphinx-build -b html docs $(mktemp -d)
-          sphinx-build -b man docs $(mktemp -d)
+          python3 -m pip install . --user
+          python3 -m pip install sphinx --user
+          sphinx-build -b html docs/ sphinx/html
+          sphinx-build -b man docs/ sphinx/man
+      - name: Store docs
+        uses: actions/upload-artifact@v5
+        with:
+          name: docs
+          path: sphinx/
