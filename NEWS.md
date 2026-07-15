@@ -1,6 +1,14 @@
 afew 3.1.0 (unreleased)
 =======================
 
+Migration from deprecated `pkg_resources` to `importlib.metadata`
+
+  We stopped using the the deprecated `pkg_resources` package in favor of `importlib.metadata`.
+
+Migration to notmuch2 python bindings
+
+  afew has been migrated to use the `notmuch2` python bindings, as the old ones were deprecated.
+
 Python 3.10 and older support dropped
 
   afew needs Python 3.11 or later. 3.14 has been included into CI.
