@@ -22,13 +22,6 @@ jobs:
       - name: Install pypa/build and build-system deps
         run: |
           python3 -m pip install build setuptools setuptools_scm --user
-      - name: Build a binary wheel and a source tarball
-        run: python3 -m build
-      - name: Store the distribution packages
-        uses: actions/upload-artifact@v5
-        with:
-          name: python-package-distributions
-          path: dist/
       - name: Install dependencies
         shell: bash
         run: |
@@ -42,14 +35,3 @@ jobs:
         run: |
           python3 -m pip install freezegun --user
           pytest
-      - name: Docs
-        run: |
-          python3 -m pip install . --user
-          python3 -m pip install sphinx --user
-          sphinx-build -b html docs/ sphinx/html
-          sphinx-build -b man docs/ sphinx/man
-      - name: Store docs
-        uses: actions/upload-artifact@v5
-        with:
-          name: docs
-          path: sphinx/
