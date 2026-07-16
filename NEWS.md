@@ -1,3 +1,11 @@
+afew 4.0.1 (2026-07-16)
+=======================
+
+Migration from `setup.py` to `pyproject.toml`
+
+  `afew` has been migrated to use `pyproject.toml` in favor of `setup.py`.
+  This includes describing all doc/lint/test dependencies via `optional-dependencies`.
+
 afew 4.0.0 (2026-07-16)
 =======================
 
