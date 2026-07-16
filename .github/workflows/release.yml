@@ -16,7 +16,10 @@ jobs:
           python-version: "3.14"
       - name: Install pypa/build and build-system deps
         run: |
-          python3 -m pip install build setuptools setuptools_scm --user
+          sudo apt-get update
+          sudo apt-get install -y notmuch libnotmuch-dev
+          python3 -m pip install git+https://github.com/weilbith/notmuch2-python-bindings@69b50a0682a7c917bc0cd3bffd38efacf4f1679c --user
+          python3 -m pip install build . --user
       - name: Build a binary wheel and a source tarball
         run: python3 -m build
       - name: Store the distribution packages

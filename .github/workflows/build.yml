@@ -19,26 +19,24 @@ jobs:
         uses: actions/setup-python@v4
         with:
           python-version: '${{ matrix.python-version }}'
-      - name: Install pypa/build and build-system deps
-        run: |
-          python3 -m pip install build setuptools setuptools_scm --user
-      - name: Install dependencies
+      - name: Install system dependencies
         shell: bash
         run: |
           sudo apt-get update
-          sudo apt-get install -y notmuch libnotmuch-dev flake8
-          python3 -m pip install pytest dkimpy flake8 git+https://github.com/weilbith/notmuch2-python-bindings@69b50a0682a7c917bc0cd3bffd38efacf4f1679c --user
+          sudo apt-get install -y notmuch libnotmuch-dev
+      - name: Install pypa/build and dependencies
+        run: |
+          # Install notmuch2 explicitly until weilbith/notmuch2-python-bindings#7 is fixed
+          python3 -m pip install git+https://github.com/weilbith/notmuch2-python-bindings@69b50a0682a7c917bc0cd3bffd38efacf4f1679c --user
+          python3 -m pip install build '.[doc,lint,test]' --user
       - name: flake8 lint
         run: |
           flake8 --ignore=E501,W504 afew/
       - name: Tests
         run: |
-          python3 -m pip install freezegun --user
           pytest
       - name: Docs
         run: |
-          python3 -m pip install . --user
-          python3 -m pip install sphinx --user
           sphinx-build -b html docs/ sphinx/html
           sphinx-build -b man docs/ sphinx/man
       - name: Store docs
