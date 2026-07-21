@@ -1,3 +1,19 @@
+afew 4.0.2 (2026-07-21)
+=======================
+
+Fixes to read afew version at runtime
+
+  4.0.1 migrated to `pyproject.toml`, but didn't include the snippet to write a
+  `version.py` file. We still had code reading the version from there, causing
+  an import error at runtime.
+
+  This was not caught by unit tests as there was nothing testing the codepath,
+  and also didn't fail in manual testing, as the (`.gitignore`'d) `version.py`
+  was still present in the local checkout.
+
+  The remaining import of `afew.version.version` was changed to use
+  `importlib.metadata.version`, so we don't need to generate the file at all.
+
 afew 4.0.1 (2026-07-16)
 =======================
 
