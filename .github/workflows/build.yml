@@ -26,8 +26,6 @@ jobs:
           sudo apt-get install -y notmuch libnotmuch-dev
       - name: Install pypa/build and dependencies
         run: |
-          # Install notmuch2 explicitly until weilbith/notmuch2-python-bindings#7 is fixed
-          python3 -m pip install git+https://github.com/weilbith/notmuch2-python-bindings@69b50a0682a7c917bc0cd3bffd38efacf4f1679c --user
           python3 -m pip install build '.[doc,lint,test]' --user
       - name: flake8 lint
         run: |
