@@ -17,6 +17,7 @@ class Database:
 
     def __init__(self):
         self.db_path = self._calculate_db_path()
+        self.mail_root = self._calculate_mail_root()
         self.handle = None
 
     def _calculate_db_path(self):
@@ -33,6 +34,19 @@ class Database:
             db_path = '{}/{}'.format(os.environ.get('HOME'), db_path)
 
         return db_path
+
+    def _calculate_mail_root(self):
+        """
+        Calculates the mail root directory. This is the directory that contains
+        the maildir directories. It is used to determine the relative path of
+        messages for notmuch.
+        """
+        mail_root = notmuch_settings.get('database', 'mail_root', fallback=None)
+
+        if mail_root is None:
+            mail_root = self.db_path
+
+        return mail_root
 
     def __enter__(self):
         """
