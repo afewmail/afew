@@ -1,6 +1,8 @@
 # SPDX-License-Identifier: ISC
 # Copyright (c) dtk <dtk@gmx.de>
 
+import collections
+import glob
 import logging
 import os
 import shutil
@@ -17,7 +19,8 @@ class MailMover(Database):
     Move mail files matching a given notmuch query into a target maildir folder.
     """
 
-    def __init__(self, max_age=0, rename=False, dry_run=False, notmuch_args='', quiet=False):
+    def __init__(self, max_age=0, rename=False, dry_run=False, notmuch_args='', quiet=False,
+                 folder_priorities=None):
         super().__init__()
         self.db = Database()
         self.query = 'folder:"{folder}" AND {subquery}'
@@ -31,11 +34,21 @@ class MailMover(Database):
         self.rename = rename
         self.notmuch_args = notmuch_args
         self.quiet = quiet
+        self.folder_priorities = folder_priorities or {}
+        self._resolution_cache = {}
 
     def get_new_name(self, fname, destination):
         basename = os.path.basename(fname)
         submaildir = os.path.split(os.path.split(fname)[0])[1]
-        if self.rename:
+        # 'auto' renames only mbsync files (UID embedded as ,U=NNN), leaving
+        # offlineimap and plain maildir names untouched
+        if self.rename == 'auto':
+            rename = ',U=' in basename
+        elif isinstance(self.rename, str):
+            rename = self.rename.lower() == 'true'
+        else:
+            rename = bool(self.rename)
+        if rename:
             parts = basename.split(':')
             if len(parts) > 1:
                 flagpart = ':' + parts[-1]
@@ -46,16 +59,98 @@ class MailMover(Database):
             basename = str(uuid.uuid1()) + flagpart
         return os.path.join(destination, submaildir, basename)
 
+    def _select_targets(self, fnames, destination):
+        """Files that actually change folders, keyed by their new name.
+
+        A file is skipped when its source vanished from disk (stale notmuch
+        index entry) or when it already lives inside the destination maildir
+        tree - the folder itself or one of its subfolders. The latter keeps
+        'folder:PATH' prefix queries (which match PATH/sub/* as well) from
+        pulling mail out of organizational subfolders into the folder root.
+        """
+        targets = {}
+        for fname in fnames:
+            if not os.path.exists(fname):
+                logging.warning("source gone, skipping: {}".format(fname))
+                continue
+            new_name = self.get_new_name(fname, destination)
+            if self._same_maildir_tree(fname, new_name):
+                continue
+            targets[fname] = new_name
+        return targets
+
+    @staticmethod
+    def _same_maildir_tree(fname, new_name):
+        """True when both paths live in the same maildir tree."""
+        src_maildir = os.path.dirname(os.path.dirname(fname))
+        dst_maildir = os.path.dirname(os.path.dirname(new_name))
+        return src_maildir == dst_maildir or \
+            src_maildir.startswith(dst_maildir + os.sep)
+
+    def _resolve_account_folder(self, account, tag):
+        """Resolve a priority key to the account's folder: the first candidate
+        that exists on disk wins ('*' candidates are globs); if none exists,
+        the first candidate is used (the folder must be created by the mail
+        client or sync tool - afew does not create it)."""
+        candidates = self.folder_priorities.get(tag) or ['']
+        base = os.path.join(self.db_path, account)
+        for candidate in candidates:
+            if '*' in candidate:
+                matches = sorted(glob.glob(os.path.join(base, candidate)))
+                if matches:
+                    return os.path.join(account, os.path.basename(matches[0]))
+            elif os.path.isdir(os.path.join(base, candidate)):
+                return os.path.join(account, candidate)
+        return os.path.join(account, candidates[0])
+
+    def _managed_folders(self, account):
+        """Existing folders the mover manages for an account: INBOX plus the
+        resolved priority folders."""
+        folders = [os.path.join(account, 'INBOX')]
+        for tag in self.folder_priorities:
+            folders.append(self._resolve_account_folder(account, tag))
+        return sorted(f for f in folders
+                      if os.path.isdir(os.path.join(self.db_path, f)))
+
+    def expand_rules(self, rules):
+        """Expand wildcard folder keys (gmail/*) into the account's managed
+        folders only: INBOX plus the resolved priority folders. Organizational
+        subfolders are left alone - mail there is where the user put it."""
+        expanded = collections.OrderedDict()
+        for folder, folder_rules in rules.items():
+            if '*' not in folder:
+                expanded[folder] = folder_rules
+                continue
+            account = folder[:folder.index('*')].rstrip('/')
+            for source in self._managed_folders(account):
+                expanded[source] = folder_rules
+        return expanded
+
+    def _resolve_folder(self, maildir, tag):
+        """Resolve a priority key for the maildir's account (memoized)."""
+        key = (maildir, tag)
+        if key not in self._resolution_cache:
+            self._resolution_cache[key] = self._resolve_account_folder(
+                maildir.split('/')[0], tag)
+        return self._resolution_cache[key]
+
     def move(self, maildir, rules):
         """
         Move mails in folder maildir according to the given rules.
         """
+        if '*' in maildir:
+            for source, source_rules in self.expand_rules({maildir: rules}).items():
+                self.move(source, source_rules)
+            return
         # identify and move messages
         logging.info("checking mails in '{}'".format(maildir))
         to_delete_fnames = []
         moved = False
         for query in rules.keys():
-            destination = '{}/{}/'.format(self.db_path, rules[query])
+            dest_rule = rules[query]
+            if dest_rule in self.folder_priorities:
+                dest_rule = self._resolve_folder(maildir, dest_rule)
+            destination = '{}/{}/'.format(self.db_path, dest_rule)
             main_query = self.query.format(
                 folder=maildir.replace("\"", "\\\""), subquery=query)
             logging.debug("query: {}".format(main_query))
@@ -68,14 +163,17 @@ class MailMover(Database):
                                   if maildir in name]
                 if not to_move_fnames:
                     continue
+                targets = self._select_targets(to_move_fnames, destination)
+                if not targets:
+                    continue
                 moved = True
-                self.__log_move_action(message, maildir, rules[query],
+                self.__log_move_action(message, maildir, dest_rule,
                                        self.dry_run)
-                for fname in to_move_fnames:
+                for fname, new_name in targets.items():
                     if self.dry_run:
                         continue
                     try:
-                        shutil.copy2(fname, self.get_new_name(fname, destination))
+                        shutil.copy2(fname, new_name)
                         to_delete_fnames.append(fname)
                     except shutil.SameFileError:
                         logging.warning("trying to move '{}' onto itself".format(fname))
@@ -113,6 +211,13 @@ class MailMover(Database):
             logging.error("Could not update notmuch database "
                           "after syncing maildir '{}': {}".format(maildir, err))
             raise SystemExit
+        finally:
+            # the external `notmuch new` bumps the database revision; any
+            # handle we hold is stale and would raise on the next query.
+            # drop it so the next folder - one instance may run move()
+            # several times through wildcard expansion - reopens against
+            # the new revision
+            self.close()
 
     def __log_move_action(self, message, source, destination, dry_run):
         '''
