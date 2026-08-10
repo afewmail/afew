@@ -25,7 +25,8 @@ def main(options, database, query_string):
                             quick_find_dirs_hack(database.db_path))
     elif options.move_mails:
         for maildir, rules in options.mail_move_rules.items():
-            mover = MailMover(options.mail_move_age, options.mail_move_rename, options.dry_run, options.notmuch_args)
+            mover = MailMover(options.mail_move_age, options.mail_move_rename, options.dry_run,
+                              options.notmuch_args, folder_priorities=options.mail_move_folder_priorities)
             mover.move(maildir, rules)
             mover.close()
     else:

@@ -96,7 +96,20 @@ def get_mail_move_age():
 
 
 def get_mail_move_rename():
-    rename = False
+    rename = 'false'
     if settings.has_option(mail_mover_section, 'rename'):
-        rename = settings.get(mail_mover_section, 'rename').lower() == 'true'
+        rename = settings.get(mail_mover_section, 'rename').lower()
+        if rename not in ('true', 'false', 'auto'):
+            raise NameError("invalid rename value: %r (expected true, false or auto)" % rename)
     return rename
+
+
+def get_mail_move_folder_priorities():
+    priorities = collections.OrderedDict()
+    if settings.has_option(mail_mover_section, 'folder_priorities'):
+        for item in settings.get(mail_mover_section, 'folder_priorities').split(';'):
+            tag, _, folders = item.strip().partition(':')
+            if not tag or not folders:
+                raise NameError("invalid folder_priorities entry: %r" % item)
+            priorities[tag.strip()] = [f.strip() for f in folders.split(',') if f.strip()]
+    return priorities

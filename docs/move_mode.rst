@@ -10,8 +10,9 @@ Here is a full sample configuration for move mode:
 
     [MailMover]
     folders = INBOX Junk
-    rename = False
+    rename = auto
     max_age = 15
+    folder_priorities = archive:Archives,Archive;spam:[Gmail]/Spam,Spam,Junk*
 
     # rules
     INBOX = 'tag:spam':Junk 'NOT tag:inbox':Archive
@@ -67,6 +68,44 @@ The above rules will move all mails in `Junk` that don't have the **spam** tag
 but do have an **inbox** tag into the directory `INBOX`. All other mails not
 tagged with **spam** will be moved into `Archive`.
 
+Wildcard Folder Keys
+--------------------
+
+Instead of listing every folder of an account, a folder key may end in
+``/*`` to cover the whole account. The key expands to the account's
+INBOX plus its resolved priority folders (see `Folder Priorities`
+below), so one rules block can serve every account with the same
+layout:
+
+.. code-block:: ini
+
+    folders = gmail/* jelveh/*
+
+    gmail/* = 'tag:spam':spam 'NOT tag:inbox':archive
+    jelveh/* = 'tag:spam':spam 'NOT tag:inbox':archive
+
+Only folders that exist on disk are expanded. Organizational subfolders
+(``jelveh/Archive/2022``, say) are never expanded and never moved from.
+
+Folder Priorities
+-----------------
+
+Mail providers name folders differently: gmail uses ``[Gmail]/Spam``
+and ``[Gmail]/Trash``, others plain ``Spam`` and ``Trash``. The
+``folder_priorities`` option maps a tag to an ordered list of candidate
+folder names (entries separated by ``;``, candidates by ``,``):
+
+.. code-block:: ini
+
+    folder_priorities = archive:Archives,Archive;spam:[Gmail]/Spam,Spam,Junk*
+
+When a rule destination matches one of these keys, it is resolved per
+account: the first candidate folder that exists on disk wins (``*``
+candidates are globs), falling back to the first candidate if none
+exists. Above, gmail mail destined for ``spam`` lands in
+``[Gmail]/Spam``, jelveh mail in ``Spam``. Destinations that do not
+match a key are taken literally.
+
 Max Age
 -------
 
@@ -94,9 +133,15 @@ This allows `mbsync` to assign a new UID to the file and avoid UID conflicts.
 
 If you are using `offlineimap`, you can safely ignore this option.
 
+The option accepts ``true``, ``false`` and ``auto``. ``auto`` renames
+only files that mbsync has already renamed - their name embeds the UID
+as `,U=NNN` - and leaves offlineimap and plain maildir names untouched.
+This is handy when some accounts are synced with mbsync and others are
+not:
+
 .. code-block:: ini
 
-    rename = True
+    rename = auto
 
 
 Limitations
@@ -122,3 +167,10 @@ moving it? ;)
 feature. If you tag a mail with two tags and there is a rule for each
 of them, both rules will apply.  Your mail will be copied into two
 destination folders, then removed from its original location.
+
+**(3)** Moves that change nothing are skipped. A mail that already
+lives inside the destination folder tree - the folder itself or one of
+its subfolders - is left in place. Since ``folder:PATH`` queries match
+subfolders too, afew would otherwise pull such mails up into the folder
+root. Files that vanished from disk (stale index entries) are skipped
+instead of aborting the run.
