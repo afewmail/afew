@@ -13,6 +13,9 @@ Add tags 2 of the tags below:
 
 """
 
+import email
+import email.policy
+import gzip
 import logging
 import re
 import tempfile
@@ -37,9 +40,12 @@ class ReportFilesIterator:
     """
     def __init__(self, message):
         self.message = message
+        self.parser = email.parser.BytesParser(policy=email.policy.default)
 
     def __iter__(self):
-        for part in self.message.get_message_parts():
+        with self.message.path.open("rb") as fp:
+            parsed_message = self.parser.parse(fp)
+        for part in parsed_message.iter_parts():
             if part.get_content_type() == 'application/zip':
                 with tempfile.TemporaryFile(suffix='.zip') as file:
                     file.write(part.get_payload(decode=True))
@@ -53,6 +59,9 @@ class ReportFilesIterator:
                             from zip_error
             elif part.get_content_type() == 'application/xml':
                 yield part.get_payload(decode=True)
+            elif part.get_content_type() == 'application/gzip':
+                data = part.get_payload(decode=True)
+                yield gzip.decompress(data)
 
 
 def and_dict(dict1, dict2):
@@ -81,7 +90,7 @@ def has_failed(node):
     :param node: XML node holding status as text.
     :returns: Whether the status is reported as "failed".
     """
-    if not node or not node.text:
+    if node is None or node.text is None:
         return True
     return (node.text.strip() not in ['pass', 'none'])
 
@@ -147,7 +156,10 @@ class DMARCReportInspectionFilter(Filter):
             self.__module__, self.__class__.__name__))
 
     def handle_message(self, message):
-        if not self.dmarc_subject.match(message.header('Subject')):
+        try:
+            if not self.dmarc_subject.match(message.header('Subject')):
+                return
+        except LookupError:
             return
 
         auth_results = {'dkim': True, 'spf': True}
